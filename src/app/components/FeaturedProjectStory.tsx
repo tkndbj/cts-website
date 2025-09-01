@@ -17,7 +17,7 @@ export default function FeaturedProjectStory({
   const projects = [
     {
       id: 1,
-      image: "/panaroma1.jpg",
+      image: "/fourseasons.jpg",
       title: "FOUR SEASONS LIFE",
       description:
         "Çağdaş tasarım çözümleri ile geleceğin yapılarını inşa ediyoruz. Her mevsimin güzelliğini yaşayabileceğiniz modern yaşam alanları.",
