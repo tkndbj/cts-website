@@ -123,624 +123,306 @@ export default function ImageGallerySection({
       </div>
 
       <style jsx>{`
-        /* Desktop Styles - Original 4-column layout */
-        @media (min-width: 769px) {
-          /* Görsel aralıkları: 55–75% görünür, 75–80% header'a akarken sönmeye başlar, 80%'de yok */
-          .image-1 {
-            animation: image-1-lifecycle linear both;
-            animation-timeline: scroll(root);
-            animation-range: 55% 80%;
-          }
-          .image-2 {
-            animation: image-2-lifecycle linear both;
-            animation-timeline: scroll(root);
-            animation-range: 56% 80%;
-          }
-          .image-3 {
-            animation: image-3-lifecycle linear both;
-            animation-timeline: scroll(root);
-            animation-range: 57% 80%;
-          }
-          .image-4 {
-            animation: image-4-lifecycle linear both;
-            animation-timeline: scroll(root);
-            animation-range: 58% 80%;
-          }
-
-          /* Başlık kartları: 55–75% gridde görünür, 75–80% header pozisyonuna taşınır, 80%'de sabit */
-          .title-card-1 {
-            animation: title-1-to-header linear both;
-            animation-timeline: scroll(root);
-            animation-range: 55% 80%;
-          }
-          .title-card-2 {
-            animation: title-2-to-header linear both;
-            animation-timeline: scroll(root);
-            animation-range: 56% 80%;
-          }
-          .title-card-3 {
-            animation: title-3-to-header linear both;
-            animation-timeline: scroll(root);
-            animation-range: 57% 80%;
-          }
-          .title-card-4 {
-            animation: title-4-to-header linear both;
-            animation-timeline: scroll(root);
-            animation-range: 58% 80%;
-          }
-
-          /* 4 görseli 4 kolon gibi konumlayan keyframe'ler (desktop) */
-          @keyframes image-1-lifecycle {
-            0% {
-              opacity: 0;
-              top: 100vh;
-              left: 50%;
-              transform: translateX(-50%) translateY(100px);
-              width: 200px;
-              height: 120px;
-            }
-            25% {
-              opacity: 1;
-              top: 90px;
-              left: 0.5%;
-              transform: translate(0, 0);
-              width: 24%;
-              height: 450px;
-            }
-            80% {
-              opacity: 1;
-              top: 90px;
-              left: 0.5%;
-              transform: translate(0, 0);
-              width: 24%;
-              height: 450px;
-            }
-            100% {
-              opacity: 0;
-              top: 90px;
-              left: 0.5%;
-              transform: translateY(-100px);
-              width: 24%;
-              height: 450px;
-            }
-          }
-          @keyframes image-2-lifecycle {
-            0% {
-              opacity: 0;
-              top: 100vh;
-              left: 50%;
-              transform: translateX(-50%) translateY(100px);
-              width: 200px;
-              height: 120px;
-            }
-            25% {
-              opacity: 1;
-              top: 90px;
-              left: 25.5%;
-              transform: translate(0, 0);
-              width: 24%;
-              height: 450px;
-            }
-            80% {
-              opacity: 1;
-              top: 90px;
-              left: 25.5%;
-              transform: translate(0, 0);
-              width: 24%;
-              height: 450px;
-            }
-            100% {
-              opacity: 0;
-              top: 90px;
-              left: 25.5%;
-              transform: translateY(-100px);
-              width: 24%;
-              height: 450px;
-            }
-          }
-          @keyframes image-3-lifecycle {
-            0% {
-              opacity: 0;
-              top: 100vh;
-              left: 50%;
-              transform: translateX(-50%) translateY(100px);
-              width: 200px;
-              height: 120px;
-            }
-            25% {
-              opacity: 1;
-              top: 90px;
-              left: 50.5%;
-              transform: translate(0, 0);
-              width: 24%;
-              height: 450px;
-            }
-            80% {
-              opacity: 1;
-              top: 90px;
-              left: 50.5%;
-              transform: translate(0, 0);
-              width: 24%;
-              height: 450px;
-            }
-            100% {
-              opacity: 0;
-              top: 90px;
-              left: 50.5%;
-              transform: translateY(-100px);
-              width: 24%;
-              height: 450px;
-            }
-          }
-          @keyframes image-4-lifecycle {
-            0% {
-              opacity: 0;
-              top: 100vh;
-              left: 50%;
-              transform: translateX(-50%) translateY(100px);
-              width: 200px;
-              height: 120px;
-            }
-            25% {
-              opacity: 1;
-              top: 90px;
-              left: 75.5%;
-              transform: translate(0, 0);
-              width: 24%;
-              height: 450px;
-            }
-            80% {
-              opacity: 1;
-              top: 90px;
-              left: 75.5%;
-              transform: translate(0, 0);
-              width: 24%;
-              height: 450px;
-            }
-            100% {
-              opacity: 0;
-              top: 90px;
-              left: 75.5%;
-              transform: translateY(-100px);
-              width: 24%;
-              height: 450px;
-            }
-          }
-
-          /* Başlıkları gridden header'a taşıyan keyframe'ler */
-          @keyframes title-1-to-header {
-            0% {
-              opacity: 0;
-              top: 560px;
-              left: 0.5%;
-              width: 24%;
-              transform: translateY(50px);
-            }
-            30% {
-              opacity: 1;
-              top: 560px;
-              left: 0.5%;
-              width: 24%;
-              transform: translateY(0);
-            }
-            90% {
-              opacity: 1;
-              top: 560px;
-              left: 0.5%;
-              width: 24%;
-            }
-            100% {
-              opacity: 1;
-              top: 90px;
-              left: 5%;
-              width: 22%;
-            }
-          }
-          @keyframes title-2-to-header {
-            0% {
-              opacity: 0;
-              top: 560px;
-              left: 25.5%;
-              width: 24%;
-              transform: translateY(50px);
-            }
-            30% {
-              opacity: 1;
-              top: 560px;
-              left: 25.5%;
-              width: 24%;
-              transform: translateY(0);
-            }
-            90% {
-              opacity: 1;
-              top: 560px;
-              left: 25.5%;
-              width: 24%;
-            }
-            100% {
-              opacity: 1;
-              top: 90px;
-              left: 27.5%;
-              width: 22%;
-            }
-          }
-          @keyframes title-3-to-header {
-            0% {
-              opacity: 0;
-              top: 560px;
-              left: 50.5%;
-              width: 24%;
-              transform: translateY(50px);
-            }
-            30% {
-              opacity: 1;
-              top: 560px;
-              left: 50.5%;
-              width: 24%;
-              transform: translateY(0);
-            }
-            90% {
-              opacity: 1;
-              top: 560px;
-              left: 50.5%;
-              width: 24%;
-            }
-            100% {
-              opacity: 1;
-              top: 90px;
-              left: 50.5%;
-              width: 22%;
-            }
-          }
-          @keyframes title-4-to-header {
-            0% {
-              opacity: 0;
-              top: 560px;
-              left: 75.5%;
-              width: 24%;
-              transform: translateY(50px);
-            }
-            30% {
-              opacity: 1;
-              top: 560px;
-              left: 75.5%;
-              width: 24%;
-              transform: translateY(0);
-            }
-            90% {
-              opacity: 1;
-              top: 560px;
-              left: 75.5%;
-              width: 24%;
-            }
-            100% {
-              opacity: 1;
-              top: 90px;
-              left: 73%;
-              width: 22%;
-            }
-          }
+        /* Görsel aralıkları: 55–75% görünür, 75–80% header'a akarken sönmeye başlar, 80%'de yok */
+        .image-1 {
+          animation: image-1-lifecycle linear both;
+          animation-timeline: scroll(root);
+          animation-range: 55% 80%;
+        }
+        .image-2 {
+          animation: image-2-lifecycle linear both;
+          animation-timeline: scroll(root);
+          animation-range: 56% 80%;
+        }
+        .image-3 {
+          animation: image-3-lifecycle linear both;
+          animation-timeline: scroll(root);
+          animation-range: 57% 80%;
+        }
+        .image-4 {
+          animation: image-4-lifecycle linear both;
+          animation-timeline: scroll(root);
+          animation-range: 58% 80%;
         }
 
-        /* Mobile Styles - Single column layout */
-        @media (max-width: 768px) {
-          /* Mobile Images - 1 per row, stacked vertically */
-          .image-1 {
-            animation: mobile-image-1-lifecycle linear both;
-            animation-timeline: scroll(root);
-            animation-range: 55% 80%;
-          }
-          .image-2 {
-            animation: mobile-image-2-lifecycle linear both;
-            animation-timeline: scroll(root);
-            animation-range: 58% 80%;
-          }
-          .image-3 {
-            animation: mobile-image-3-lifecycle linear both;
-            animation-timeline: scroll(root);
-            animation-range: 61% 80%;
-          }
-          .image-4 {
-            animation: mobile-image-4-lifecycle linear both;
-            animation-timeline: scroll(root);
-            animation-range: 64% 80%;
-          }
-
-          /* Mobile Titles - positioned below their respective images */
-          .title-card-1 {
-            animation: mobile-title-1-to-header linear both;
-            animation-timeline: scroll(root);
-            animation-range: 55% 80%;
-          }
-          .title-card-2 {
-            animation: mobile-title-2-to-header linear both;
-            animation-timeline: scroll(root);
-            animation-range: 58% 80%;
-          }
-          .title-card-3 {
-            animation: mobile-title-3-to-header linear both;
-            animation-timeline: scroll(root);
-            animation-range: 61% 80%;
-          }
-          .title-card-4 {
-            animation: mobile-title-4-to-header linear both;
-            animation-timeline: scroll(root);
-            animation-range: 64% 80%;
-          }
-
-          /* Mobile Image Keyframes - Single column */
-          @keyframes mobile-image-1-lifecycle {
-            0% {
-              opacity: 0;
-              top: 100vh;
-              left: 50%;
-              transform: translateX(-50%) translateY(100px);
-              width: 200px;
-              height: 120px;
-            }
-            25% {
-              opacity: 1;
-              top: 100px;
-              left: 5%;
-              transform: translate(0, 0);
-              width: 90%;
-              height: 200px;
-            }
-            80% {
-              opacity: 1;
-              top: 100px;
-              left: 5%;
-              transform: translate(0, 0);
-              width: 90%;
-              height: 200px;
-            }
-            100% {
-              opacity: 0;
-              top: 100px;
-              left: 5%;
-              transform: translateY(-100px);
-              width: 90%;
-              height: 200px;
-            }
-          }
-          @keyframes mobile-image-2-lifecycle {
-            0% {
-              opacity: 0;
-              top: 100vh;
-              left: 50%;
-              transform: translateX(-50%) translateY(100px);
-              width: 200px;
-              height: 120px;
-            }
-            25% {
-              opacity: 1;
-              top: 320px;
-              left: 5%;
-              transform: translate(0, 0);
-              width: 90%;
-              height: 200px;
-            }
-            80% {
-              opacity: 1;
-              top: 320px;
-              left: 5%;
-              transform: translate(0, 0);
-              width: 90%;
-              height: 200px;
-            }
-            100% {
-              opacity: 0;
-              top: 320px;
-              left: 5%;
-              transform: translateY(-100px);
-              width: 90%;
-              height: 200px;
-            }
-          }
-          @keyframes mobile-image-3-lifecycle {
-            0% {
-              opacity: 0;
-              top: 100vh;
-              left: 50%;
-              transform: translateX(-50%) translateY(100px);
-              width: 200px;
-              height: 120px;
-            }
-            25% {
-              opacity: 1;
-              top: 540px;
-              left: 5%;
-              transform: translate(0, 0);
-              width: 90%;
-              height: 200px;
-            }
-            80% {
-              opacity: 1;
-              top: 540px;
-              left: 5%;
-              transform: translate(0, 0);
-              width: 90%;
-              height: 200px;
-            }
-            100% {
-              opacity: 0;
-              top: 540px;
-              left: 5%;
-              transform: translateY(-100px);
-              width: 90%;
-              height: 200px;
-            }
-          }
-          @keyframes mobile-image-4-lifecycle {
-            0% {
-              opacity: 0;
-              top: 100vh;
-              left: 50%;
-              transform: translateX(-50%) translateY(100px);
-              width: 200px;
-              height: 120px;
-            }
-            25% {
-              opacity: 1;
-              top: 760px;
-              left: 5%;
-              transform: translate(0, 0);
-              width: 90%;
-              height: 200px;
-            }
-            80% {
-              opacity: 1;
-              top: 760px;
-              left: 5%;
-              transform: translate(0, 0);
-              width: 90%;
-              height: 200px;
-            }
-            100% {
-              opacity: 0;
-              top: 760px;
-              left: 5%;
-              transform: translateY(-100px);
-              width: 90%;
-              height: 200px;
-            }
-          }
-
-          /* Mobile Title Keyframes - Below images, then to header */
-          @keyframes mobile-title-1-to-header {
-            0% {
-              opacity: 0;
-              top: 310px;
-              left: 5%;
-              width: 90%;
-              transform: translateY(50px);
-            }
-            30% {
-              opacity: 1;
-              top: 310px;
-              left: 5%;
-              width: 90%;
-              transform: translateY(0);
-            }
-            90% {
-              opacity: 1;
-              top: 310px;
-              left: 5%;
-              width: 90%;
-            }
-            100% {
-              opacity: 1;
-              top: 90px;
-              left: 5%;
-              width: 40%;
-            }
-          }
-          @keyframes mobile-title-2-to-header {
-            0% {
-              opacity: 0;
-              top: 530px;
-              left: 5%;
-              width: 90%;
-              transform: translateY(50px);
-            }
-            30% {
-              opacity: 1;
-              top: 530px;
-              left: 5%;
-              width: 90%;
-              transform: translateY(0);
-            }
-            90% {
-              opacity: 1;
-              top: 530px;
-              left: 5%;
-              width: 90%;
-            }
-            100% {
-              opacity: 1;
-              top: 130px;
-              left: 5%;
-              width: 40%;
-            }
-          }
-          @keyframes mobile-title-3-to-header {
-            0% {
-              opacity: 0;
-              top: 750px;
-              left: 5%;
-              width: 90%;
-              transform: translateY(50px);
-            }
-            30% {
-              opacity: 1;
-              top: 750px;
-              left: 5%;
-              width: 90%;
-              transform: translateY(0);
-            }
-            90% {
-              opacity: 1;
-              top: 750px;
-              left: 5%;
-              width: 90%;
-            }
-            100% {
-              opacity: 1;
-              top: 170px;
-              left: 5%;
-              width: 40%;
-            }
-          }
-          @keyframes mobile-title-4-to-header {
-            0% {
-              opacity: 0;
-              top: 970px;
-              left: 5%;
-              width: 90%;
-              transform: translateY(50px);
-            }
-            30% {
-              opacity: 1;
-              top: 970px;
-              left: 5%;
-              width: 90%;
-              transform: translateY(0);
-            }
-            90% {
-              opacity: 1;
-              top: 970px;
-              left: 5%;
-              width: 90%;
-            }
-            100% {
-              opacity: 1;
-              top: 210px;
-              left: 5%;
-              width: 40%;
-            }
-          }
-
-          /* Mobile title styling adjustments */
-          .title-content {
-            text-align: left !important;
-            align-items: flex-start !important;
-            padding: 12px 16px !important;
-          }
-
-          .title-text {
-            font-size: 16px !important;
-          }
-
-          .title-description {
-            font-size: 12px !important;
-            margin-top: 4px !important;
-          }
+        /* Başlık kartları: 55–75% gridde görünür, 75–80% header pozisyonuna taşınır, 80%'de sabit */
+        .title-card-1 {
+          animation: title-1-to-header linear both;
+          animation-timeline: scroll(root);
+          animation-range: 55% 80%;
+        }
+        .title-card-2 {
+          animation: title-2-to-header linear both;
+          animation-timeline: scroll(root);
+          animation-range: 56% 80%;
+        }
+        .title-card-3 {
+          animation: title-3-to-header linear both;
+          animation-timeline: scroll(root);
+          animation-range: 57% 80%;
+        }
+        .title-card-4 {
+          animation: title-4-to-header linear both;
+          animation-timeline: scroll(root);
+          animation-range: 58% 80%;
         }
 
         .title-description {
           animation: description-fade linear both;
           animation-timeline: scroll(root);
           animation-range: 70% 75%;
+        }
+
+        /* 4 görseli 4 kolon gibi konumlayan keyframe'ler (desktop) */
+        @keyframes image-1-lifecycle {
+          0% {
+            opacity: 0;
+            top: 100vh;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            width: 200px;
+            height: 120px;
+          }
+          25% {
+            opacity: 1;
+            top: 90px;
+            left: 0.5%;
+            transform: translate(0, 0);
+            width: 24%;
+            height: 450px;
+          }
+          80% {
+            opacity: 1;
+            top: 90px;
+            left: 0.5%;
+            transform: translate(0, 0);
+            width: 24%;
+            height: 450px;
+          }
+          100% {
+            opacity: 0;
+            top: 90px;
+            left: 0.5%;
+            transform: translateY(-100px);
+            width: 24%;
+            height: 450px;
+          }
+        }
+        @keyframes image-2-lifecycle {
+          0% {
+            opacity: 0;
+            top: 100vh;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            width: 200px;
+            height: 120px;
+          }
+          25% {
+            opacity: 1;
+            top: 90px;
+            left: 25.5%;
+            transform: translate(0, 0);
+            width: 24%;
+            height: 450px;
+          }
+          80% {
+            opacity: 1;
+            top: 90px;
+            left: 25.5%;
+            transform: translate(0, 0);
+            width: 24%;
+            height: 450px;
+          }
+          100% {
+            opacity: 0;
+            top: 90px;
+            left: 25.5%;
+            transform: translateY(-100px);
+            width: 24%;
+            height: 450px;
+          }
+        }
+        @keyframes image-3-lifecycle {
+          0% {
+            opacity: 0;
+            top: 100vh;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            width: 200px;
+            height: 120px;
+          }
+          25% {
+            opacity: 1;
+            top: 90px;
+            left: 50.5%;
+            transform: translate(0, 0);
+            width: 24%;
+            height: 450px;
+          }
+          80% {
+            opacity: 1;
+            top: 90px;
+            left: 50.5%;
+            transform: translate(0, 0);
+            width: 24%;
+            height: 450px;
+          }
+          100% {
+            opacity: 0;
+            top: 90px;
+            left: 50.5%;
+            transform: translateY(-100px);
+            width: 24%;
+            height: 450px;
+          }
+        }
+        @keyframes image-4-lifecycle {
+          0% {
+            opacity: 0;
+            top: 100vh;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            width: 200px;
+            height: 120px;
+          }
+          25% {
+            opacity: 1;
+            top: 90px;
+            left: 75.5%;
+            transform: translate(0, 0);
+            width: 24%;
+            height: 450px;
+          }
+          80% {
+            opacity: 1;
+            top: 90px;
+            left: 75.5%;
+            transform: translate(0, 0);
+            width: 24%;
+            height: 450px;
+          }
+          100% {
+            opacity: 0;
+            top: 90px;
+            left: 75.5%;
+            transform: translateY(-100px);
+            width: 24%;
+            height: 450px;
+          }
+        }
+
+        /* Başlıkları gridden header'a taşıyan keyframe'ler */
+        @keyframes title-1-to-header {
+          0% {
+            opacity: 0;
+            top: 560px;
+            left: 0.5%;
+            width: 24%;
+            transform: translateY(50px);
+          }
+          30% {
+            opacity: 1;
+            top: 560px;
+            left: 0.5%;
+            width: 24%;
+            transform: translateY(0);
+          }
+          90% {
+            opacity: 1;
+            top: 560px;
+            left: 0.5%;
+            width: 24%;
+          }
+          100% {
+            opacity: 1;
+            top: 90px;
+            left: 5%;
+            width: 22%;
+          }
+        }
+        @keyframes title-2-to-header {
+          0% {
+            opacity: 0;
+            top: 560px;
+            left: 25.5%;
+            width: 24%;
+            transform: translateY(50px);
+          }
+          30% {
+            opacity: 1;
+            top: 560px;
+            left: 25.5%;
+            width: 24%;
+            transform: translateY(0);
+          }
+          90% {
+            opacity: 1;
+            top: 560px;
+            left: 25.5%;
+            width: 24%;
+          }
+          100% {
+            opacity: 1;
+            top: 90px;
+            left: 27.5%;
+            width: 22%;
+          }
+        }
+        @keyframes title-3-to-header {
+          0% {
+            opacity: 0;
+            top: 560px;
+            left: 50.5%;
+            width: 24%;
+            transform: translateY(50px);
+          }
+          30% {
+            opacity: 1;
+            top: 560px;
+            left: 50.5%;
+            width: 24%;
+            transform: translateY(0);
+          }
+          90% {
+            opacity: 1;
+            top: 560px;
+            left: 50.5%;
+            width: 24%;
+          }
+          100% {
+            opacity: 1;
+            top: 90px;
+            left: 50.5%;
+            width: 22%;
+          }
+        }
+        @keyframes title-4-to-header {
+          0% {
+            opacity: 0;
+            top: 560px;
+            left: 75.5%;
+            width: 24%;
+            transform: translateY(50px);
+          }
+          30% {
+            opacity: 1;
+            top: 560px;
+            left: 75.5%;
+            width: 24%;
+            transform: translateY(0);
+          }
+          90% {
+            opacity: 1;
+            top: 560px;
+            left: 75.5%;
+            width: 24%;
+          }
+          100% {
+            opacity: 1;
+            top: 90px;
+            left: 73%;
+            width: 22%;
+          }
         }
 
         /* Header title highlighting during featured project story */
@@ -869,6 +551,8 @@ export default function ImageGallerySection({
         body.direct-navigation .title-card-4 .title-content {
           animation: none !important;
         }
+
+        /* Mobil/Tablet media query'lerini istersen geri ekleyebiliriz; şu an asıl sıralama için masaüstü netlik veriyor. */
       `}</style>
     </>
   );
