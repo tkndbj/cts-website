@@ -451,7 +451,7 @@ export default function FeaturedProjectStory({
                 style={{ objectFit: "cover" }}
                 unoptimized
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/25 to-black/50" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/15 to-black/30" />
             </div>
           );
         })}
@@ -464,7 +464,9 @@ export default function FeaturedProjectStory({
           return (
             <div
               key={p.id}
-              className={`hero-copy hero-copy-${p.id}`}
+              className={`hero-copy hero-copy-${p.id} ${
+                selectedName ? "items-start pt-16" : "items-center"
+              }`}
               style={{
                 pointerEvents:
                   activeProjectId === p.id
@@ -475,7 +477,7 @@ export default function FeaturedProjectStory({
             >
               <div className="px-[5%] text-left max-w-[1200px]">
                 {selectedName && (
-                  <div className="mb-3 flex items-center gap-2 pointer-events-auto">
+                  <div className="mb-4 flex items-center gap-2 pointer-events-auto">
                     <button
                       onClick={() => {
                         setSelectedUnitByProject((prev) => ({
@@ -542,24 +544,37 @@ export default function FeaturedProjectStory({
                   </h2>
                 )}
 
-                <p className="max-w-3xl text-white/95 text-lg md:text-2xl font-light leading-relaxed drop-shadow-[0_4px_12px_rgba(0,0,0,0.45)]">
-                  {p.description}
-                </p>
+                {/* Description only shown when no unit is selected */}
+                {!selectedName && (
+                  <p className="max-w-3xl text-white/95 text-lg md:text-2xl font-light leading-relaxed drop-shadow-[0_4px_12px_rgba(0,0,0,0.45)]">
+                    {p.description}
+                  </p>
+                )}
 
-                <div className="mt-8 pointer-events-auto">
+                <div
+                  className={`${
+                    selectedName ? "mt-4" : "mt-8"
+                  } pointer-events-auto`}
+                >
                   <div className="text-sm uppercase tracking-widest text-white/80 mb-1 font-medium">
                     Daire Tipleri
                   </div>
                   <div className="text-xs text-white/60 mb-4 font-light">
                     Detay için tıklayın
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-2xl">
+                  <div
+                    className={`grid grid-cols-2 md:grid-cols-4 ${
+                      selectedName ? "gap-2" : "gap-3"
+                    } max-w-2xl`}
+                  >
                     {p.unitTypes.map((u, index) => {
                       const isActive = selectedName === u;
                       return (
                         <div
                           key={u}
-                          className={`group relative overflow-hidden rounded-xl border-3 border-orange-400/30 bg-black/60 px-4 py-3 backdrop-blur-lg shadow-xl transition-all duration-300 cursor-pointer ${
+                          className={`group relative overflow-hidden rounded-xl border-3 border-orange-400/30 bg-black/60 ${
+                            selectedName ? "px-3 py-2" : "px-4 py-3"
+                          } backdrop-blur-lg shadow-xl transition-all duration-300 cursor-pointer ${
                             isActive
                               ? "scale-105 border-orange-400/80 ring-2 ring-orange-400"
                               : "hover:scale-105 hover:border-orange-400/60"
@@ -602,7 +617,13 @@ export default function FeaturedProjectStory({
                         >
                           <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                           <div className="relative z-10 text-center">
-                            <div className="text-base md:text-lg font-semibold text-white/95 mb-1">
+                            <div
+                              className={`${
+                                selectedName
+                                  ? "text-sm md:text-base"
+                                  : "text-base md:text-lg"
+                              } font-semibold text-white/95 mb-1`}
+                            >
                               {u}
                             </div>
                             <div className="w-full h-0.5 bg-gradient-to-r from-orange-400/60 to-orange-500/60 rounded-full opacity-70" />
@@ -818,7 +839,6 @@ export default function FeaturedProjectStory({
         }
         .hero-copy {
           display: flex;
-          align-items: center;
           justify-content: flex-start;
           transform: translateY(10px);
           pointer-events: none; /* default kapalı; aktifte inline ile açıyoruz */
