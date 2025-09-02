@@ -104,13 +104,13 @@ export default function ImageGallerySection({
       </div>
 
       {/* Başlık kartları */}
-      <div className="transitioning-titles fixed top-0 left-0 w-full h-screen z-47 pointer-events-auto">
+      <div className="transitioning-titles fixed top-0 left-0 w-full h-screen z-47 pointer-events-none">
         {projects.map((project) => (
           <div key={project.id} className={`title-card-${project.id} absolute`}>
             <div
-              className="title-content px-4 py-2 rounded-lg transition-all duration-300 hover:bg-orange-500 hover:text-white cursor-pointer flex flex-col items-center text-center"
-              onClick={() => scrollToProject(project.id)}
-            >
+   className="title-content pointer-events-auto px-4 py-2 rounded-lg transition-all duration-300 hover:bg-orange-500 hover:text-white cursor-pointer flex flex-col items-center text-center"
+    onClick={() => scrollToProject(project.id)}
+>
               <h3 className="title-text text-white font-semibold text-lg">
                 {project.title}
               </h3>
@@ -168,10 +168,10 @@ export default function ImageGallerySection({
         }
 
         .title-description {
-          animation: description-fade linear both;
-          animation-timeline: scroll(root);
-          animation-range: 70% 75%;
-        }
+  animation: description-fade linear both;
+  animation-timeline: scroll(root);
+  animation-range: 72% 78%;
+}
 
         /* 4 görseli 4 kolon gibi konumlayan keyframe'ler (desktop) */
         @keyframes image-1-lifecycle {

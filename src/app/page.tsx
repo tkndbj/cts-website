@@ -1,116 +1,207 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import HeroSection from "./components/HeroSection";
 import HeaderBackground from "./components/HeaderBackground";
-// import ProjectDetailsSection from "./components/ProjectDetailsSection"; // ← GEÇİCİ: kapalı
 import ImageGallerySection from "./components/ImageGallerySection";
 import FeaturedProjectStory from "./components/FeaturedProjectStory";
 
 export default function Home() {
   const [isNavigating, setIsNavigating] = useState(false);
   const [targetProject, setTargetProject] = useState<number | null>(null);
+  const scrollTimeoutRef = useRef<number | null>(null);
 
+  // Uzun akış için proxy
+  const SCROLL_PROXY_VH = 700;
+
+  // Faz eşikleri (0..1 arası)
+  // 0        : Welcome/video
+  // 0.55     : Main header oluşmuş
+  // 0.75     : 4 görsel + isimler
+  // 0.82     : 2. header
+  // 0.86/0.90/0.94/0.98 : Proje 1..4 blokları
+  const STEP_MARKS = [0, 0.7, 0.83, 0.87, 0.91, 0.95, 0.98];
+
+  const snappingRef = useRef(false); // şu an otomatik kayıyor mu?
+  const cooldownRef = useRef(0); // momentum filtreleme
+  const lastTouchYRef = useRef<number | null>(null);
+
+  const getScrollInfo = () => {
+    const proxy = document.querySelector(".scroll-proxy") as HTMLElement | null;
+    const vh = window.innerHeight;
+    const maxScroll = proxy
+      ? Math.max(proxy.offsetHeight - vh, 1)
+      : Math.max(document.body.scrollHeight - vh, 1);
+    const y = window.scrollY;
+    const pct = Math.min(Math.max(y / maxScroll, 0), 1);
+    return { y, maxScroll, pct };
+  };
+
+  const scrollToPct = (pct: number, behavior: ScrollBehavior = "smooth") => {
+    const { maxScroll } = getScrollInfo();
+    const top = pct * maxScroll;
+    setIsNavigating(true);
+    document.body.classList.add("direct-navigation");
+    window.scrollTo({ top, behavior });
+    // kilidi kısa bir süre açık tut
+    if (scrollTimeoutRef.current) {
+      window.clearTimeout(scrollTimeoutRef.current);
+    }
+    scrollTimeoutRef.current = window.setTimeout(() => {
+      document.body.classList.remove("direct-navigation");
+      setIsNavigating(false);
+    }, 900);
+  };
+
+  const nearestStep = (pct: number, dir: "next" | "prev") => {
+    if (dir === "next") {
+      for (const s of STEP_MARKS) if (s - pct > 0.001) return s;
+      return STEP_MARKS[STEP_MARKS.length - 1];
+    } else {
+      for (let i = STEP_MARKS.length - 1; i >= 0; i--) {
+        if (pct - STEP_MARKS[i] > 0.001) return STEP_MARKS[i];
+      }
+      return STEP_MARKS[0];
+    }
+  };
+
+  // “Tek scroll = bir faz” davranışı
+  useEffect(() => {
+    const MIN_DELTA = 28; // trackpad/momentum için eşik
+    const COOLDOWN_MS = 520; // bir adım sonrası kilit süresi
+
+    let wheelTimer: number | null = null;
+
+    const onWheel = (e: WheelEvent) => {
+      // Hem touch momentum’u hem de hızlı tekerlek spam’ini engelle
+      if (
+        snappingRef.current ||
+        isNavigating ||
+        cooldownRef.current > Date.now()
+      )
+        return;
+
+      const dy = e.deltaY;
+      if (Math.abs(dy) < MIN_DELTA) return; // min eşik
+
+      e.preventDefault();
+
+      const { pct } = getScrollInfo();
+      const dir = dy > 0 ? "next" : "prev";
+      const target = nearestStep(pct, dir);
+
+      snappingRef.current = true;
+      cooldownRef.current = Date.now() + COOLDOWN_MS;
+      scrollToPct(target, "smooth");
+
+      if (wheelTimer) clearTimeout(wheelTimer);
+      wheelTimer = window.setTimeout(() => {
+        snappingRef.current = false;
+      }, COOLDOWN_MS + 100);
+    };
+
+    const onKey = (e: KeyboardEvent) => {
+      if (
+        snappingRef.current ||
+        isNavigating ||
+        cooldownRef.current > Date.now()
+      )
+        return;
+
+      const keysNext = ["PageDown", " ", "ArrowDown"];
+      const keysPrev = ["PageUp", "ArrowUp"];
+
+      if (![...keysNext, ...keysPrev].includes(e.key)) return;
+
+      e.preventDefault();
+      const { pct } = getScrollInfo();
+      const dir = keysNext.includes(e.key) ? "next" : "prev";
+      const target = nearestStep(pct, dir);
+
+      snappingRef.current = true;
+      cooldownRef.current = Date.now() + COOLDOWN_MS;
+      scrollToPct(target, "smooth");
+      setTimeout(() => (snappingRef.current = false), COOLDOWN_MS + 100);
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      lastTouchYRef.current = e.touches[0]?.clientY ?? null;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (
+        snappingRef.current ||
+        isNavigating ||
+        cooldownRef.current > Date.now()
+      )
+        return;
+      if (lastTouchYRef.current == null) return;
+
+      const dy = lastTouchYRef.current - e.touches[0].clientY;
+      if (Math.abs(dy) < 28) return; // küçük kaydırmaları yok say
+
+      e.preventDefault();
+
+      const { pct } = getScrollInfo();
+      const dir = dy > 0 ? "next" : "prev";
+      const target = nearestStep(pct, dir);
+
+      snappingRef.current = true;
+      cooldownRef.current = Date.now() + COOLDOWN_MS;
+      scrollToPct(target, "smooth");
+      setTimeout(() => (snappingRef.current = false), COOLDOWN_MS + 120);
+      lastTouchYRef.current = null;
+    };
+
+    // passive:false önemli — preventDefault için
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("keydown", onKey, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+    };
+  }, [isNavigating]);
+
+  // Üst logoya tıklandığında hızlıca en başa dön
   const scrollToTop = () => {
-    // Create overlay
     const overlay = document.createElement("div");
     overlay.className = "fade-overlay";
     overlay.style.cssText = `
-      position: fixed;
-      inset: 0;
-      background: black;
-      z-index: 9999;
-      opacity: 0;
-      transition: opacity 0.4s ease-in-out;
-      pointer-events: none;
+      position: fixed; inset: 0; background: black; z-index: 9999;
+      opacity: 0; transition: opacity 0.4s ease-in-out; pointer-events: none;
     `;
     document.body.appendChild(overlay);
-
-    // Fade in
-    requestAnimationFrame(() => {
-      overlay.style.opacity = "1";
-    });
-
-    // After fade in, jump to top
+    requestAnimationFrame(() => (overlay.style.opacity = "1"));
     setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: "instant" });
-
-      // Fade out
+      window.scrollTo({ top: 0, behavior: "auto" });
       overlay.style.opacity = "0";
-
-      // Remove overlay
-      setTimeout(() => {
-        document.body.removeChild(overlay);
-      }, 400);
+      setTimeout(() => document.body.removeChild(overlay), 400);
     }, 400);
   };
 
-  // Uzun akış için büyük bir proxy. (0–100%)
-  const SCROLL_PROXY_VH = 700;
-
-  // Add these scroll functions for project navigation
+  // Proje kısayolları
   const scrollToProject = (projectId: number) => {
-    // Get the actual height of the scroll proxy element
-    const scrollProxy = document.querySelector(".scroll-proxy") as HTMLElement;
-    if (!scrollProxy) return;
+    const map: Record<number, number> = { 1: 0.83, 2: 0.87, 3: 0.91, 4: 0.95 };
+    const pct = map[projectId] ?? 0.83;
 
-    // The actual height of the scroll proxy in pixels
-    const scrollProxyHeight = scrollProxy.offsetHeight;
-
-    // The viewport height
-    const viewportHeight = window.innerHeight;
-
-    // Maximum scrollable distance (total height - viewport height)
-    const maxScroll = scrollProxyHeight - viewportHeight;
-
-    let targetPercentage;
-
-    switch (projectId) {
-      case 1: // Four Seasons Life - starts at 82%
-        targetPercentage = 0.83;
-        break;
-      case 2: // The Sign - starts at 86%
-        targetPercentage = 0.87;
-        break;
-      case 3: // Aurora Bay - starts at 90%
-        targetPercentage = 0.91;
-        break;
-      case 4: // Carob Hill - starts at 94%
-        targetPercentage = 0.95;
-        break;
-      default:
-        targetPercentage = 0.83;
-    }
-
-    // Calculate the scroll position
-    const targetScrollPosition = targetPercentage * maxScroll;
-
-    // Start navigation mode
     setIsNavigating(true);
     setTargetProject(projectId);
-
-    // Add a class to body to disable scroll animations
     document.body.classList.add("direct-navigation");
 
-    // Perform the scroll
-    window.scrollTo({
-      top: targetScrollPosition,
-      behavior: "smooth",
-    });
+    scrollToPct(pct, "smooth");
 
-    // After scroll completes, remove navigation mode
     setTimeout(() => {
       document.body.classList.remove("direct-navigation");
       setIsNavigating(false);
       setTargetProject(null);
-    }, 800); // Adjust timing as needed
+    }, 900);
   };
 
-  // Pass navigation state to child components
-  const navigationProps = {
-    isNavigating,
-    targetProject,
-  };
+  const navigationProps = { isNavigating, targetProject };
 
   return (
     <>
@@ -130,17 +221,11 @@ export default function Home() {
         style={{ fontFamily: "Figtree, sans-serif" }}
       >
         <HeroSection scrollToTop={scrollToTop} />
-
-        {/* 55–75% grid + başlıklar */}
         <ImageGallerySection
           scrollToProject={scrollToProject}
           navigationProps={navigationProps}
         />
-
-        {/* 75–82% ikinci header arka planı */}
         <HeaderBackground />
-
-        {/* 82–98% fullscreen proje hikayesi */}
         <FeaturedProjectStory navigationProps={navigationProps} />
       </div>
 
@@ -161,28 +246,25 @@ export default function Home() {
           overscroll-behavior: none;
           background: #0b0b12;
         }
-        .stage {
-          pointer-events: none;
+        /* Snap hissi için overscroll kapalı; stage pointer-events yönetimi aynen */
+        .stage .featured-hero {
+          pointer-events: auto;
         }
         .nav-menu,
         .title-card-1,
         .title-card-2,
         .title-card-3,
         .title-card-4,
-        .transitioning-titles,
         .project-titles-container,
         .company-title {
           pointer-events: auto;
         }
 
-        /* During direct navigation, disable scroll-timeline animations */
         body.direct-navigation .hero-slide,
         body.direct-navigation .hero-copy {
           animation: none !important;
           transition: opacity 0.6s ease-in-out !important;
         }
-
-        /* Also disable title card highlight animations during navigation */
         body.direct-navigation .title-card-1 .title-content,
         body.direct-navigation .title-card-2 .title-content,
         body.direct-navigation .title-card-3 .title-content,
@@ -192,7 +274,6 @@ export default function Home() {
           animation-range: none !important;
         }
 
-        /* Navigation overlay for smooth transition */
         .stage.navigating::after {
           content: "";
           position: fixed;
@@ -203,7 +284,6 @@ export default function Home() {
           pointer-events: none;
           z-index: 100;
         }
-
         @keyframes navigation-fade {
           0% {
             opacity: 0;
