@@ -271,7 +271,7 @@ export default function MobileProjectDetails({
           alt={project.title}
           fill
           style={{ objectFit: "cover" }}
-          className="brightness-75"
+          className="brightness-90"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/30" />
       </div>
