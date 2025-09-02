@@ -972,7 +972,7 @@ export default function FeaturedProjectStory({
             opacity: 1;
           }
         }
-        .fs-image {
+        2 .fs-image {
           opacity: 0;
           animation: fs-img-in 260ms ease-out forwards;
         }

@@ -5,8 +5,49 @@ import HeroSection from "./components/HeroSection";
 import HeaderBackground from "./components/HeaderBackground";
 import ImageGallerySection from "./components/ImageGallerySection";
 import FeaturedProjectStory from "./components/FeaturedProjectStory";
-import MobileNavigation from "./components/MobileNavigation";
+import MobileProjectDetails from "./components/MobileProjectDetails";
 import Image from "next/image";
+
+// Mobile Navigation Component
+function MobileNavigation({
+  projects,
+  currentProject,
+  onProjectSelect,
+}: {
+  projects: Array<{ id: number; title: string; description: string }>;
+  currentProject: number;
+  onProjectSelect: (id: number) => void;
+}) {
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+      <div className="bg-gray-900/95 backdrop-blur-lg border-t border-white/10">
+        <div className="px-4 py-3">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xs text-white/60 uppercase tracking-wider">
+              Projeler
+            </span>
+            <span className="text-xs text-white/40">{currentProject}/4</span>
+          </div>
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+            {projects.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => onProjectSelect(p.id)}
+                className={`flex-shrink-0 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                  currentProject === p.id
+                    ? "bg-orange-500 text-white"
+                    : "bg-white/10 text-white/70 active:bg-white/20"
+                }`}
+              >
+                {p.title}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   const [isNavigating, setIsNavigating] = useState(false);
@@ -14,6 +55,7 @@ export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
   const [mobileProject, setMobileProject] = useState(1);
   const [mobileShowProjects, setMobileShowProjects] = useState(false);
+  const [mobileShowDetails, setMobileShowDetails] = useState(false);
   const scrollTimeoutRef = useRef<number | null>(null);
 
   const SCROLL_PROXY_VH = 700;
@@ -198,6 +240,7 @@ export default function Home() {
     if (isMobile) {
       setMobileProject(1);
       setMobileShowProjects(false);
+      setMobileShowDetails(false);
       return;
     }
 
@@ -243,6 +286,15 @@ export default function Home() {
 
   const handleMobileProjectSelect = (projectId: number) => {
     setMobileProject(projectId);
+    setMobileShowDetails(false);
+  };
+
+  const handleMobileDetailsClick = () => {
+    setMobileShowDetails(true);
+  };
+
+  const handleMobileDetailsBack = () => {
+    setMobileShowDetails(false);
   };
 
   return (
@@ -276,7 +328,7 @@ export default function Home() {
         </div>
 
         {/* Mobile project display */}
-        {isMobile && mobileShowProjects && (
+        {isMobile && mobileShowProjects && !mobileShowDetails && (
           <div className="mobile-projects fixed inset-0 z-45 pt-14 pb-20 bg-gray-900">
             <div className="h-full overflow-hidden">
               <div className="relative h-full">
@@ -303,9 +355,30 @@ export default function Home() {
                         <h2 className="text-3xl font-bold text-orange-500 mb-3">
                           {project.title}
                         </h2>
-                        <p className="text-white/90 text-sm leading-relaxed">
+                        <p className="text-white/90 text-sm leading-relaxed mb-4">
                           {project.description}
                         </p>
+                        {/* Details Button */}
+                        <button
+                          onClick={handleMobileDetailsClick}
+                          className="inline-flex items-center gap-2 rounded-lg bg-orange-500 hover:bg-orange-600 active:bg-orange-700 px-4 py-2 text-white font-medium text-sm transition-colors"
+                        >
+                          <span>Detaylar</span>
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
+                            <path
+                              d="M9 18l6-6-6-6"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -319,6 +392,14 @@ export default function Home() {
               onProjectSelect={handleMobileProjectSelect}
             />
           </div>
+        )}
+
+        {/* Mobile Project Details View */}
+        {isMobile && mobileShowDetails && (
+          <MobileProjectDetails
+            projectId={mobileProject}
+            onBack={handleMobileDetailsBack}
+          />
         )}
       </div>
 
