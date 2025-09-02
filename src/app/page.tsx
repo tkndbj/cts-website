@@ -11,15 +11,10 @@ export default function Home() {
   const [targetProject, setTargetProject] = useState<number | null>(null);
   const scrollTimeoutRef = useRef<number | null>(null);
 
-  // Uzun akış için proxy
+  // Uzun akış için proxy (sadece desktop/tablet anlamlı)
   const SCROLL_PROXY_VH = 700;
 
-  // Faz eşikleri (0..1 arası)
-  // 0        : Welcome/video
-  // 0.55     : Main header oluşmuş
-  // 0.75     : 4 görsel + isimler
-  // 0.82     : 2. header
-  // 0.86/0.90/0.94/0.98 : Proje 1..4 blokları
+  // Faz eşikleri (desktop/tablet)
   const STEP_MARKS = [0, 0.7, 0.83, 0.87, 0.91, 0.95, 0.98];
 
   const snappingRef = useRef(false);
@@ -68,12 +63,12 @@ export default function Home() {
     }
   };
 
-  // “Tek scroll = bir faz” davranışı — SADECE MASAÜSTÜ/TABLET
+  // “Tek scroll = bir faz” — SADECE desktop/tablet
   useEffect(() => {
-    if (!isDesktop()) return; // mobilde dinleyiciler hiç eklenmez
+    if (!isDesktop()) return;
 
-    const MIN_DELTA = 28; // trackpad/momentum için eşik
-    const COOLDOWN_MS = 520; // bir adım sonrası kilit süresi
+    const MIN_DELTA = 28;
+    const COOLDOWN_MS = 520;
     let wheelTimer: number | null = null;
 
     const onWheel = (e: WheelEvent) => {
@@ -115,9 +110,9 @@ export default function Home() {
       const dir = keysNext.includes(e.key) ? "next" : "prev";
       const target = nearestStep(pct, dir);
       snappingRef.current = true;
-      cooldownRef.current = Date.now() + 520;
+      cooldownRef.current = Date.now() + COOLDOWN_MS;
       scrollToPct(target, "smooth");
-      setTimeout(() => (snappingRef.current = false), 520 + 100);
+      setTimeout(() => (snappingRef.current = false), COOLDOWN_MS + 100);
     };
 
     const onTouchStart = (e: TouchEvent) => {
@@ -131,9 +126,11 @@ export default function Home() {
       )
         return;
       if (lastTouchYRef.current == null) return;
+
       const dy = lastTouchYRef.current - e.touches[0].clientY;
       if (Math.abs(dy) < 28) return;
       e.preventDefault();
+
       const { pct } = getScrollInfo();
       const dir = dy > 0 ? "next" : "prev";
       const target = nearestStep(pct, dir);
@@ -157,7 +154,7 @@ export default function Home() {
     };
   }, [isNavigating]);
 
-  // Üst logoya tıklandığında hızlıca en başa dön
+  // Logo → tepeye dön
   const scrollToTop = () => {
     const overlay = document.createElement("div");
     overlay.className = "fade-overlay";
@@ -174,7 +171,7 @@ export default function Home() {
     }, 400);
   };
 
-  // Proje kısayolları
+  // Proje kısayolları (desktop/tablet için)
   const scrollToProject = (projectId: number) => {
     const map: Record<number, number> = { 1: 0.83, 2: 0.87, 3: 0.91, 4: 0.95 };
     const pct = map[projectId] ?? 0.83;
@@ -211,26 +208,32 @@ export default function Home() {
         <HeroSection
           scrollToTop={scrollToTop}
           onTapAdvance={() => {
-            // Mobilde animasyonsuz ikinci görünüme geçiş
-            document.body.classList.add("mobile-second");
-            // Masaüstünde yine de ilgili aşamaya kaydırmak istersek (tablet/desktop):
-            if (isDesktop()) scrollToPct(0.7, "smooth");
+            // MOBİL: 2. ekrana geç ve içerikte kaydırmayı kapat
+            if (!isDesktop()) {
+              document.body.classList.add("mobile-second", "mobile-no-scroll");
+            } else {
+              // DESKTOP/TABLET: adım 0.7’ye yumuşak kaydır
+              scrollToPct(0.7, "smooth");
+            }
           }}
         />
 
-        <ImageGallerySection
-          scrollToProject={scrollToProject}
-          navigationProps={{ isNavigating, targetProject }}
-        />
-        <HeaderBackground />
-        <FeaturedProjectStory
-          navigationProps={{ isNavigating, targetProject }}
-        />
+        {/* Bu üç bileşeni mobilde tamamen gizliyoruz (sadeleştirme) */}
+        <div className="hidden md:block">
+          <ImageGallerySection
+            scrollToProject={scrollToProject}
+            navigationProps={{ isNavigating, targetProject }}
+          />
+          <HeaderBackground />
+          <FeaturedProjectStory
+            navigationProps={{ isNavigating, targetProject }}
+          />
+        </div>
       </div>
 
-      {/* SCROLL PROXY */}
+      {/* SCROLL PROXY (sadece md+ anlamlı) */}
       <div
-        className="scroll-proxy relative z-0"
+        className="scroll-proxy relative z-0 hidden md:block"
         style={{
           height: `${SCROLL_PROXY_VH}vh`,
           background: "linear-gradient(180deg,#111827,#0b0b0b)",
@@ -246,6 +249,7 @@ export default function Home() {
           background: #0b0b12;
         }
 
+        /* desktop/tablet için mevcut davranış */
         .stage .featured-hero {
           pointer-events: auto;
         }
@@ -298,22 +302,22 @@ export default function Home() {
           }
         }
 
-        /* --- MOBİLDE SCROLL ANİMASYONLARINI TAMAMEN KAPAT --- */
+        /* --- MOBİL: TÜM scroll/scroll-timeline animasyonlarını KAPAT --- */
         @media (max-width: 767px) {
-          .hero-header,
-          .video-container,
-          .video-overlay,
-          .company-title,
-          .subtitle,
-          .nav-menu,
-          .scroll-mouse {
+          .stage * {
             animation: none !important;
-            animation-timeline: none !important;
-            animation-range: none !important;
+            animation-timeline: initial !important;
+            animation-range: initial !important;
+            scroll-behavior: auto !important;
+          }
+          /* 2. ekranda sayfa kaymasını tamamen kapat */
+          body.mobile-no-scroll {
+            overflow: hidden !important;
+            height: 100vh !important;
           }
         }
 
-        /* mobile-second modunda (telefonlarda 2. görünüm) video gizlenir */
+        /* 2. ekranda video katmanı gizli (mobil) */
         @media (max-width: 767px) {
           body.mobile-second .video-container {
             display: none !important;
