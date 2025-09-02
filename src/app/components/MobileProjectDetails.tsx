@@ -191,30 +191,81 @@ export default function MobileProjectDetails({
     setSelectedInterior(null);
   };
 
-  const toggleFullscreen = async () => {
-    if (!document.fullscreenElement) {
-      try {
-        await document.documentElement.requestFullscreen();
-        setIsFullscreen(true);
-      } catch (err) {
-        console.error("Error attempting to enable fullscreen:", err);
-      }
-    } else {
-      try {
-        await document.exitFullscreen();
-        setIsFullscreen(false);
-      } catch (err) {
-        console.error("Error attempting to exit fullscreen:", err);
-      }
-    }
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
   };
 
   const bgImage = selectedInterior || unitData?.image || `/fourseasons.jpg`;
 
+  if (isFullscreen) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black flex flex-col">
+        {/* Fullscreen Header */}
+        <div className="flex-shrink-0 p-4">
+          <button
+            onClick={() => setIsFullscreen(false)}
+            className="flex items-center justify-center rounded-lg bg-black/60 backdrop-blur-sm border border-white/20 p-2 text-white"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M15 18l-6-6 6-6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+
+        {/* Fullscreen Image */}
+        <div className="flex-1 relative">
+          <Image
+            src={bgImage}
+            alt={project.title}
+            fill
+            style={{ objectFit: "contain" }}
+          />
+        </div>
+
+        {/* Fullscreen Interior Thumbnails */}
+        {selectedUnit && interiors && interiors.length > 0 && (
+          <div className="flex-shrink-0 bg-black/80 border-t border-white/20 p-4">
+            <div className="text-xs uppercase tracking-wider text-white/60 mb-2">
+              İç Mekan Görselleri
+            </div>
+            <div className="overflow-x-auto">
+              <div className="flex gap-3" style={{ width: "max-content" }}>
+                {interiors.map((src, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedInterior(src)}
+                    className={`relative w-24 h-18 rounded-lg overflow-hidden border-2 transition-all ${
+                      selectedInterior === src
+                        ? "border-orange-400 ring-2 ring-orange-400/50"
+                        : "border-white/20"
+                    }`}
+                  >
+                    <Image
+                      src={src}
+                      alt={`Interior ${index + 1}`}
+                      fill
+                      style={{ objectFit: "cover" }}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
-    <div className="fixed inset-0 z-45 pt-14 pb-20 bg-gray-900 md:hidden flex flex-col">
+    <div className="fixed inset-0 z-45 pt-14 bg-gray-900 md:hidden flex flex-col">
       {/* Background Image */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 top-14">
         <Image
           src={bgImage}
           alt={project.title}
@@ -227,11 +278,11 @@ export default function MobileProjectDetails({
 
       {/* Header */}
       <div className="relative z-10 flex-shrink-0 p-4">
-        <div className="flex items-center gap-3 mb-3">
+        <div className="flex items-center gap-3">
           {/* Back Button with Project Name */}
           <button
             onClick={onBack}
-            className="flex-1 flex items-center gap-2 rounded-lg bg-black/60 backdrop-blur-sm border border-white/20 px-3 py-2 text-white text-sm"
+            className="flex-1 flex items-center gap-2 rounded-lg bg-black/60 backdrop-blur-sm border border-white/20 px-3 py-2 text-white text-sm h-10"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path
@@ -247,25 +298,37 @@ export default function MobileProjectDetails({
               {project.title}
             </span>
           </button>
-        </div>
 
-        {/* Fullscreen Button */}
-        <button
-          onClick={toggleFullscreen}
-          className="inline-flex items-center justify-center rounded-lg bg-black/60 backdrop-blur-sm border border-white/20 p-2 text-white"
-        >
-          {isFullscreen ? (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          ) : (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          {/* Stats - shown when unit is selected */}
+          {selectedUnit && unitData?.stats && (
+            <>
+              <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm px-2 py-1 text-center h-10 flex flex-col justify-center min-w-[45px]">
+                <div className="text-xs text-white/60 leading-none">M²</div>
+                <div className="text-sm font-bold text-white leading-none">
+                  {unitData.stats.m2}
+                </div>
+              </div>
+              <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm px-2 py-1 text-center h-10 flex flex-col justify-center min-w-[45px]">
+                <div className="text-xs text-white/60 leading-none">Banyo</div>
+                <div className="text-sm font-bold text-white leading-none">
+                  {unitData.stats.banyo}
+                </div>
+              </div>
+              <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm px-2 py-1 text-center h-10 flex flex-col justify-center min-w-[45px]">
+                <div className="text-xs text-white/60 leading-none">Yatak</div>
+                <div className="text-sm font-bold text-white leading-none">
+                  {unitData.stats.yatak}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Fullscreen Button */}
+          <button
+            onClick={toggleFullscreen}
+            className="flex items-center justify-center rounded-lg bg-black/60 backdrop-blur-sm border border-white/20 p-2 text-white h-10 w-10"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path
                 d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
                 stroke="currentColor"
@@ -274,55 +337,20 @@ export default function MobileProjectDetails({
                 strokeLinejoin="round"
               />
             </svg>
-          )}
-        </button>
+          </button>
+        </div>
       </div>
 
       {/* Main Content Area */}
       <div className="relative z-10 flex-1 overflow-y-auto px-4">
-        {selectedUnit && (
-          <>
-            {/* Selected Unit Title */}
-            <h2 className="text-2xl font-bold text-orange-500 mb-4">
-              {selectedUnit}
-            </h2>
-
-            {/* Stats */}
-            {unitData?.stats && (
-              <div className="grid grid-cols-3 gap-2 mb-6">
-                <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm p-3 text-center">
-                  <div className="text-xs text-white/60">M²</div>
-                  <div className="text-lg font-bold text-white">
-                    {unitData.stats.m2}
-                  </div>
-                </div>
-                <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm p-3 text-center">
-                  <div className="text-xs text-white/60">Banyo</div>
-                  <div className="text-lg font-bold text-white">
-                    {unitData.stats.banyo}
-                  </div>
-                </div>
-                <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm p-3 text-center">
-                  <div className="text-xs text-white/60">Yatak</div>
-                  <div className="text-lg font-bold text-white">
-                    {unitData.stats.yatak}
-                  </div>
-                </div>
-              </div>
-            )}
-          </>
-        )}
+        {/* Content can be added here if needed */}
       </div>
 
-      {/* Bottom Section */}
+      {/* Bottom Section - Fixed to bottom */}
       <div className="relative z-10 flex-shrink-0">
         {/* Interior Images Thumbnail Banner */}
         {selectedUnit && interiors && interiors.length > 0 && (
-          <div
-            className={`bg-black/70 backdrop-blur-sm border-t border-white/20 transition-all duration-300 ease-out ${
-              selectedUnit ? "max-h-32 opacity-100" : "max-h-0 opacity-0"
-            } overflow-hidden`}
-          >
+          <div className="bg-black/70 backdrop-blur-sm border-t border-white/20">
             <div className="p-2">
               <div className="text-xs uppercase tracking-wider text-white/60 mb-2 px-2">
                 İç Mekan Görselleri
@@ -353,8 +381,8 @@ export default function MobileProjectDetails({
           </div>
         )}
 
-        {/* Unit Types Bottom Bar */}
-        <div className="bg-black/70 backdrop-blur-sm border-t border-white/20 p-3">
+        {/* Unit Types Bottom Bar - Attached to very bottom */}
+        <div className="bg-black/70 backdrop-blur-sm border-t border-white/20 p-3 pb-5">
           <div className="text-xs uppercase tracking-wider text-white/60 mb-2 px-2">
             Daire Tipleri
           </div>
