@@ -13,7 +13,13 @@ interface ImageGallerySectionProps {
 export default function ImageGallerySection({
   scrollToProject,
   navigationProps,
-}: ImageGallerySectionProps) {
+}: {
+  scrollToProject: (projectId: number) => void;
+  navigationProps?: {
+    isNavigating: boolean;
+    targetProject: number | null;
+  };
+}) {
   const projects = [
     {
       id: 1,
@@ -44,19 +50,16 @@ export default function ImageGallerySection({
 
   useEffect(() => {
     if (navigationProps?.isNavigating) {
-      // During navigation, apply direct highlighting to target project
       projects.forEach((project) => {
         const titleCard = document.querySelector(
           `.title-card-${project.id} .title-content`
         ) as HTMLElement;
         if (titleCard) {
           if (project.id === navigationProps.targetProject) {
-            // Apply highlight to target project
             titleCard.style.backgroundColor = "#ea580c";
             titleCard.style.color = "white";
             titleCard.style.transform = "scale(1.02)";
           } else {
-            // Remove highlight from other projects
             titleCard.style.backgroundColor = "transparent";
             titleCard.style.color = "white";
             titleCard.style.transform = "scale(1)";
@@ -64,7 +67,6 @@ export default function ImageGallerySection({
         }
       });
 
-      // Clean up after navigation
       setTimeout(() => {
         projects.forEach((project) => {
           const titleCard = document.querySelector(
@@ -82,7 +84,6 @@ export default function ImageGallerySection({
 
   return (
     <>
-      {/* 55–75%: 4 görsel + 4 title grid olarak gelir */}
       <div className="image-gallery fixed top-0 left-0 w-full h-screen z-40 pointer-events-none">
         {projects.map((project, index) => (
           <div
@@ -103,14 +104,13 @@ export default function ImageGallerySection({
         ))}
       </div>
 
-      {/* Başlık kartları */}
       <div className="transitioning-titles fixed top-0 left-0 w-full h-screen z-47 pointer-events-none">
         {projects.map((project) => (
           <div key={project.id} className={`title-card-${project.id} absolute`}>
             <div
-   className="title-content pointer-events-auto px-4 py-2 rounded-lg transition-all duration-300 hover:bg-orange-500 hover:text-white cursor-pointer flex flex-col items-center text-center"
-    onClick={() => scrollToProject(project.id)}
->
+              className="title-content pointer-events-auto px-4 py-2 rounded-lg transition-all duration-300 hover:bg-orange-500 hover:text-white cursor-pointer flex flex-col items-center text-center"
+              onClick={() => scrollToProject(project.id)}
+            >
               <h3 className="title-text text-white font-semibold text-lg">
                 {project.title}
               </h3>
@@ -123,7 +123,6 @@ export default function ImageGallerySection({
       </div>
 
       <style jsx>{`
-        /* Görsel aralıkları: 55–75% görünür, 75–80% header'a akarken sönmeye başlar, 80%'de yok */
         .image-1 {
           animation: image-1-lifecycle linear both;
           animation-timeline: scroll(root);
@@ -145,7 +144,6 @@ export default function ImageGallerySection({
           animation-range: 58% 80%;
         }
 
-        /* Başlık kartları: 55–75% gridde görünür, 75–80% header pozisyonuna taşınır, 80%'de sabit */
         .title-card-1 {
           animation: title-1-to-header linear both;
           animation-timeline: scroll(root);
@@ -168,12 +166,11 @@ export default function ImageGallerySection({
         }
 
         .title-description {
-  animation: description-fade linear both;
-  animation-timeline: scroll(root);
-  animation-range: 72% 78%;
-}
+          animation: description-fade linear both;
+          animation-timeline: scroll(root);
+          animation-range: 72% 78%;
+        }
 
-        /* 4 görseli 4 kolon gibi konumlayan keyframe'ler (desktop) */
         @keyframes image-1-lifecycle {
           0% {
             opacity: 0;
@@ -311,7 +308,6 @@ export default function ImageGallerySection({
           }
         }
 
-        /* Başlıkları gridden header'a taşıyan keyframe'ler */
         @keyframes title-1-to-header {
           0% {
             opacity: 0;
@@ -425,7 +421,6 @@ export default function ImageGallerySection({
           }
         }
 
-        /* Header title highlighting during featured project story */
         .title-card-1 .title-content {
           animation: title-card-1-highlight linear both;
           animation-timeline: scroll(root);
@@ -447,7 +442,6 @@ export default function ImageGallerySection({
           animation-range: 94% 98%;
         }
 
-        /* New highlight keyframes for header titles */
         @keyframes title-card-1-highlight {
           0% {
             background-color: transparent;
@@ -544,15 +538,12 @@ export default function ImageGallerySection({
           }
         }
 
-        /* Disable highlight animations during navigation */
         body.direct-navigation .title-card-1 .title-content,
         body.direct-navigation .title-card-2 .title-content,
         body.direct-navigation .title-card-3 .title-content,
         body.direct-navigation .title-card-4 .title-content {
           animation: none !important;
         }
-
-        /* Mobil/Tablet media query'lerini istersen geri ekleyebiliriz; şu an asıl sıralama için masaüstü netlik veriyor. */
       `}</style>
     </>
   );

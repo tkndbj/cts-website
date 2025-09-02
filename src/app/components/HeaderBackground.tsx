@@ -21,19 +21,6 @@ export default function HeaderBackground() {
             opacity: 1;
           }
         }
-
-        /* Mobile adjustments - increase height to accommodate stacked titles */
-        @media (max-width: 768px) {
-          .header-bg-content {
-            height: 260px !important;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .header-bg-content {
-            height: 280px !important;
-          }
-        }
       `}</style>
     </>
   );

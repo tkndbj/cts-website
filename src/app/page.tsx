@@ -5,21 +5,61 @@ import HeroSection from "./components/HeroSection";
 import HeaderBackground from "./components/HeaderBackground";
 import ImageGallerySection from "./components/ImageGallerySection";
 import FeaturedProjectStory from "./components/FeaturedProjectStory";
+import MobileNavigation from "./components/MobileNavigation";
+import Image from "next/image";
 
 export default function Home() {
   const [isNavigating, setIsNavigating] = useState(false);
   const [targetProject, setTargetProject] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileProject, setMobileProject] = useState(1);
+  const [mobileShowProjects, setMobileShowProjects] = useState(false);
   const scrollTimeoutRef = useRef<number | null>(null);
 
-  // Uzun akış için proxy (sadece desktop/tablet anlamlı)
   const SCROLL_PROXY_VH = 700;
-
-  // Faz eşikleri (desktop/tablet)
   const STEP_MARKS = [0, 0.7, 0.83, 0.87, 0.91, 0.95, 0.98];
 
   const snappingRef = useRef(false);
   const cooldownRef = useRef(0);
   const lastTouchYRef = useRef<number | null>(null);
+
+  const projects = [
+    {
+      id: 1,
+      image: "/fourseasons.jpg",
+      title: "Four Seasons Life",
+      description:
+        "Çağdaş tasarım çözümleri ile geleceğin yapılarını inşa ediyoruz",
+    },
+    {
+      id: 2,
+      image: "/thesign.jpg",
+      title: "The Sign",
+      description: "Uzman ekibimiz ile her detayda mükemmellik arayışı",
+    },
+    {
+      id: 3,
+      image: "/aurora.jpg",
+      title: "Aurora Bay",
+      description: "Çevre dostu yapılar ile doğaya saygılı inşaat",
+    },
+    {
+      id: 4,
+      image: "/carob.jpg",
+      title: "Carob Hill",
+      description: "Zamanında teslimat ve müşteri memnuniyeti odaklı hizmet",
+    },
+  ];
+
+  useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.matchMedia("(max-width: 767px)").matches;
+      setIsMobile(mobile);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const isDesktop = () =>
     typeof window !== "undefined" &&
@@ -63,7 +103,7 @@ export default function Home() {
     }
   };
 
-  // “Tek scroll = bir faz” — SADECE desktop/tablet
+  // Desktop scroll handling (unchanged)
   useEffect(() => {
     if (!isDesktop()) return;
 
@@ -154,8 +194,13 @@ export default function Home() {
     };
   }, [isNavigating]);
 
-  // Logo → tepeye dön
   const scrollToTop = () => {
+    if (isMobile) {
+      setMobileProject(1);
+      setMobileShowProjects(false);
+      return;
+    }
+
     const overlay = document.createElement("div");
     overlay.className = "fade-overlay";
     overlay.style.cssText = `
@@ -171,7 +216,6 @@ export default function Home() {
     }, 400);
   };
 
-  // Proje kısayolları (desktop/tablet için)
   const scrollToProject = (projectId: number) => {
     const map: Record<number, number> = { 1: 0.83, 2: 0.87, 3: 0.91, 4: 0.95 };
     const pct = map[projectId] ?? 0.83;
@@ -188,9 +232,21 @@ export default function Home() {
 
   const navigationProps = { isNavigating, targetProject };
 
+  const handleMobileAdvance = () => {
+    if (!isMobile) {
+      scrollToPct(0.7, "smooth");
+    } else {
+      document.body.classList.add("mobile-second", "mobile-no-scroll");
+      setMobileShowProjects(true);
+    }
+  };
+
+  const handleMobileProjectSelect = (projectId: number) => {
+    setMobileProject(projectId);
+  };
+
   return (
     <>
-      {/* Google Fonts */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
       <link
@@ -198,7 +254,6 @@ export default function Home() {
         rel="stylesheet"
       />
 
-      {/* SABİT SAHNE */}
       <div
         className={`stage fixed inset-0 z-[1] ${
           isNavigating ? "navigating" : ""
@@ -207,31 +262,67 @@ export default function Home() {
       >
         <HeroSection
           scrollToTop={scrollToTop}
-          onTapAdvance={() => {
-            // MOBİL: 2. ekrana geç ve içerikte kaydırmayı kapat
-            if (!isDesktop()) {
-              document.body.classList.add("mobile-second", "mobile-no-scroll");
-            } else {
-              // DESKTOP/TABLET: adım 0.7’ye yumuşak kaydır
-              scrollToPct(0.7, "smooth");
-            }
-          }}
+          onTapAdvance={handleMobileAdvance}
         />
 
-        {/* Bu üç bileşeni mobilde tamamen gizliyoruz (sadeleştirme) */}
+        {/* Desktop components */}
         <div className="hidden md:block">
           <ImageGallerySection
             scrollToProject={scrollToProject}
-            navigationProps={{ isNavigating, targetProject }}
+            navigationProps={navigationProps}
           />
           <HeaderBackground />
-          <FeaturedProjectStory
-            navigationProps={{ isNavigating, targetProject }}
-          />
+          <FeaturedProjectStory navigationProps={navigationProps} />
         </div>
+
+        {/* Mobile project display */}
+        {isMobile && mobileShowProjects && (
+          <div className="mobile-projects fixed inset-0 z-45 pt-14 pb-20 bg-gray-900">
+            <div className="h-full overflow-hidden">
+              <div className="relative h-full">
+                {projects.map((project) => (
+                  <div
+                    key={project.id}
+                    className={`absolute inset-0 transition-all duration-500 ${
+                      mobileProject === project.id
+                        ? "opacity-100 scale-100"
+                        : "opacity-0 scale-95 pointer-events-none"
+                    }`}
+                  >
+                    <div className="relative h-full">
+                      <Image
+                        src={project.image}
+                        alt={project.title}
+                        fill
+                        style={{ objectFit: "cover" }}
+                        className="brightness-75"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+
+                      <div className="absolute bottom-0 left-0 right-0 p-6 pb-24">
+                        <h2 className="text-3xl font-bold text-orange-500 mb-3">
+                          {project.title}
+                        </h2>
+                        <p className="text-white/90 text-sm leading-relaxed">
+                          {project.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <MobileNavigation
+              projects={projects}
+              currentProject={mobileProject}
+              onProjectSelect={handleMobileProjectSelect}
+            />
+          </div>
+        )}
       </div>
 
-      {/* SCROLL PROXY (sadece md+ anlamlı) */}
+      {/* Desktop scroll proxy */}
       <div
         className="scroll-proxy relative z-0 hidden md:block"
         style={{
@@ -249,7 +340,6 @@ export default function Home() {
           background: #0b0b12;
         }
 
-        /* desktop/tablet için mevcut davranış */
         .stage .featured-hero {
           pointer-events: auto;
         }
@@ -302,7 +392,7 @@ export default function Home() {
           }
         }
 
-        /* --- MOBİL: TÜM scroll/scroll-timeline animasyonlarını KAPAT --- */
+        /* Mobile: Disable ALL scroll animations */
         @media (max-width: 767px) {
           .stage * {
             animation: none !important;
@@ -310,17 +400,22 @@ export default function Home() {
             animation-range: initial !important;
             scroll-behavior: auto !important;
           }
-          /* 2. ekranda sayfa kaymasını tamamen kapat */
+
           body.mobile-no-scroll {
             overflow: hidden !important;
             height: 100vh !important;
           }
-        }
 
-        /* 2. ekranda video katmanı gizli (mobil) */
-        @media (max-width: 767px) {
           body.mobile-second .video-container {
             display: none !important;
+          }
+
+          .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
           }
         }
       `}</style>

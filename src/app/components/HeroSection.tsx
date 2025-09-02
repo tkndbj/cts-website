@@ -5,48 +5,15 @@ interface HeroSectionProps {
 
 import { useEffect, useState } from "react";
 
-type MobileProject = {
-  id: number;
-  title: string;
-  desc: string;
-  image: string; // public path
-};
-
-const MOBILE_PROJECTS: MobileProject[] = [
-  {
-    id: 1,
-    title: "Four Seasons Life",
-    desc: "Deniz kıyısında yaşam",
-    image: "/projects/fourseasons.jpg",
-  },
-  {
-    id: 2,
-    title: "Carob",
-    desc: "Doğa ile iç içe",
-    image: "/projects/carob.jpg",
-  },
-  {
-    id: 3,
-    title: "Aurora Bay",
-    desc: "Lüks sahil villaları",
-    image: "/projects/aurora-bay.jpg",
-  },
-  {
-    id: 4,
-    title: "City Homes",
-    desc: "Şehirde modern konfor",
-    image: "/projects/city-homes.jpg",
-  },
-];
-
 export default function HeroSection({
   scrollToTop,
   onTapAdvance,
-}: HeroSectionProps) {
+}: {
+  scrollToTop: () => void;
+  onTapAdvance: () => void;
+}) {
   const [isMobile, setIsMobile] = useState(false);
-  const [mobilePhase, setMobilePhase] = useState<"welcome" | "second">(
-    "welcome"
-  );
+  const [mobilePhase, setMobilePhase] = useState<"welcome" | "main">("welcome");
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -57,11 +24,10 @@ export default function HeroSection({
     return () => mq.removeEventListener("change", apply);
   }, []);
 
-  // Body sınıfı üzerinden faz senkronu (Home ekler)
   useEffect(() => {
     const observer = new MutationObserver(() => {
       if (document.body.classList.contains("mobile-second")) {
-        setMobilePhase("second");
+        setMobilePhase("main");
       }
     });
     observer.observe(document.body, {
@@ -71,12 +37,11 @@ export default function HeroSection({
     return () => observer.disconnect();
   }, []);
 
-  // ---------- DESKTOP/TABLET ----------
+  // Desktop/Tablet View (unchanged)
   if (!isMobile) {
     return (
       <>
         <div className="hero-header fixed top-0 left-0 z-50 w-full h-screen flex items-center justify-center">
-          {/* Video arka plan */}
           <div className="video-container absolute inset-0 w-full h-full overflow-hidden">
             <video
               className="video-background absolute top-0 left-0 w-full h-full object-cover"
@@ -89,7 +54,7 @@ export default function HeroSection({
               <source src="/video-compressed.webm" type="video/webm" />
               <source src="/video-compressed.mp4" type="video/mp4" />
             </video>
-            <div className="video-overlay absolute inset-0 bg-black/40 pointer-events-none" />
+            <div className="video-overlay absolute inset-0 bg-black/40 pointer-events-none"></div>
           </div>
 
           <div
@@ -286,12 +251,11 @@ export default function HeroSection({
     );
   }
 
-  // ---------- MOBİL ----------
+  // Mobile View
   return (
     <>
-      {/* Faz A: Welcome / Video + Dokunun */}
       {mobilePhase === "welcome" && (
-        <div className="mobile-welcome fixed inset-0 z-50 flex items-center justify-center">
+        <div className="mobile-welcome fixed inset-0 z-50 flex items-center justify-center animate-fadeIn">
           <div className="video-container absolute inset-0 w-full h-full overflow-hidden">
             <video
               className="video-background absolute top-0 left-0 w-full h-full object-cover"
@@ -308,16 +272,16 @@ export default function HeroSection({
           </div>
 
           <div className="relative z-10 text-center px-6">
-            <h1 className="text-white font-bold leading-tight mobile-title">
+            <h1 className="text-white font-bold leading-tight mobile-title animate-slideUp">
               <span className="block whitespace-nowrap">Ceyhun Tunalı</span>
               <span className="block text-orange-500">&amp; Sons</span>
             </h1>
 
             <button
               type="button"
-              className="mt-6 inline-flex flex-col items-center gap-2 active:scale-95 transition"
+              className="mt-6 inline-flex flex-col items-center gap-2 active:scale-95 transition animate-fadeInDelay"
               onClick={() => {
-                setMobilePhase("second");
+                setMobilePhase("main");
                 onTapAdvance();
               }}
               aria-label="Devam etmek için dokunun"
@@ -345,118 +309,129 @@ export default function HeroSection({
         </div>
       )}
 
-      {/* Faz B: Main header + 2×2 grid (tek ekrana sığar) */}
-      {mobilePhase === "second" && (
-        <>
-          {/* Header */}
-          <header className="mobile-header fixed top-0 left-0 right-0 h-16 z-50 bg-gray-900/95 backdrop-blur-md shadow-lg flex items-center justify-between px-4">
+      {mobilePhase === "main" && (
+        <header className="mobile-header fixed top-0 left-0 right-0 h-14 z-50 bg-gray-900/95 backdrop-blur-md shadow-lg flex items-center justify-between px-3 animate-slideDown">
+          <button
+            className="text-white font-semibold text-sm tracking-tight flex items-center"
+            onClick={scrollToTop}
+            aria-label="Başa dön"
+          >
+            <span>Ceyhun Tunalı</span>
+            <span className="text-orange-500 ml-1">&amp; Sons</span>
+          </button>
+
+          <div className="relative">
             <button
-              className="text-white font-semibold text-lg tracking-tight"
-              onClick={scrollToTop}
-              aria-label="Başa dön"
+              aria-label="Menüyü aç"
+              className="p-1.5 rounded-md border border-white/10 text-white"
+              onClick={() => setMenuOpen((v) => !v)}
             >
-              <span className="align-middle">Ceyhun Tunalı</span>{" "}
-              <span className="text-orange-500 align-middle">&amp; Sons</span>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
             </button>
 
-            <div className="relative">
-              <button
-                aria-label="Menüyü aç"
-                className="p-2 rounded-md border border-white/10 text-white"
-                onClick={() => setMenuOpen((v) => !v)}
+            {menuOpen && (
+              <div
+                className="absolute right-0 mt-2 w-44 rounded-xl bg-gray-800/95 backdrop-blur border border-white/10 shadow-xl overflow-hidden animate-fadeIn"
+                onClick={() => setMenuOpen(false)}
               >
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
+                <a
+                  href="/aboutus"
+                  className="block px-4 py-2.5 text-sm text-white/90 hover:bg-white/10"
                 >
-                  <line x1="3" y1="6" x2="21" y2="6" />
-                  <line x1="3" y1="12" x2="21" y2="12" />
-                  <line x1="3" y1="18" x2="21" y2="18" />
-                </svg>
-              </button>
-
-              {menuOpen && (
-                <div
-                  className="absolute right-0 mt-2 w-48 rounded-xl bg-gray-800/95 backdrop-blur border border-white/10 shadow-xl overflow-hidden"
-                  onClick={() => setMenuOpen(false)}
+                  Hakkımızda
+                </a>
+                <a
+                  href="#projelerimiz"
+                  className="block px-4 py-2.5 text-sm text-white/90 hover:bg-white/10"
                 >
-                  <a
-                    href="/aboutus"
-                    className="block px-4 py-3 text-white/90 hover:bg-white/10"
-                  >
-                    Hakkımızda
-                  </a>
-                  <a
-                    href="#projelerimiz"
-                    className="block px-4 py-3 text-white/90 hover:bg-white/10"
-                  >
-                    Projelerimiz
-                  </a>
-                  <a
-                    href="#iletisim"
-                    className="block px-4 py-3 text-white/90 hover:bg-white/10"
-                  >
-                    İletişim
-                  </a>
-                </div>
-              )}
-            </div>
-          </header>
-
-          {/* 2×2 Grid — header’ın hemen altında, tek ekrana sığar */}
-          <section className="mobile-projects fixed left-0 right-0 top-16 bottom-0 z-40 p-3 grid grid-cols-2 grid-rows-2 gap-3">
-            {MOBILE_PROJECTS.map((p) => (
-              <article
-                key={p.id}
-                className="relative rounded-xl overflow-hidden shadow-lg bg-gray-800/40"
-              >
-                {/* Görsel */}
-                <img
-                  src={p.image}
-                  alt={p.title}
-                  className="absolute inset-0 w-full h-full object-cover"
-                  draggable={false}
-                />
-                {/* Alt şerit (şeffaf siyah label) */}
-                <div className="absolute inset-x-0 bottom-0 bg-black/55 backdrop-blur-[1px] px-3 py-2">
-                  <h3 className="text-white text-sm font-semibold leading-snug">
-                    {p.title}
-                  </h3>
-                  <p className="text-white/80 text-[12px] leading-tight">
-                    {p.desc}
-                  </p>
-                </div>
-                {/* Hafif gradient okunabilirlik için */}
-                <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/30 to-transparent" />
-              </article>
-            ))}
-          </section>
-        </>
+                  Projelerimiz
+                </a>
+                <a
+                  href="#iletisim"
+                  className="block px-4 py-2.5 text-sm text-white/90 hover:bg-white/10"
+                >
+                  İletişim
+                </a>
+              </div>
+            )}
+          </div>
+        </header>
       )}
 
       <style jsx>{`
-        /* Mobil başlık 2 satır */
         .mobile-title {
-          font-size: clamp(1.8rem, 8.5vw, 2.4rem);
+          font-size: clamp(1.6rem, 7vw, 2rem);
         }
 
-        /* Görsel odak */
-        .video-background {
-          object-position: center center;
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
 
-        /* Mobilde animasyon yok (ek garanti) */
-        .mobile-welcome,
-        .mobile-header,
-        .mobile-projects {
-          /* animasyon tanımlı değil */
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes slideDown {
+          from {
+            transform: translateY(-100%);
+          }
+          to {
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeInDelay {
+          0% {
+            opacity: 0;
+          }
+          50% {
+            opacity: 0;
+          }
+          100% {
+            opacity: 1;
+          }
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.5s ease-out;
+        }
+
+        .animate-slideUp {
+          animation: slideUp 0.6s ease-out;
+        }
+
+        .animate-slideDown {
+          animation: slideDown 0.3s ease-out;
+        }
+
+        .animate-fadeInDelay {
+          animation: fadeInDelay 1s ease-out;
         }
       `}</style>
     </>
