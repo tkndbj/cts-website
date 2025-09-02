@@ -212,7 +212,7 @@ export default function FeaturedProjectStory({
     null
   );
 
-  // FS sırasında görünen projenin snapshot’ı (sadece açılışta set, kapanınca sıfırla)
+  // FS sırasında görünen projenin snapshot'ı (sadece açılışta set, kapanınca sıfırla)
   const frozenActiveProjectRef = useRef<number | null>(null);
 
   const [mounted, setMounted] = useState(false);
@@ -293,13 +293,13 @@ export default function FeaturedProjectStory({
     };
   }, [fullscreenProjectId, selectedUnitByProject]);
 
-  // 🔧 FIX: sadece FS AÇILIRKEN snapshot al; FS KAPANIRKEN snapshot’ı temizle (geri set ETME!)
+  // 🔧 FIX: sadece FS AÇILIRKEN snapshot al; FS KAPANIRKEN snapshot'ı temizle (geri set ETME!)
   useEffect(() => {
     if (fullscreenProjectId != null) {
       // FS açılıyor → o anki projeyi kaydet
       frozenActiveProjectRef.current = activeProjectId;
     } else {
-      // FS kapandı → snapshot’ı sıfırla (scroll ve closeFullscreen belirlesin)
+      // FS kapandı → snapshot'ı sıfırla (scroll ve closeFullscreen belirlesin)
       frozenActiveProjectRef.current = null;
     }
   }, [fullscreenProjectId]); // <-- activeProjectId bağımlılığını kaldırdık
@@ -409,13 +409,13 @@ export default function FeaturedProjectStory({
     document.documentElement.classList.remove("fs-lock");
     document.body.style.overflow = "";
 
-    // FS kapanınca aktif projeyi “mevcut scroll yüzdesine” göre belirle
+    // FS kapanınca aktif projeyi "mevcut scroll yüzdesine" göre belirle
     const apply = () => {
       const { pct } = getScrollInfo();
       setActiveProjectId(projectFromPct(pct));
     };
     apply();
-    requestAnimationFrame(apply); // bir sonraki frame’de tekrar (race temiz)
+    requestAnimationFrame(apply); // bir sonraki frame'de tekrar (race temiz)
   };
 
   useEffect(() => {
@@ -528,104 +528,23 @@ export default function FeaturedProjectStory({
                       </svg>
                       <span className="text-sm">Tam ekran</span>
                     </button>
+
+                    {/* Unit name moved here with reduced font size */}
+                    <h2 className="text-2xl md:text-3xl font-extrabold text-orange-500 tracking-tight drop-shadow-[0_6px_16px_rgba(0,0,0,0.45)]">
+                      {displayTitle}
+                    </h2>
                   </div>
                 )}
 
-                <h2 className="text-5xl md:text-7xl font-extrabold text-orange-500 tracking-tight mb-4 drop-shadow-[0_6px_16px_rgba(0,0,0,0.45)]">
-                  {displayTitle}
-                </h2>
+                {!selectedName && (
+                  <h2 className="text-5xl md:text-7xl font-extrabold text-orange-500 tracking-tight mb-4 drop-shadow-[0_6px_16px_rgba(0,0,0,0.45)]">
+                    {displayTitle}
+                  </h2>
+                )}
 
                 <p className="max-w-3xl text-white/95 text-lg md:text-2xl font-light leading-relaxed drop-shadow-[0_4px_12px_rgba(0,0,0,0.45)]">
                   {p.description}
                 </p>
-
-                {selectedName && (
-                  <div className="mt-6 pointer-events-auto">
-                    <div className="grid grid-cols-3 gap-3 max-w-md">
-                      <div className="rounded-xl border border-white/20 bg-black/70 backdrop-blur-md px-4 py-3 text-center">
-                        <div className="text-xs uppercase tracking-wider text-white/70">
-                          Metre Kare
-                        </div>
-                        <div className="text-xl md:text-2xl font-bold text-white mt-1">
-                          {unitData?.stats?.m2 ?? "—"}
-                        </div>
-                      </div>
-                      <div className="rounded-xl border border-white/20 bg-black/70 backdrop-blur-md px-4 py-3 text-center">
-                        <div className="text-xs uppercase tracking-wider text-white/70">
-                          Banyo
-                        </div>
-                        <div className="text-xl md:text-2xl font-bold text-white mt-1">
-                          {unitData?.stats?.banyo ?? "—"}
-                        </div>
-                      </div>
-                      <div className="rounded-xl border border-white/20 bg-black/70 backdrop-blur-md px-4 py-3 text-center">
-                        <div className="text-xs uppercase tracking-wider text-white/70">
-                          Yatak Odası
-                        </div>
-                        <div className="text-xl md:text-2xl font-bold text-white mt-1">
-                          {unitData?.stats?.yatak ?? "—"}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {selectedName &&
-                  (() => {
-                    const thumbs = UNIT_INTERIORS[p.id]?.[selectedName] ?? [];
-                    if (!thumbs.length) return null;
-                    return (
-                      <div
-                        className={`thumb-tray fixed left-0 right-0 bottom-0 z-[5] px-[5%] pb-6 pt-3 ${
-                          activeProjectId === p.id ? "thumb-tray--open" : ""
-                        }`}
-                        style={{
-                          pointerEvents:
-                            activeProjectId === p.id ? "auto" : "none",
-                        }}
-                      >
-                        <div className="mx-auto max-w-[1200px] rounded-2xl border border-white/15 bg-black/35 backdrop-blur-xl shadow-2xl">
-                          <div className="px-4 py-3 text-white/80 text-xs uppercase tracking-wider">
-                            İç Mekan Görselleri
-                          </div>
-                          <div className="px-4 pb-4">
-                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-                              {thumbs.map((src) => {
-                                const isPicked =
-                                  selectedInteriorByProject[p.id] === src;
-                                return (
-                                  <button
-                                    key={src}
-                                    className={`group relative aspect-[4/3] overflow-hidden rounded-xl border transition-all duration-300 ${
-                                      isPicked
-                                        ? "border-orange-400/80 ring-2 ring-orange-400"
-                                        : "border-white/15 hover:border-white/35"
-                                    }`}
-                                    onClick={() => {
-                                      if (activeProjectId === p.id) {
-                                        setSelectedInteriorByProject(
-                                          (prev) => ({ ...prev, [p.id]: src })
-                                        );
-                                      }
-                                    }}
-                                  >
-                                    <Image
-                                      src={src}
-                                      alt="Interior"
-                                      fill
-                                      style={{ objectFit: "cover" }}
-                                      unoptimized
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })()}
 
                 <div className="mt-8 pointer-events-auto">
                   <div className="text-sm uppercase tracking-widest text-white/80 mb-1 font-medium">
@@ -694,6 +613,96 @@ export default function FeaturedProjectStory({
                   </div>
                 </div>
               </div>
+
+              {/* Specifications moved to center right when unit is selected */}
+              {selectedName && (
+                <div className="fixed right-8 top-1/2 transform -translate-y-1/2 pointer-events-auto z-10">
+                  <div className="flex flex-col gap-3">
+                    <div className="rounded-xl border border-white/20 bg-black/70 backdrop-blur-md px-4 py-3 text-center min-w-[120px]">
+                      <div className="text-xs uppercase tracking-wider text-white/70">
+                        Metre Kare
+                      </div>
+                      <div className="text-xl md:text-2xl font-bold text-white mt-1">
+                        {unitData?.stats?.m2 ?? "—"}
+                      </div>
+                    </div>
+                    <div className="rounded-xl border border-white/20 bg-black/70 backdrop-blur-md px-4 py-3 text-center min-w-[120px]">
+                      <div className="text-xs uppercase tracking-wider text-white/70">
+                        Banyo
+                      </div>
+                      <div className="text-xl md:text-2xl font-bold text-white mt-1">
+                        {unitData?.stats?.banyo ?? "—"}
+                      </div>
+                    </div>
+                    <div className="rounded-xl border border-white/20 bg-black/70 backdrop-blur-md px-4 py-3 text-center min-w-[120px]">
+                      <div className="text-xs uppercase tracking-wider text-white/70">
+                        Yatak Odası
+                      </div>
+                      <div className="text-xl md:text-2xl font-bold text-white mt-1">
+                        {unitData?.stats?.yatak ?? "—"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {selectedName &&
+                (() => {
+                  const thumbs = UNIT_INTERIORS[p.id]?.[selectedName] ?? [];
+                  if (!thumbs.length) return null;
+                  return (
+                    <div
+                      className={`thumb-tray fixed left-0 right-0 bottom-0 z-[5] px-[5%] pb-6 pt-3 ${
+                        activeProjectId === p.id ? "thumb-tray--open" : ""
+                      }`}
+                      style={{
+                        pointerEvents:
+                          activeProjectId === p.id ? "auto" : "none",
+                      }}
+                    >
+                      <div className="mx-auto max-w-[1200px] rounded-2xl border border-white/15 bg-black/50 backdrop-blur-xl shadow-2xl">
+                        <div className="px-4 py-3 text-white/80 text-xs uppercase tracking-wider">
+                          İç Mekan Görselleri
+                        </div>
+                        <div className="px-4 pb-4">
+                          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-2">
+                            {thumbs.map((src) => {
+                              const isPicked =
+                                selectedInteriorByProject[p.id] === src;
+                              return (
+                                <button
+                                  key={src}
+                                  className={`group relative aspect-[4/3] overflow-hidden rounded-lg border transition-all duration-300 ${
+                                    isPicked
+                                      ? "border-orange-400/80 ring-2 ring-orange-400"
+                                      : "border-white/15 hover:border-white/35"
+                                  }`}
+                                  onClick={() => {
+                                    if (activeProjectId === p.id) {
+                                      setSelectedInteriorByProject((prev) => ({
+                                        ...prev,
+                                        [p.id]: src,
+                                      }));
+                                    }
+                                  }}
+                                >
+                                  <Image
+                                    src={src}
+                                    alt="Interior"
+                                    fill
+                                    style={{ objectFit: "cover" }}
+                                    unoptimized
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
             </div>
           );
         })}
@@ -751,43 +760,41 @@ export default function FeaturedProjectStory({
                 </div>
 
                 {thumbs.length > 0 && (
-                  <div className="absolute left-0 right-0 bottom-0 px-6 pb-6 pt-4 z-[2]">
-                    <div className="mx-auto max-w-[1400px] rounded-2xl border border-white/15 bg-black/50 backdrop-blur-xl shadow-2xl">
-                      <div className="px-4 py-3 text-white/80 text-xs uppercase tracking-wider">
+                  <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-[2] max-h-[80vh] overflow-y-auto">
+                    <div className="rounded-2xl border border-white/15 bg-black/50 backdrop-blur-xl shadow-2xl p-4">
+                      <div className="text-white/80 text-xs uppercase tracking-wider mb-3 text-center">
                         İç Mekan Görselleri
                       </div>
-                      <div className="px-4 pb-4">
-                        <div className="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
-                          {thumbs.map((src) => {
-                            const isPicked =
-                              selectedInteriorByProject[pid] === src;
-                            return (
-                              <button
-                                key={src}
-                                className={`group relative aspect-[4/3] overflow-hidden rounded-xl border transition-all duration-300 ${
-                                  isPicked
-                                    ? "border-orange-400/80 ring-2 ring-orange-400"
-                                    : "border-white/15 hover:border-white/35"
-                                }`}
-                                onClick={() =>
-                                  setSelectedInteriorByProject((prev) => ({
-                                    ...prev,
-                                    [pid]: src,
-                                  }))
-                                }
-                              >
-                                <Image
-                                  src={src}
-                                  alt="Interior"
-                                  fill
-                                  style={{ objectFit: "cover" }}
-                                  unoptimized
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                              </button>
-                            );
-                          })}
-                        </div>
+                      <div className="flex flex-col gap-2 max-w-[120px]">
+                        {thumbs.map((src) => {
+                          const isPicked =
+                            selectedInteriorByProject[pid] === src;
+                          return (
+                            <button
+                              key={src}
+                              className={`group relative aspect-[4/3] overflow-hidden rounded-lg border transition-all duration-300 ${
+                                isPicked
+                                  ? "border-orange-400/80 ring-2 ring-orange-400"
+                                  : "border-white/15 hover:border-white/35"
+                              }`}
+                              onClick={() =>
+                                setSelectedInteriorByProject((prev) => ({
+                                  ...prev,
+                                  [pid]: src,
+                                }))
+                              }
+                            >
+                              <Image
+                                src={src}
+                                alt="Interior"
+                                fill
+                                style={{ objectFit: "cover" }}
+                                unoptimized
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>
