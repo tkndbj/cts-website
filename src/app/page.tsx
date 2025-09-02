@@ -220,13 +220,20 @@ export default function Home() {
         }`}
         style={{ fontFamily: "Figtree, sans-serif" }}
       >
-        <HeroSection scrollToTop={scrollToTop} />
+        <HeroSection
+          scrollToTop={scrollToTop}
+          onTapAdvance={() => scrollToPct(0.7, "smooth")}
+        />
+        {/* ↑↑↑ */}
+
         <ImageGallerySection
           scrollToProject={scrollToProject}
-          navigationProps={navigationProps}
+          navigationProps={{ isNavigating, targetProject }}
         />
         <HeaderBackground />
-        <FeaturedProjectStory navigationProps={navigationProps} />
+        <FeaturedProjectStory
+          navigationProps={{ isNavigating, targetProject }}
+        />
       </div>
 
       {/* SCROLL PROXY */}

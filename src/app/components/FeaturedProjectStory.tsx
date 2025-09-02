@@ -212,7 +212,7 @@ export default function FeaturedProjectStory({
     null
   );
 
-  // FS sırasında görünen projenin snapshot'ı (sadece açılışta set, kapanınca sıfırla)
+  // FS sırasında görünen projenin snapshot’ı (sadece açılışta set, kapanınca sıfırla)
   const frozenActiveProjectRef = useRef<number | null>(null);
 
   const [mounted, setMounted] = useState(false);
@@ -293,13 +293,13 @@ export default function FeaturedProjectStory({
     };
   }, [fullscreenProjectId, selectedUnitByProject]);
 
-  // 🔧 FIX: sadece FS AÇILIRKEN snapshot al; FS KAPANIRKEN snapshot'ı temizle (geri set ETME!)
+  // 🔧 FIX: sadece FS AÇILIRKEN snapshot al; FS KAPANIRKEN snapshot’ı temizle (geri set ETME!)
   useEffect(() => {
     if (fullscreenProjectId != null) {
       // FS açılıyor → o anki projeyi kaydet
       frozenActiveProjectRef.current = activeProjectId;
     } else {
-      // FS kapandı → snapshot'ı sıfırla (scroll ve closeFullscreen belirlesin)
+      // FS kapandı → snapshot’ı sıfırla (scroll ve closeFullscreen belirlesin)
       frozenActiveProjectRef.current = null;
     }
   }, [fullscreenProjectId]); // <-- activeProjectId bağımlılığını kaldırdık
@@ -409,13 +409,13 @@ export default function FeaturedProjectStory({
     document.documentElement.classList.remove("fs-lock");
     document.body.style.overflow = "";
 
-    // FS kapanınca aktif projeyi "mevcut scroll yüzdesine" göre belirle
+    // FS kapanınca aktif projeyi “mevcut scroll yüzdesine” göre belirle
     const apply = () => {
       const { pct } = getScrollInfo();
       setActiveProjectId(projectFromPct(pct));
     };
     apply();
-    requestAnimationFrame(apply); // bir sonraki frame'de tekrar (race temiz)
+    requestAnimationFrame(apply); // bir sonraki frame’de tekrar (race temiz)
   };
 
   useEffect(() => {
@@ -473,9 +473,9 @@ export default function FeaturedProjectStory({
                 zIndex: activeProjectId === p.id ? 3 : 2,
               }}
             >
-              <div className="px-[3%] sm:px-[5%] text-left max-w-[1200px] w-full">
+              <div className="px-[5%] text-left max-w-[1200px]">
                 {selectedName && (
-                  <div className="mb-2 sm:mb-3 flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
+                  <div className="mb-3 flex items-center gap-2 pointer-events-auto">
                     <button
                       onClick={() => {
                         setSelectedUnitByProject((prev) => ({
@@ -487,13 +487,12 @@ export default function FeaturedProjectStory({
                           [p.id]: null,
                         }));
                       }}
-                      className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl bg-black/70 hover:bg-black/80 border border-white/25 px-2 sm:px-3 py-1.5 sm:py-2 text-white transition backdrop-blur-sm"
+                      className="inline-flex items-center gap-2 rounded-xl bg-black/70 hover:bg-black/80 border border-white/25 px-3 py-2 text-white transition backdrop-blur-sm"
                       title="Geri"
                     >
                       <svg
-                        width="16"
-                        height="16"
-                        className="sm:w-[18px] sm:h-[18px]"
+                        width="18"
+                        height="18"
                         viewBox="0 0 24 24"
                         fill="none"
                       >
@@ -505,18 +504,17 @@ export default function FeaturedProjectStory({
                           strokeLinejoin="round"
                         />
                       </svg>
-                      <span className="text-xs sm:text-sm">Geri</span>
+                      <span className="text-sm">Geri</span>
                     </button>
 
                     <button
                       onClick={() => setFullscreenProjectId(p.id)}
-                      className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl bg-black/70 hover:bg-black/80 border border-white/25 px-2 sm:px-3 py-1.5 sm:py-2 text-white transition backdrop-blur-sm"
+                      className="inline-flex items-center gap-2 rounded-xl bg-black/70 hover:bg-black/80 border border-white/25 px-3 py-2 text-white transition backdrop-blur-sm"
                       title="Tam ekran"
                     >
                       <svg
-                        width="16"
-                        height="16"
-                        className="sm:w-[18px] sm:h-[18px]"
+                        width="18"
+                        height="18"
                         viewBox="0 0 24 24"
                         fill="none"
                       >
@@ -528,43 +526,43 @@ export default function FeaturedProjectStory({
                           strokeLinejoin="round"
                         />
                       </svg>
-                      <span className="text-xs sm:text-sm">Tam ekran</span>
+                      <span className="text-sm">Tam ekran</span>
                     </button>
                   </div>
                 )}
 
-                <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-orange-500 tracking-tight mb-2 sm:mb-4 drop-shadow-[0_6px_16px_rgba(0,0,0,0.45)]">
+                <h2 className="text-5xl md:text-7xl font-extrabold text-orange-500 tracking-tight mb-4 drop-shadow-[0_6px_16px_rgba(0,0,0,0.45)]">
                   {displayTitle}
                 </h2>
 
-                <p className="max-w-3xl text-white/95 text-sm sm:text-lg md:text-xl lg:text-2xl font-light leading-relaxed drop-shadow-[0_4px_12px_rgba(0,0,0,0.45)]">
+                <p className="max-w-3xl text-white/95 text-lg md:text-2xl font-light leading-relaxed drop-shadow-[0_4px_12px_rgba(0,0,0,0.45)]">
                   {p.description}
                 </p>
 
                 {selectedName && (
-                  <div className="mt-4 sm:mt-6 pointer-events-auto">
-                    <div className="grid grid-cols-3 gap-2 sm:gap-3 max-w-xs sm:max-w-md">
-                      <div className="rounded-lg sm:rounded-xl border border-white/20 bg-black/70 backdrop-blur-md px-2 sm:px-4 py-2 sm:py-3 text-center">
-                        <div className="text-[10px] sm:text-xs uppercase tracking-wider text-white/70">
+                  <div className="mt-6 pointer-events-auto">
+                    <div className="grid grid-cols-3 gap-3 max-w-md">
+                      <div className="rounded-xl border border-white/20 bg-black/70 backdrop-blur-md px-4 py-3 text-center">
+                        <div className="text-xs uppercase tracking-wider text-white/70">
                           Metre Kare
                         </div>
-                        <div className="text-sm sm:text-xl md:text-2xl font-bold text-white mt-1">
+                        <div className="text-xl md:text-2xl font-bold text-white mt-1">
                           {unitData?.stats?.m2 ?? "—"}
                         </div>
                       </div>
-                      <div className="rounded-lg sm:rounded-xl border border-white/20 bg-black/70 backdrop-blur-md px-2 sm:px-4 py-2 sm:py-3 text-center">
-                        <div className="text-[10px] sm:text-xs uppercase tracking-wider text-white/70">
+                      <div className="rounded-xl border border-white/20 bg-black/70 backdrop-blur-md px-4 py-3 text-center">
+                        <div className="text-xs uppercase tracking-wider text-white/70">
                           Banyo
                         </div>
-                        <div className="text-sm sm:text-xl md:text-2xl font-bold text-white mt-1">
+                        <div className="text-xl md:text-2xl font-bold text-white mt-1">
                           {unitData?.stats?.banyo ?? "—"}
                         </div>
                       </div>
-                      <div className="rounded-lg sm:rounded-xl border border-white/20 bg-black/70 backdrop-blur-md px-2 sm:px-4 py-2 sm:py-3 text-center">
-                        <div className="text-[10px] sm:text-xs uppercase tracking-wider text-white/70">
+                      <div className="rounded-xl border border-white/20 bg-black/70 backdrop-blur-md px-4 py-3 text-center">
+                        <div className="text-xs uppercase tracking-wider text-white/70">
                           Yatak Odası
                         </div>
-                        <div className="text-sm sm:text-xl md:text-2xl font-bold text-white mt-1">
+                        <div className="text-xl md:text-2xl font-bold text-white mt-1">
                           {unitData?.stats?.yatak ?? "—"}
                         </div>
                       </div>
@@ -578,7 +576,7 @@ export default function FeaturedProjectStory({
                     if (!thumbs.length) return null;
                     return (
                       <div
-                        className={`thumb-tray fixed left-0 right-0 bottom-0 z-[5] px-[3%] sm:px-[5%] pb-3 sm:pb-6 pt-2 sm:pt-3 ${
+                        className={`thumb-tray fixed left-0 right-0 bottom-0 z-[5] px-[5%] pb-6 pt-3 ${
                           activeProjectId === p.id ? "thumb-tray--open" : ""
                         }`}
                         style={{
@@ -586,19 +584,19 @@ export default function FeaturedProjectStory({
                             activeProjectId === p.id ? "auto" : "none",
                         }}
                       >
-                        <div className="mx-auto max-w-[1200px] rounded-xl sm:rounded-2xl border border-white/15 bg-black/35 backdrop-blur-xl shadow-2xl">
-                          <div className="px-3 sm:px-4 py-2 sm:py-3 text-white/80 text-[10px] sm:text-xs uppercase tracking-wider">
+                        <div className="mx-auto max-w-[1200px] rounded-2xl border border-white/15 bg-black/35 backdrop-blur-xl shadow-2xl">
+                          <div className="px-4 py-3 text-white/80 text-xs uppercase tracking-wider">
                             İç Mekan Görselleri
                           </div>
-                          <div className="px-3 sm:px-4 pb-3 sm:pb-4">
-                            <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-thin">
+                          <div className="px-4 pb-4">
+                            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
                               {thumbs.map((src) => {
                                 const isPicked =
                                   selectedInteriorByProject[p.id] === src;
                                 return (
                                   <button
                                     key={src}
-                                    className={`group relative flex-shrink-0 w-16 h-12 sm:w-20 sm:h-15 md:w-24 md:h-18 overflow-hidden rounded-lg sm:rounded-xl border transition-all duration-300 ${
+                                    className={`group relative aspect-[4/3] overflow-hidden rounded-xl border transition-all duration-300 ${
                                       isPicked
                                         ? "border-orange-400/80 ring-2 ring-orange-400"
                                         : "border-white/15 hover:border-white/35"
@@ -629,20 +627,20 @@ export default function FeaturedProjectStory({
                     );
                   })()}
 
-                <div className="mt-4 sm:mt-8 pointer-events-auto">
-                  <div className="text-xs sm:text-sm uppercase tracking-widest text-white/80 mb-1 font-medium">
+                <div className="mt-8 pointer-events-auto">
+                  <div className="text-sm uppercase tracking-widest text-white/80 mb-1 font-medium">
                     Daire Tipleri
                   </div>
-                  <div className="text-[10px] sm:text-xs text-white/60 mb-2 sm:mb-4 font-light">
+                  <div className="text-xs text-white/60 mb-4 font-light">
                     Detay için tıklayın
                   </div>
-                  <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-thin">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-2xl">
                     {p.unitTypes.map((u, index) => {
                       const isActive = selectedName === u;
                       return (
                         <div
                           key={u}
-                          className={`group relative flex-shrink-0 overflow-hidden rounded-lg sm:rounded-xl border-2 sm:border-3 border-orange-400/30 bg-black/60 px-3 sm:px-4 py-2 sm:py-3 backdrop-blur-lg shadow-xl transition-all duration-300 cursor-pointer min-w-[80px] sm:min-w-[100px] text-center ${
+                          className={`group relative overflow-hidden rounded-xl border-3 border-orange-400/30 bg-black/60 px-4 py-3 backdrop-blur-lg shadow-xl transition-all duration-300 cursor-pointer ${
                             isActive
                               ? "scale-105 border-orange-400/80 ring-2 ring-orange-400"
                               : "hover:scale-105 hover:border-orange-400/60"
@@ -684,8 +682,8 @@ export default function FeaturedProjectStory({
                           }}
                         >
                           <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                          <div className="relative z-10">
-                            <div className="text-xs sm:text-base md:text-lg font-semibold text-white/95 mb-1">
+                          <div className="relative z-10 text-center">
+                            <div className="text-base md:text-lg font-semibold text-white/95 mb-1">
                               {u}
                             </div>
                             <div className="w-full h-0.5 bg-gradient-to-r from-orange-400/60 to-orange-500/60 rounded-full opacity-70" />
@@ -733,19 +731,13 @@ export default function FeaturedProjectStory({
                   <div className="absolute inset-0 bg-black/20" />
                 </div>
 
-                <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-[2]">
+                <div className="absolute top-4 left-4 z-[2]">
                   <button
                     onClick={closeFullscreen}
-                    className="inline-flex items-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl bg-black/70 hover:bg-black/60 border border-white/25 px-2 sm:px-3 py-1.5 sm:py-2 text-white transition backdrop-blur-sm"
+                    className="inline-flex items-center gap-2 rounded-xl bg-black/70 hover:bg-black/60 border border-white/25 px-3 py-2 text-white transition backdrop-blur-sm"
                     title="Kapat"
                   >
-                    <svg
-                      width="16"
-                      height="16"
-                      className="sm:w-[18px] sm:h-[18px]"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                    >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                       <path
                         d="M15 18l-6-6 6-6"
                         stroke="currentColor"
@@ -754,25 +746,25 @@ export default function FeaturedProjectStory({
                         strokeLinejoin="round"
                       />
                     </svg>
-                    <span className="text-xs sm:text-sm">Geri</span>
+                    <span className="text-sm">Geri</span>
                   </button>
                 </div>
 
                 {thumbs.length > 0 && (
-                  <div className="absolute left-0 right-0 bottom-0 px-3 sm:px-6 pb-3 sm:pb-6 pt-2 sm:pt-4 z-[2]">
-                    <div className="mx-auto max-w-[1400px] rounded-xl sm:rounded-2xl border border-white/15 bg-black/50 backdrop-blur-xl shadow-2xl">
-                      <div className="px-3 sm:px-4 py-2 sm:py-3 text-white/80 text-[10px] sm:text-xs uppercase tracking-wider">
+                  <div className="absolute left-0 right-0 bottom-0 px-6 pb-6 pt-4 z-[2]">
+                    <div className="mx-auto max-w-[1400px] rounded-2xl border border-white/15 bg-black/50 backdrop-blur-xl shadow-2xl">
+                      <div className="px-4 py-3 text-white/80 text-xs uppercase tracking-wider">
                         İç Mekan Görselleri
                       </div>
-                      <div className="px-3 sm:px-4 pb-3 sm:pb-4">
-                        <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-thin">
+                      <div className="px-4 pb-4">
+                        <div className="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
                           {thumbs.map((src) => {
                             const isPicked =
                               selectedInteriorByProject[pid] === src;
                             return (
                               <button
                                 key={src}
-                                className={`group relative flex-shrink-0 w-12 h-9 sm:w-16 sm:h-12 md:w-20 md:h-15 overflow-hidden rounded-lg sm:rounded-xl border transition-all duration-300 ${
+                                className={`group relative aspect-[4/3] overflow-hidden rounded-xl border transition-all duration-300 ${
                                   isPicked
                                     ? "border-orange-400/80 ring-2 ring-orange-400"
                                     : "border-white/15 hover:border-white/35"
@@ -952,6 +944,15 @@ export default function FeaturedProjectStory({
           will-change: opacity, transform;
         }
 
+        @media (max-width: 768px) {
+          .hero-copy :global(h2) {
+            font-size: 2.2rem;
+          }
+          .hero-copy :global(p) {
+            font-size: 1rem;
+          }
+        }
+
         .thumb-tray {
           transform: translateY(110%);
           transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -992,49 +993,6 @@ export default function FeaturedProjectStory({
         .hero-copy,
         .thumb-tray {
           touch-action: manipulation;
-        }
-
-        /* Custom scrollbar styles */
-        .scrollbar-thin {
-          scrollbar-width: thin;
-          scrollbar-color: rgba(255, 165, 0, 0.5) rgba(0, 0, 0, 0.1);
-        }
-
-        .scrollbar-thin::-webkit-scrollbar {
-          height: 4px;
-        }
-
-        .scrollbar-thin::-webkit-scrollbar-track {
-          background: rgba(0, 0, 0, 0.1);
-          border-radius: 2px;
-        }
-
-        .scrollbar-thin::-webkit-scrollbar-thumb {
-          background: rgba(255, 165, 0, 0.5);
-          border-radius: 2px;
-        }
-
-        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 165, 0, 0.7);
-        }
-
-        /* Responsive breakpoints adjustments */
-        @media (max-width: 640px) {
-          .hero-copy {
-            padding-bottom: 120px; /* Extra space for thumbnails on mobile */
-          }
-        }
-
-        @media (max-width: 1024px) {
-          .hero-copy {
-            padding-bottom: 100px; /* Prevent overlap on smaller desktop screens */
-          }
-        }
-
-        @media (max-width: 1280px) {
-          .hero-copy {
-            padding-bottom: 80px; /* Adjust for medium screens */
-          }
         }
       `}</style>
     </>
