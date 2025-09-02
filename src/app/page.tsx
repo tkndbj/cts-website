@@ -22,9 +22,13 @@ export default function Home() {
   // 0.86/0.90/0.94/0.98 : Proje 1..4 blokları
   const STEP_MARKS = [0, 0.7, 0.83, 0.87, 0.91, 0.95, 0.98];
 
-  const snappingRef = useRef(false); // şu an otomatik kayıyor mu?
-  const cooldownRef = useRef(0); // momentum filtreleme
+  const snappingRef = useRef(false);
+  const cooldownRef = useRef(0);
   const lastTouchYRef = useRef<number | null>(null);
+
+  const isDesktop = () =>
+    typeof window !== "undefined" &&
+    window.matchMedia("(min-width: 768px)").matches;
 
   const getScrollInfo = () => {
     const proxy = document.querySelector(".scroll-proxy") as HTMLElement | null;
@@ -43,7 +47,6 @@ export default function Home() {
     setIsNavigating(true);
     document.body.classList.add("direct-navigation");
     window.scrollTo({ top, behavior });
-    // kilidi kısa bir süre açık tut
     if (scrollTimeoutRef.current) {
       window.clearTimeout(scrollTimeoutRef.current);
     }
@@ -65,35 +68,30 @@ export default function Home() {
     }
   };
 
-  // “Tek scroll = bir faz” davranışı
+  // “Tek scroll = bir faz” davranışı — SADECE MASAÜSTÜ/TABLET
   useEffect(() => {
+    if (!isDesktop()) return; // mobilde dinleyiciler hiç eklenmez
+
     const MIN_DELTA = 28; // trackpad/momentum için eşik
     const COOLDOWN_MS = 520; // bir adım sonrası kilit süresi
-
     let wheelTimer: number | null = null;
 
     const onWheel = (e: WheelEvent) => {
-      // Hem touch momentum’u hem de hızlı tekerlek spam’ini engelle
       if (
         snappingRef.current ||
         isNavigating ||
         cooldownRef.current > Date.now()
       )
         return;
-
       const dy = e.deltaY;
-      if (Math.abs(dy) < MIN_DELTA) return; // min eşik
-
+      if (Math.abs(dy) < MIN_DELTA) return;
       e.preventDefault();
-
       const { pct } = getScrollInfo();
       const dir = dy > 0 ? "next" : "prev";
       const target = nearestStep(pct, dir);
-
       snappingRef.current = true;
       cooldownRef.current = Date.now() + COOLDOWN_MS;
       scrollToPct(target, "smooth");
-
       if (wheelTimer) clearTimeout(wheelTimer);
       wheelTimer = window.setTimeout(() => {
         snappingRef.current = false;
@@ -110,18 +108,16 @@ export default function Home() {
 
       const keysNext = ["PageDown", " ", "ArrowDown"];
       const keysPrev = ["PageUp", "ArrowUp"];
-
       if (![...keysNext, ...keysPrev].includes(e.key)) return;
 
       e.preventDefault();
       const { pct } = getScrollInfo();
       const dir = keysNext.includes(e.key) ? "next" : "prev";
       const target = nearestStep(pct, dir);
-
       snappingRef.current = true;
-      cooldownRef.current = Date.now() + COOLDOWN_MS;
+      cooldownRef.current = Date.now() + 520;
       scrollToPct(target, "smooth");
-      setTimeout(() => (snappingRef.current = false), COOLDOWN_MS + 100);
+      setTimeout(() => (snappingRef.current = false), 520 + 100);
     };
 
     const onTouchStart = (e: TouchEvent) => {
@@ -135,24 +131,19 @@ export default function Home() {
       )
         return;
       if (lastTouchYRef.current == null) return;
-
       const dy = lastTouchYRef.current - e.touches[0].clientY;
-      if (Math.abs(dy) < 28) return; // küçük kaydırmaları yok say
-
+      if (Math.abs(dy) < 28) return;
       e.preventDefault();
-
       const { pct } = getScrollInfo();
       const dir = dy > 0 ? "next" : "prev";
       const target = nearestStep(pct, dir);
-
       snappingRef.current = true;
-      cooldownRef.current = Date.now() + COOLDOWN_MS;
+      cooldownRef.current = Date.now() + 520;
       scrollToPct(target, "smooth");
-      setTimeout(() => (snappingRef.current = false), COOLDOWN_MS + 120);
+      setTimeout(() => (snappingRef.current = false), 520 + 120);
       lastTouchYRef.current = null;
     };
 
-    // passive:false önemli — preventDefault için
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("keydown", onKey, { passive: false });
     window.addEventListener("touchstart", onTouchStart, { passive: true });
@@ -187,13 +178,10 @@ export default function Home() {
   const scrollToProject = (projectId: number) => {
     const map: Record<number, number> = { 1: 0.83, 2: 0.87, 3: 0.91, 4: 0.95 };
     const pct = map[projectId] ?? 0.83;
-
     setIsNavigating(true);
     setTargetProject(projectId);
     document.body.classList.add("direct-navigation");
-
     scrollToPct(pct, "smooth");
-
     setTimeout(() => {
       document.body.classList.remove("direct-navigation");
       setIsNavigating(false);
@@ -222,9 +210,13 @@ export default function Home() {
       >
         <HeroSection
           scrollToTop={scrollToTop}
-          onTapAdvance={() => scrollToPct(0.7, "smooth")}
+          onTapAdvance={() => {
+            // Mobilde animasyonsuz ikinci görünüme geçiş
+            document.body.classList.add("mobile-second");
+            // Masaüstünde yine de ilgili aşamaya kaydırmak istersek (tablet/desktop):
+            if (isDesktop()) scrollToPct(0.7, "smooth");
+          }}
         />
-        {/* ↑↑↑ */}
 
         <ImageGallerySection
           scrollToProject={scrollToProject}
@@ -253,7 +245,7 @@ export default function Home() {
           overscroll-behavior: none;
           background: #0b0b12;
         }
-        /* Snap hissi için overscroll kapalı; stage pointer-events yönetimi aynen */
+
         .stage .featured-hero {
           pointer-events: auto;
         }
@@ -303,6 +295,28 @@ export default function Home() {
           }
           100% {
             opacity: 0;
+          }
+        }
+
+        /* --- MOBİLDE SCROLL ANİMASYONLARINI TAMAMEN KAPAT --- */
+        @media (max-width: 767px) {
+          .hero-header,
+          .video-container,
+          .video-overlay,
+          .company-title,
+          .subtitle,
+          .nav-menu,
+          .scroll-mouse {
+            animation: none !important;
+            animation-timeline: none !important;
+            animation-range: none !important;
+          }
+        }
+
+        /* mobile-second modunda (telefonlarda 2. görünüm) video gizlenir */
+        @media (max-width: 767px) {
+          body.mobile-second .video-container {
+            display: none !important;
           }
         }
       `}</style>
