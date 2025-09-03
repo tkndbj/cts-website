@@ -236,7 +236,7 @@ export default function Home() {
         }`}
         style={{ fontFamily: "Figtree, sans-serif" }}
       >
-        {/* Hero Section */}
+       
         {/* Hero Section */}
 <div className={`section-hero absolute inset-0 ${
   (currentSection === 'hero' && (!isMobile || (!mobileShowGallery && !mobileShowProjects && !mobileShowDetails))) ? 'active' : ''
