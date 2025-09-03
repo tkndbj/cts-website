@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import MapView from './MapView';
 
 interface NavigationProps {
   isNavigating: boolean;
@@ -228,6 +229,7 @@ export default function FeaturedProjectStory({
   const [showInteriorTray, setShowInteriorTray] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
   const [bannerKey, setBannerKey] = useState(0);
+  const [showMap, setShowMap] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -343,27 +345,27 @@ export default function FeaturedProjectStory({
         <div className="h-full flex items-center justify-between px-6">
           {/* Back button */}
           <div className="flex items-center">
-            <button
-              onClick={onBack}
-              className="group inline-flex items-center gap-3 px-4 py-2.5 rounded-xl bg-black/5 hover:bg-black/10 border border-black/10 hover:border-orange-400/30 transition-all duration-300 text-gray-800 backdrop-blur-sm"
-            >
-              <svg 
-                width="18" 
-                height="18" 
-                viewBox="0 0 24 24" 
-                fill="none"
-                className="group-hover:text-orange-400 transition-colors"
-              >
-                <path
-                  d="M15 18l-6-6 6-6"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <span className="text-sm font-medium">Projeler</span>
-            </button>
+          <button
+  onClick={onBack}
+  className="group inline-flex items-center gap-3 px-4 py-2.5 rounded-xl bg-black/5 hover:bg-black/10 border border-black/10 hover:border-orange-400/30 transition-all duration-300 text-white backdrop-blur-sm"
+>
+  <svg 
+    width="18" 
+    height="18" 
+    viewBox="0 0 24 24" 
+    fill="none"
+    className="group-hover:text-orange-400 transition-colors text-white"
+  >
+    <path
+      d="M15 18l-6-6 6-6"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+  <span className="text-sm font-medium text-white">Ana Sayfa</span>
+</button>
           </div>
 
           {/* Project Names Navigation - Centered */}
@@ -451,32 +453,52 @@ export default function FeaturedProjectStory({
         >
           {/* Project Title with Fullscreen Button */}
           <div className="flex items-center justify-between mb-3">
-            <h2 
-              className="text-2xl md:text-3xl font-bold tracking-tight"
-              style={{ color: '#96DED1' }}
-            >
-              {activeProject.title}
-            </h2>
-            
-            {/* Fullscreen Button - only show when unit is selected */}
-            {selectedName && (
-              <button
-                onClick={() => setFullscreenProjectId(currentProject)}
-                className="inline-flex items-center gap-2 rounded-xl bg-black/20 hover:bg-black/30 border border-white/25 px-3 py-2 text-white transition backdrop-blur-sm ml-3"
-                title="Tam ekran"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M9 3H3v6M21 9V3h-6M3 15v6h6M15 21h6v-6"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-            )}
-          </div>
+  <h2 
+    className="text-2xl md:text-3xl font-bold tracking-tight"
+    style={{ color: '#96DED1' }}
+  >
+    {activeProject.title}
+  </h2>
+  
+  <div className="flex items-center gap-2 ml-3">
+    {/* Map Button */}
+    <button
+      onClick={() => setShowMap(true)}
+      className="inline-flex items-center gap-2 rounded-xl bg-black/20 hover:bg-black/30 border border-white/25 px-3 py-2 text-white transition backdrop-blur-sm"
+      title="Haritada Göster"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path
+          d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2" />
+      </svg>
+    </button>
+    
+    {/* Fullscreen Button - only show when unit is selected */}
+    {selectedName && (
+      <button
+        onClick={() => setFullscreenProjectId(currentProject)}
+        className="inline-flex items-center gap-2 rounded-xl bg-black/20 hover:bg-black/30 border border-white/25 px-3 py-2 text-white transition backdrop-blur-sm"
+        title="Tam ekran"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M9 3H3v6M21 9V3h-6M3 15v6h6M15 21h6v-6"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
+    )}
+  </div>
+</div>
           
           {/* Project Description */}
           <p className="text-white text-sm md:text-base font-light leading-relaxed mb-4">
@@ -771,6 +793,11 @@ export default function FeaturedProjectStory({
           animation: slideInRight 0.6s ease-out;
         }
       `}</style>
+      <MapView 
+  isOpen={showMap}
+  projectId={currentProject}
+  onClose={() => setShowMap(false)}
+/>
     </>
   );
 }
