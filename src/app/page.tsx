@@ -35,7 +35,7 @@ function MobileNavigation({
                 onClick={() => onProjectSelect(p.id)}
                 className={`flex-shrink-0 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                   currentProject === p.id
-                    ? "bg-orange-500 text-white"
+                    ? "bg-[#191970] text-white"
                     : "bg-white/10 text-white/70 active:bg-white/20"
                 }`}
               >
@@ -55,6 +55,7 @@ export default function Home() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileProject, setMobileProject] = useState(1);
+  const [mobileShowGallery, setMobileShowGallery] = useState(false); // New state for mobile gallery
   const [mobileShowProjects, setMobileShowProjects] = useState(false);
   const [mobileShowDetails, setMobileShowDetails] = useState(false);
 
@@ -114,8 +115,9 @@ export default function Home() {
         setIsTransitioning(false);
       }, 400);
     } else {
+      // Mobile: Show gallery instead of directly going to projects
       document.body.classList.add("mobile-second", "mobile-no-scroll");
-      setMobileShowProjects(true);
+      setMobileShowGallery(true);
     }
   };
 
@@ -128,6 +130,9 @@ export default function Home() {
         setIsTransitioning(false);
       }, 400);
     } else {
+      // Mobile: Show projects from gallery
+      setMobileShowGallery(false);
+      setMobileShowProjects(true);
       setMobileProject(projectId);
     }
   };
@@ -135,6 +140,7 @@ export default function Home() {
   const handleBackToHero = () => {
     if (isMobile) {
       setMobileProject(1);
+      setMobileShowGallery(false);
       setMobileShowProjects(false);
       setMobileShowDetails(false);
       document.body.classList.remove("mobile-second", "mobile-no-scroll");
@@ -149,11 +155,17 @@ export default function Home() {
   };
 
   const handleBackToGallery = () => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setCurrentSection('gallery');
-      setIsTransitioning(false);
-    }, 400);
+    if (isMobile) {
+      setMobileShowProjects(false);
+      setMobileShowDetails(false);
+      setMobileShowGallery(true);
+    } else {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentSection('gallery');
+        setIsTransitioning(false);
+      }, 400);
+    }
   };
 
   const handleNextProject = () => {
@@ -186,6 +198,9 @@ export default function Home() {
 
   // Show header for all sections except hero
   const showHeader = currentSection !== 'hero' && !isMobile;
+  
+  // Show mobile header when in gallery or projects
+  const showMobileHeader = isMobile && (mobileShowGallery || mobileShowProjects || mobileShowDetails);
 
   return (
     <>
@@ -196,9 +211,14 @@ export default function Home() {
         rel="stylesheet"
       />
 
-      {/* Global Header - Only show when not in hero section */}
+      {/* Desktop Header - Only show when not in hero section */}
       {showHeader && (
         <HeaderBackground onLogoClick={handleBackToHero} />
+      )}
+
+      {/* Mobile Header - Show when in gallery or projects */}
+      {showMobileHeader && (
+        <MobileHeader onLogoClick={handleBackToHero} />
       )}
 
       <div
@@ -250,9 +270,20 @@ export default function Home() {
           </>
         )}
 
+        {/* Mobile Gallery Display */}
+        {isMobile && mobileShowGallery && !mobileShowProjects && !mobileShowDetails && (
+          <div className="mobile-gallery fixed inset-0 z-45 pt-16 bg-white">
+            <ImageGallerySection
+              scrollToProject={handleProjectSelect}
+              navigationProps={{ isNavigating: false, targetProject: null }}
+              onBackToHero={handleBackToHero}
+            />
+          </div>
+        )}
+
         {/* Mobile project display */}
         {isMobile && mobileShowProjects && !mobileShowDetails && (
-          <div className="mobile-projects fixed inset-0 z-45 pt-14 pb-20 bg-gray-900">
+          <div className="mobile-projects fixed inset-0 z-45 pt-16 pb-20 bg-gray-900">
             <div className="h-full overflow-hidden">
               <div className="relative h-full">
                 {projects.map((project) => (
@@ -275,7 +306,7 @@ export default function Home() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
                       <div className="absolute bottom-0 left-0 right-0 p-6 pb-24">
-                        <h2 className="text-3xl font-bold text-orange-500 mb-3">
+                        <h2 className="text-3xl font-bold text-[#191970] mb-3">
                           {project.title}
                         </h2>
                         <p className="text-white/90 text-sm leading-relaxed mb-4">
@@ -283,7 +314,7 @@ export default function Home() {
                         </p>
                         <button
                           onClick={handleMobileDetailsClick}
-                          className="inline-flex items-center gap-2 rounded-lg bg-orange-500 hover:bg-orange-600 active:bg-orange-700 px-4 py-2 text-white font-medium text-sm transition-colors"
+                          className="inline-flex items-center gap-2 rounded-lg bg-[#191970] hover:bg-[#1e2050] active:bg-[#151751] px-4 py-2 text-white font-medium text-sm transition-colors"
                         >
                           <span>Detaylar</span>
                           <svg
@@ -311,7 +342,7 @@ export default function Home() {
             <MobileNavigation
               projects={projects}
               currentProject={mobileProject}
-              onProjectSelect={handleProjectSelect}
+              onProjectSelect={setMobileProject}
             />
           </div>
         )}
@@ -414,5 +445,73 @@ export default function Home() {
         }
       `}</style>
     </>
+  );
+}
+
+// Mobile Header Component
+function MobileHeader({ onLogoClick }: { onLogoClick?: () => void }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  return (
+    <header className="fixed top-0 left-0 right-0 h-16 z-50 bg-[#191970]/95 backdrop-blur-md shadow-lg flex items-center justify-between px-4">
+      <button
+        className="text-white font-semibold text-sm tracking-tight flex items-center"
+        onClick={onLogoClick}
+        aria-label="Ana sayfa"
+      >
+        <span>Ceyhun Tunalı</span>
+        <span className="text-[#96DED1] ml-1">&amp; Sons</span>
+      </button>
+
+      <div className="relative">
+        <button
+          aria-label="Menüyü aç"
+          className="p-2 rounded-md border border-white/20 text-white"
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+
+        {menuOpen && (
+          <div
+            className="absolute right-0 mt-2 w-48 rounded-xl bg-[#191970]/95 backdrop-blur border border-white/20 shadow-xl overflow-hidden"
+            onClick={() => setMenuOpen(false)}
+          >
+            <a
+              href="/aboutus"
+              className="block px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
+            >
+              Hakkımızda
+            </a>
+            <a
+              href="#projeler"
+              className="block px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
+            >
+              Projeler
+            </a>
+            <a
+              href="#iletisim"
+              className="block px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
+            >
+              İletişim
+            </a>
+          </div>
+        )}
+      </div>
+    </header>
   );
 }
