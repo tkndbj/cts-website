@@ -142,11 +142,17 @@ export default function Home() {
 
   const handleBackToHero = () => {
     if (isMobile) {
+      // Complete reset of all mobile states
       setMobileProject(1);
       setMobileShowGallery(false);
       setMobileShowProjects(false);
       setMobileShowDetails(false);
+      
+      // Remove all mobile-specific classes
       document.body.classList.remove("mobile-second", "mobile-no-scroll");
+      
+      // Force reset to hero section
+      setCurrentSection('hero');
     } else {
       setIsTransitioning(true);
       setTimeout(() => {
@@ -231,14 +237,15 @@ export default function Home() {
         style={{ fontFamily: "Figtree, sans-serif" }}
       >
         {/* Hero Section */}
-        <div className={`section-hero absolute inset-0 ${
-          currentSection === 'hero' ? 'active' : ''
-        }`}>
-          <HeroSection
-            scrollToTop={handleBackToHero}
-            onTapAdvance={handleAdvanceToGallery}
-          />
-        </div>
+        {/* Hero Section */}
+<div className={`section-hero absolute inset-0 ${
+  (currentSection === 'hero' && (!isMobile || (!mobileShowGallery && !mobileShowProjects && !mobileShowDetails))) ? 'active' : ''
+}`}>
+  <HeroSection
+    scrollToTop={handleBackToHero}
+    onTapAdvance={handleAdvanceToGallery}
+  />
+</div>
 
         {/* Desktop Gallery & Projects */}
         {!isMobile && (
