@@ -17,7 +17,7 @@ export default function ImageGallerySection({
 }: ImageGallerySectionProps) {
   const [isVisible, setIsVisible] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<any>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   const officeCoordinates = { lng: 33.963165, lat: 35.322848 };

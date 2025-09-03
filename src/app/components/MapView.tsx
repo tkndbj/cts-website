@@ -18,7 +18,7 @@ interface MapViewProps {
 
 export default function MapView({ isOpen, projectId, onClose }: MapViewProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<any>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -242,7 +242,7 @@ export default function MapView({ isOpen, projectId, onClose }: MapViewProps) {
               }}
               className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-400 rounded-lg text-white text-sm font-medium transition"
             >
-              Google Maps'te Aç
+              Google Maps ile Aç
             </button>
             <button
               onClick={() => {
