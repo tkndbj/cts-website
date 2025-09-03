@@ -35,9 +35,12 @@ function MobileNavigation({
                 onClick={() => onProjectSelect(p.id)}
                 className={`flex-shrink-0 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                   currentProject === p.id
-                    ? "bg-[#2a2a8a] text-white"
+                    ? "bg-[#2a2a8a]"
                     : "bg-white/10 text-white/70 active:bg-white/20"
                 }`}
+                style={{
+                  color: currentProject === p.id ? '#96DED1' : undefined // Changed active text color
+                }}
               >
                 {p.title}
               </button>
@@ -55,7 +58,7 @@ export default function Home() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileProject, setMobileProject] = useState(1);
-  const [mobileShowGallery, setMobileShowGallery] = useState(false); // New state for mobile gallery
+  const [mobileShowGallery, setMobileShowGallery] = useState(false);
   const [mobileShowProjects, setMobileShowProjects] = useState(false);
   const [mobileShowDetails, setMobileShowDetails] = useState(false);
 
@@ -306,7 +309,7 @@ export default function Home() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
                       <div className="absolute bottom-0 left-0 right-0 p-6 pb-24">
-                        <h2 className="text-3xl font-bold text-[#191970] mb-3">
+                        <h2 className="text-3xl font-bold mb-3" style={{ color: '#96DED1' }}>
                           {project.title}
                         </h2>
                         <p className="text-white/90 text-sm leading-relaxed mb-4">
@@ -448,12 +451,15 @@ export default function Home() {
   );
 }
 
-// Mobile Header Component
+// Mobile Header Component - Updated with Figtree font
 function MobileHeader({ onLogoClick }: { onLogoClick?: () => void }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 z-50 bg-[#191970]/95 backdrop-blur-md shadow-lg flex items-center justify-between px-4">
+    <header 
+      className="fixed top-0 left-0 right-0 h-16 z-50 bg-[#191970]/95 backdrop-blur-md shadow-lg flex items-center justify-between px-4"
+      style={{ fontFamily: 'Figtree, sans-serif' }} // Added Figtree font
+    >
       <button
         className="text-white font-semibold text-sm tracking-tight flex items-center"
         onClick={onLogoClick}
