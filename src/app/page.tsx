@@ -20,7 +20,7 @@ function MobileNavigation({
 }) {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
-      <div className="bg-gray-900/95 backdrop-blur-lg border-t border-white/10">
+      <div className="bg-[#191970]/95 backdrop-blur-lg border-t border-white/10">
         <div className="px-4 py-3">
           <div className="flex justify-between items-center mb-2">
             <span className="text-xs text-white/60 uppercase tracking-wider">
@@ -35,7 +35,7 @@ function MobileNavigation({
                 onClick={() => onProjectSelect(p.id)}
                 className={`flex-shrink-0 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                   currentProject === p.id
-                    ? "bg-[#191970] text-white"
+                    ? "bg-[#2a2a8a] text-white"
                     : "bg-white/10 text-white/70 active:bg-white/20"
                 }`}
               >

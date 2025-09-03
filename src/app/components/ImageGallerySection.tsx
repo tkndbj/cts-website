@@ -126,193 +126,218 @@ export default function ImageGallerySection({
   }, [isMobile]);
 
   if (isMobile) {
-    // Mobile Layout
+    // Mobile Layout - Horizontally scrollable with clickable buttons
     return (
       <>
         <div className="fixed inset-0 bg-white overflow-hidden">
-          <div className="h-full flex flex-col justify-center px-6 py-8">
-            {/* Mobile Title */}
-            <div className={`transition-all duration-1000 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-            }`}>
-              <h1 className="text-3xl font-bold mb-4 leading-tight text-center">
-                <span className="text-gray-900">Ceyhun Tunalı</span>
-                <br />
-                <span className="text-[#191970]">&amp; Sons</span>
-              </h1>
-            </div>
-
-            {/* Mobile Globe Illustration */}
-            <div className={`transition-all duration-1000 delay-300 mb-6 ${
-              isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
-            }`}>
-              <div className="flex justify-center">
-                <div className="relative">
-                  <div className="w-48 h-48 rounded-full bg-gradient-to-br from-blue-400 to-green-400 shadow-lg flex items-center justify-center">
-                    <div className="absolute inset-2 rounded-full border-2 border-white/30"></div>
-                    <div className="w-4 h-4 bg-[#191970] rounded-full shadow-lg animate-pulse"></div>
-                  </div>
-                  
-                  {/* Floating elements */}
-                  <div className="absolute -top-3 -right-3 w-6 h-6 bg-gradient-to-br from-[#191970] to-[#4169E1] rounded-full animate-float shadow-md"></div>
-                  <div className="absolute top-8 -left-3 w-4 h-4 bg-gradient-to-br from-blue-400 to-cyan-300 rounded-full animate-float-delay-1 shadow-sm"></div>
-                  <div className="absolute -bottom-2 right-8 w-3 h-3 bg-gradient-to-br from-green-400 to-emerald-300 rounded-full animate-float-delay-2 shadow-sm"></div>
+          <div className="h-full overflow-x-auto overflow-y-hidden snap-x snap-mandatory" style={{ scrollBehavior: 'smooth' }}>
+            {/* Horizontal scrolling container */}
+            <div className="flex h-full" style={{ width: '200vw' }}>
+              
+              {/* First Screen - Company Info */}
+              <div className="flex-shrink-0 w-screen h-full flex flex-col justify-center px-6 py-8 snap-start">
+                {/* Mobile Title */}
+                <div className={`transition-all duration-1000 ${
+                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+                }`}>
+                  <h1 className="text-3xl font-bold mb-4 leading-tight text-center">
+                    <span className="text-gray-900">Ceyhun Tunalı</span>
+                    <br />
+                    <span className="text-[#191970]">&amp; Sons</span>
+                  </h1>
                 </div>
-              </div>
-            </div>
 
-            {/* Mobile Subtitle */}
-            <div className={`transition-all duration-1000 delay-200 mb-6 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-            }`}>
-              <p className="text-base text-gray-600 font-light leading-relaxed text-center">
-                40 yılı aşkın deneyimimizle, hayallerinizi gerçeğe dönüştürüyoruz. 
-                Her projede kalite, güven ve mükemmellik vadediyoruz.
-              </p>
-            </div>
+                {/* Mobile Globe Illustration */}
+                <div className={`transition-all duration-1000 delay-300 mb-6 ${
+                  isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                }`}>
+                  <div className="flex justify-center">
+                    <div className="relative">
+                      <div className="w-48 h-48 rounded-full bg-gradient-to-br from-blue-400 to-green-400 shadow-lg flex items-center justify-center">
+                        <div className="absolute inset-2 rounded-full border-2 border-white/30"></div>
+                        <div className="w-4 h-4 bg-[#191970] rounded-full shadow-lg animate-pulse"></div>
+                      </div>
+                      
+                      {/* Floating elements */}
+                      <div className="absolute -top-3 -right-3 w-6 h-6 bg-gradient-to-br from-[#191970] to-[#4169E1] rounded-full animate-float shadow-md"></div>
+                      <div className="absolute top-8 -left-3 w-4 h-4 bg-gradient-to-br from-blue-400 to-cyan-300 rounded-full animate-float-delay-1 shadow-sm"></div>
+                      <div className="absolute -bottom-2 right-8 w-3 h-3 bg-gradient-to-br from-green-400 to-emerald-300 rounded-full animate-float-delay-2 shadow-sm"></div>
+                    </div>
+                  </div>
+                </div>
 
-            {/* Mobile Key Points */}
-            <div className={`transition-all duration-1000 delay-400 mb-8 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-            }`}>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-[#191970] rounded-full flex items-center justify-center mx-auto mb-2">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                      <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                {/* Mobile Subtitle */}
+                <div className={`transition-all duration-1000 delay-200 mb-6 ${
+                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+                }`}>
+                  <p className="text-base text-gray-600 font-light leading-relaxed text-center">
+                    40 yılı aşkın deneyimimizle, hayallerinizi gerçeğe dönüştürüyoruz. 
+                    Her projede kalite, güven ve mükemmellik vadediyoruz.
+                  </p>
+                </div>
+
+                {/* Swipe indicator */}
+                <div className="flex justify-center mb-6">
+                  <div className="flex items-center gap-2 text-gray-400 text-sm animate-bounce">
+                    <span>Kaydırın</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </div>
-                  <h3 className="font-semibold text-gray-900 text-sm mb-1">En Son Teknoloji</h3>
-                  <p className="text-gray-600 text-xs">Modern yapı teknolojileri</p>
                 </div>
-                
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-[#191970] rounded-full flex items-center justify-center mx-auto mb-2">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                      <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-                    </svg>
-                  </div>
-                  <h3 className="font-semibold text-gray-900 text-sm mb-1">Premium Kalite</h3>
-                  <p className="text-gray-600 text-xs">En iyi malzemeler</p>
-                </div>
-                
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-[#191970] rounded-full flex items-center justify-center mx-auto mb-2">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                      <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-                    </svg>
-                  </div>
-                  <h3 className="font-semibold text-gray-900 text-sm mb-1">Uzman Ekip</h3>
-                  <p className="text-gray-600 text-xs">Deneyimli profesyoneller</p>
-                </div>
-                
-                <div className="text-center">
-                  <div className="w-12 h-12 bg-[#191970] rounded-full flex items-center justify-center mx-auto mb-2">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                      <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-                    </svg>
-                  </div>
-                  <h3 className="font-semibold text-gray-900 text-sm mb-1">Çevre Dostu</h3>
-                  <p className="text-gray-600 text-xs">Sürdürülebilir yapılar</p>
-                </div>
-              </div>
-            </div>
 
-            {/* Mobile Action Buttons */}
-            <div className={`transition-all duration-1000 delay-600 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-            }`}>
-              <div className="flex flex-col gap-3 mb-6">
-                <button
-                  onClick={() => scrollToProject(1)}
-                  className="w-full inline-flex items-center justify-center gap-3 bg-[#191970] hover:bg-[#1e2050] active:bg-[#151751] text-white px-6 py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg"
-                >
-                  <span>Projelerimizi İnceleyin</span>
-                  <svg 
-                    width="18" 
-                    height="18" 
-                    viewBox="0 0 24 24" 
-                    fill="none"
-                  >
-                    <path
-                      d="M9 18l6-6-6-6"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
-                
-                <button
-                  onClick={onBackToHero}
-                  className="w-full inline-flex items-center justify-center gap-3 border-2 border-gray-300 hover:border-gray-400 active:border-gray-500 text-gray-700 hover:text-gray-900 px-6 py-4 rounded-xl font-semibold transition-all duration-300 hover:bg-gray-50"
-                >
-                  <svg 
-                    width="18" 
-                    height="18" 
-                    viewBox="0 0 24 24" 
-                    fill="none"
-                  >
-                    <path
-                      d="M15 18l-6-6 6-6"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <span>Ana Sayfa</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Mobile Company Stats */}
-            <div className={`transition-all duration-1000 delay-800 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-            }`}>
-              <div className="pt-4 border-t border-gray-200">
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-[#191970] mb-1">40+</div>
-                    <div className="text-xs text-gray-600">Yıl Deneyim</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-[#191970] mb-1">30+</div>
-                    <div className="text-xs text-gray-600">Tamamlanan Proje</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-[#191970] mb-1">100%</div>
-                    <div className="text-xs text-gray-600">Müşteri Memnuniyeti</div>
+                {/* Company Stats */}
+                <div className={`transition-all duration-1000 delay-800 ${
+                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+                }`}>
+                  <div className="pt-4 border-t border-gray-200">
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-[#191970] mb-1">40+</div>
+                        <div className="text-xs text-gray-600">Yıl Deneyim</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-[#191970] mb-1">30+</div>
+                        <div className="text-xs text-gray-600">Tamamlanan Proje</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-[#191970] mb-1">100%</div>
+                        <div className="text-xs text-gray-600">Müşteri Memnuniyeti</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Office Location Info */}
-            <div className={`transition-all duration-1000 delay-900 mt-4 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
-            }`}>
-              <div className="bg-gray-50 rounded-xl p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-[#191970] to-[#4169E1] rounded-lg flex items-center justify-center">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
-                        stroke="white"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <circle cx="12" cy="10" r="3" stroke="white" strokeWidth="2" />
-                    </svg>
+              {/* Second Screen - Details & Actions */}
+              <div className="flex-shrink-0 w-screen h-full flex flex-col justify-center px-6 py-8 snap-start">
+                {/* Mobile Key Points */}
+                <div className={`transition-all duration-1000 delay-400 mb-8 ${
+                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+                }`}>
+                  <h2 className="text-2xl font-bold text-center mb-8 text-[#191970]">
+                    Neden Bizi Seçmelisiniz?
+                  </h2>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <div className="w-12 h-12 bg-[#191970] rounded-full flex items-center justify-center mx-auto mb-2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                          <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                        </svg>
+                      </div>
+                      <h3 className="font-semibold text-gray-900 text-sm mb-1">En Son Teknoloji</h3>
+                      <p className="text-gray-600 text-xs">Modern yapı teknolojileri</p>
+                    </div>
+                    
+                    <div className="text-center">
+                      <div className="w-12 h-12 bg-[#191970] rounded-full flex items-center justify-center mx-auto mb-2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                          <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                        </svg>
+                      </div>
+                      <h3 className="font-semibold text-gray-900 text-sm mb-1">Premium Kalite</h3>
+                      <p className="text-gray-600 text-xs">En iyi malzemeler</p>
+                    </div>
+                    
+                    <div className="text-center">
+                      <div className="w-12 h-12 bg-[#191970] rounded-full flex items-center justify-center mx-auto mb-2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                          <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                        </svg>
+                      </div>
+                      <h3 className="font-semibold text-gray-900 text-sm mb-1">Uzman Ekip</h3>
+                      <p className="text-gray-600 text-xs">Deneyimli profesyoneller</p>
+                    </div>
+                    
+                    <div className="text-center">
+                      <div className="w-12 h-12 bg-[#191970] rounded-full flex items-center justify-center mx-auto mb-2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                          <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                        </svg>
+                      </div>
+                      <h3 className="font-semibold text-gray-900 text-sm mb-1">Çevre Dostu</h3>
+                      <p className="text-gray-600 text-xs">Sürdürülebilir yapılar</p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 text-sm mb-1">Merkez Ofisimiz</h4>
-                    <p className="text-gray-600 text-xs">
-                      İskele, Kıbrıs<br />
-                      <span className="text-[#191970] font-mono">35.322848, 33.963165</span>
-                    </p>
+                </div>
+
+                {/* Mobile Action Buttons - These are the clickable buttons */}
+                <div className={`transition-all duration-1000 delay-600 relative z-10 ${
+                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+                }`}>
+                  <div className="flex flex-col gap-3 mb-6">
+                    <button
+                      onClick={() => scrollToProject(1)}
+                      className="w-full inline-flex items-center justify-center gap-3 bg-[#191970] hover:bg-[#1e2050] active:bg-[#151751] text-white px-6 py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg active:scale-95 touch-manipulation"
+                      style={{ WebkitTapHighlightColor: 'transparent' }}
+                    >
+                      <span>Projelerimizi İnceleyin</span>
+                      <svg 
+                        width="18" 
+                        height="18" 
+                        viewBox="0 0 24 24" 
+                        fill="none"
+                      >
+                        <path
+                          d="M9 18l6-6-6-6"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+                    
+                    <button
+                      onClick={onBackToHero}
+                      className="w-full inline-flex items-center justify-center gap-3 border-2 border-gray-300 hover:border-gray-400 active:border-gray-500 text-gray-700 hover:text-gray-900 px-6 py-4 rounded-xl font-semibold transition-all duration-300 hover:bg-gray-50 active:scale-95 touch-manipulation"
+                      style={{ WebkitTapHighlightColor: 'transparent' }}
+                    >
+                      <svg 
+                        width="18" 
+                        height="18" 
+                        viewBox="0 0 24 24" 
+                        fill="none"
+                      >
+                        <path
+                          d="M15 18l-6-6 6-6"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      <span>Ana Sayfa</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Office Location Info */}
+                <div className={`transition-all duration-1000 delay-900 mt-4 ${
+                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
+                }`}>
+                  <div className="bg-gray-50 rounded-xl p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#191970] to-[#4169E1] rounded-lg flex items-center justify-center">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                          <path
+                            d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                            stroke="white"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <circle cx="12" cy="10" r="3" stroke="white" strokeWidth="2" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900 text-sm mb-1">Merkez Ofisimiz</h4>
+                        <p className="text-gray-600 text-xs">
+                          İskele, Kıbrıs<br />
+                          <span className="text-[#191970] font-mono">35.322848, 33.963165</span>
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -340,6 +365,23 @@ export default function ImageGallerySection({
 
           .animate-float-delay-2 {
             animation: float 3s ease-in-out infinite 2s;
+          }
+
+          /* Hide scrollbar for mobile horizontal scroll */
+          @media (max-width: 767px) {
+            .overflow-x-auto::-webkit-scrollbar {
+              display: none;
+            }
+            .overflow-x-auto {
+              -ms-overflow-style: none;
+              scrollbar-width: none;
+            }
+            
+            /* Ensure buttons are clickable */
+            button {
+              touch-action: manipulation;
+              -webkit-tap-highlight-color: transparent;
+            }
           }
         `}</style>
       </>
