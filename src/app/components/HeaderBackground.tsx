@@ -1,27 +1,50 @@
-export default function HeaderBackground() {
+export default function HeaderBackground({ onLogoClick }: { onLogoClick?: () => void }) {
   return (
-    <>
-      <div className="second-header-bg fixed top-0 left-0 w-full z-46 pointer-events-none">
-        <div className="header-bg-content h-20 bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 shadow-xl flex items-center justify-center"></div>
+    <div 
+  className="fixed top-0 left-0 z-50 w-full h-20 backdrop-blur-lg border-b"
+  style={{
+    backgroundColor: '	#191970', // Linen white
+borderColor: 'rgba(235, 228, 215, 0.3)'
+  }}
+>
+      <div className="h-full flex items-center justify-between px-8 relative">
+        <div
+          className="cursor-pointer"
+          onClick={onLogoClick}
+        >
+          <h1 className="text-2xl font-bold text-white hover:text-blue-600 transition-colors">
+            Ceyhun Tunalı
+            <span 
+  className="ml-2 hover:opacity-80 transition-opacity"
+  style={{ color: '#96DED1' }} // Custom blue hex code
+>
+  &amp; Sons
+</span>
+          </h1>
+        </div>
+
+        {/* Centered Navigation */}
+        <nav className="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-8">
+          <a
+            href="/aboutus"
+            className="text-white hover:text-blue-300 transition-colors text-lg font-medium"
+          >
+            Hakkımızda
+          </a>
+          <a
+            href="#projelerimiz"
+            className="text-white hover:text-blue-300 transition-colors text-lg font-medium"
+          >
+            Projelerimiz
+          </a>
+          <a
+            href="#iletisim"
+            className="text-white hover:text-blue-300 transition-colors text-lg font-medium"
+          >
+            İletişim
+          </a>
+        </nav>
       </div>
-
-      <style jsx>{`
-        .second-header-bg {
-          opacity: 0;
-          animation: header-bg-appear linear both;
-          animation-timeline: scroll(root);
-          animation-range: 75% 82%;
-        }
-
-        @keyframes header-bg-appear {
-          0% {
-            opacity: 0;
-          }
-          100% {
-            opacity: 1;
-          }
-        }
-      `}</style>
-    </>
+    </div>
   );
 }

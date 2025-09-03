@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 interface NavigationProps {
@@ -10,6 +10,14 @@ interface NavigationProps {
 
 interface FeaturedProjectStoryProps {
   navigationProps?: NavigationProps;
+  currentProject?: number;
+  onBack?: () => void;
+  onNext?: () => void;
+  onPrev?: () => void;
+  hasNext?: boolean;
+  hasPrev?: boolean;
+  projects?: Array<{ id: number; title: string; description: string }>;
+  onProjectSelect?: (projectId: number) => void;
 }
 
 type UnitStats = { m2?: string; banyo?: string; yatak?: string };
@@ -17,7 +25,7 @@ type UnitConfig = Record<
   number,
   Record<string, { image?: string; stats?: UnitStats }>
 >;
-type InteriorConfig = Record<number, Record<string, string[]>>; // projectId -> unitName -> images[]
+type InteriorConfig = Record<number, Record<string, string[]>>;
 
 const UNIT_CONFIG: UnitConfig = {
   1: {
@@ -162,11 +170,18 @@ const UNIT_INTERIORS: InteriorConfig = {
 
 export default function FeaturedProjectStory({
   navigationProps,
+  currentProject = 1,
+  onBack,
+  onNext,
+  onPrev,
+  hasNext = false,
+  hasPrev = false,
+  projects = [],
+  onProjectSelect,
 }: FeaturedProjectStoryProps) {
-  const projects = [
+  const defaultProjects = [
     {
       id: 1,
-      image: "/fourseasons.jpg",
       title: "FOUR SEASONS LIFE",
       description:
         "Çağdaş tasarım çözümleri ile geleceğin yapılarını inşa ediyoruz. Her mevsimin güzelliğini yaşayabileceğiniz modern yaşam alanları.",
@@ -174,7 +189,6 @@ export default function FeaturedProjectStory({
     },
     {
       id: 2,
-      image: "/thesign.jpg",
       title: "THE SIGN",
       description:
         "Uzman ekibimiz ile her detayda mükemmellik arayışı. Şehrin kalbinde prestijli yaşamın yeni adresi.",
@@ -182,7 +196,6 @@ export default function FeaturedProjectStory({
     },
     {
       id: 3,
-      image: "/aurora.jpg",
       title: "AURORA BAY",
       description:
         "Çevre dostu yapılar ile doğaya saygılı inşaat. Denizin kucakladığı huzurlu yaşam alanları.",
@@ -190,7 +203,6 @@ export default function FeaturedProjectStory({
     },
     {
       id: 4,
-      image: "/carob.jpg",
       title: "CAROB HILL",
       description:
         "Zamanında teslimat ve müşteri memnuniyeti odaklı hizmet. Tepenin zirvesinde lüks yaşamın adresi.",
@@ -198,9 +210,12 @@ export default function FeaturedProjectStory({
     },
   ];
 
-  const [activeProjectId, setActiveProjectId] = useState<number | null>(null);
-  const rafRef = useRef<number | null>(null);
-  const prevActiveProjectIdRef = useRef<number | null>(null);
+  const projectImages = [
+    "/fourseasons.jpg",
+    "/thesign.jpg", 
+    "/aurora.jpg",
+    "/carob.jpg"
+  ];
 
   const [selectedUnitByProject, setSelectedUnitByProject] = useState<
     Record<number, string | null>
@@ -208,17 +223,71 @@ export default function FeaturedProjectStory({
   const [selectedInteriorByProject, setSelectedInteriorByProject] = useState<
     Record<number, string | null>
   >({});
-  const [fullscreenProjectId, setFullscreenProjectId] = useState<number | null>(
-    null
-  );
-
-  // FS sırasında görünen projenin snapshot'ı (sadece açılışta set, kapanınca sıfırla)
-  const frozenActiveProjectRef = useRef<number | null>(null);
-
+  const [fullscreenProjectId, setFullscreenProjectId] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [showInteriorTray, setShowInteriorTray] = useState(false);
+  const [showBanner, setShowBanner] = useState(false);
+  const [bannerKey, setBannerKey] = useState(0);
+
   useEffect(() => {
     setMounted(true);
+    // Show banner after component mounts
+    setTimeout(() => {
+      setShowBanner(true);
+    }, 300);
   }, []);
+
+  // Handle project change animations - smoother transitions
+  useEffect(() => {
+    setSelectedUnitByProject({});
+    setSelectedInteriorByProject({});
+    setShowInteriorTray(false);
+    
+    // Animate banner out and back in with new content - slower, smoother
+    setShowBanner(false);
+    setTimeout(() => {
+      setBannerKey(prev => prev + 1);
+      setShowBanner(true);
+    }, 600); // Increased from 300ms to 600ms
+  }, [currentProject]);
+
+  const activeProject = defaultProjects[currentProject - 1];
+  const selectedName = selectedUnitByProject[currentProject] ?? null;
+  const unitData = selectedName ? UNIT_CONFIG?.[currentProject]?.[selectedName] : undefined;
+  const bgImage = selectedInteriorByProject[currentProject] || 
+                  unitData?.image || 
+                  projectImages[currentProject - 1];
+
+  const handleUnitSelect = (unitName: string) => {
+    setSelectedUnitByProject(prev => ({
+      ...prev,
+      [currentProject]: unitName
+    }));
+    setSelectedInteriorByProject(prev => ({
+      ...prev,
+      [currentProject]: null
+    }));
+    setShowInteriorTray(true);
+  };
+
+  const handleUnitDeselect = () => {
+    setSelectedUnitByProject(prev => ({
+      ...prev,
+      [currentProject]: null
+    }));
+    setSelectedInteriorByProject(prev => ({
+      ...prev,
+      [currentProject]: null
+    }));
+    setShowInteriorTray(false);
+  };
+
+  const handleInteriorSelect = (src: string) => {
+    setSelectedInteriorByProject(prev => ({
+      ...prev,
+      [currentProject]: src
+    }));
+  };
 
   const stepFullscreenImage = (pid: number, dir: 1 | -1) => {
     const unitName = selectedUnitByProject[pid];
@@ -226,7 +295,7 @@ export default function FeaturedProjectStory({
     const thumbs = UNIT_INTERIORS[pid]?.[unitName] ?? [];
     if (!thumbs.length) return;
 
-    setSelectedInteriorByProject((prev: Record<number, string | null>) => {
+    setSelectedInteriorByProject((prev) => {
       const cur = prev[pid];
       const curIndex = thumbs.indexOf(cur ?? "");
       const nextIndex =
@@ -236,762 +305,395 @@ export default function FeaturedProjectStory({
     });
   };
 
+  const closeFullscreen = () => {
+    setFullscreenProjectId(null);
+  };
+
   useEffect(() => {
     if (fullscreenProjectId == null) return;
-    const pid = fullscreenProjectId;
-
-    let cooldown = false;
-    let touchStartY: number | null = null;
-
-    const onWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      if (cooldown) return;
-      cooldown = true;
-      window.setTimeout(() => (cooldown = false), 300);
-      const dir: 1 | -1 = e.deltaY > 0 ? 1 : -1;
-      stepFullscreenImage(pid, dir);
-    };
-
-    const onTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches?.[0]?.clientY ?? null;
-    };
-    const onTouchMove = (e: TouchEvent) => {
-      if (touchStartY == null) return;
-      const dy = touchStartY - (e.touches?.[0]?.clientY ?? touchStartY);
-      if (Math.abs(dy) < 24) return;
-      e.preventDefault();
-      if (cooldown) return;
-      cooldown = true;
-      window.setTimeout(() => (cooldown = false), 300);
-      const dir: 1 | -1 = dy > 0 ? 1 : -1;
-      stepFullscreenImage(pid, dir);
-      touchStartY = null;
-    };
-
+    
     const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeFullscreen();
       if (e.key === "ArrowRight") {
         e.preventDefault();
-        stepFullscreenImage(pid, 1);
+        stepFullscreenImage(fullscreenProjectId, 1);
       }
       if (e.key === "ArrowLeft") {
         e.preventDefault();
-        stepFullscreenImage(pid, -1);
+        stepFullscreenImage(fullscreenProjectId, -1);
       }
     };
-
-    window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-    window.addEventListener("keydown", onKey, { passive: false });
-
-    return () => {
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("keydown", onKey);
-      touchStartY = null;
-    };
-  }, [fullscreenProjectId, selectedUnitByProject]);
-
-  // 🔧 FIX: sadece FS AÇILIRKEN snapshot al; FS KAPANIRKEN snapshot'ı temizle (geri set ETME!)
-  useEffect(() => {
-    if (fullscreenProjectId != null) {
-      // FS açılıyor → o anki projeyi kaydet
-      frozenActiveProjectRef.current = activeProjectId;
-    } else {
-      // FS kapandı → snapshot'ı sıfırla (scroll ve closeFullscreen belirlesin)
-      frozenActiveProjectRef.current = null;
-    }
-  }, [fullscreenProjectId]); // <-- activeProjectId bağımlılığını kaldırdık
-
-  useEffect(() => {
-    const el = document.documentElement; // <html>
-    if (fullscreenProjectId != null) el.classList.add("fs-lock");
-    else el.classList.remove("fs-lock");
-    return () => el.classList.remove("fs-lock");
-  }, [fullscreenProjectId]);
-
-  const getScrollInfo = () => {
-    const proxy = document.querySelector(".scroll-proxy") as HTMLElement | null;
-    const vh = window.innerHeight;
-    const maxScroll = proxy
-      ? Math.max(proxy.offsetHeight - vh, 1)
-      : Math.max(document.body.scrollHeight - vh, 1);
-    const y = window.scrollY;
-    const pct = Math.min(Math.max(y / maxScroll, 0), 1);
-    return { pct };
-  };
-
-  const projectFromPct = (pct: number): number | null => {
-    if (pct < 0.82) return null;
-    if (pct < 0.86) return 1;
-    if (pct < 0.9) return 2;
-    if (pct < 0.94) return 3;
-    return 4; // pct >= 0.94
-  };
-
-  useEffect(() => {
-    const onScroll = () => {
-      if (fullscreenProjectId != null) return; // FS açıkken kilitli
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      rafRef.current = requestAnimationFrame(() => {
-        const { pct } = getScrollInfo();
-        const pid = projectFromPct(pct);
-        setActiveProjectId(pid);
-      });
-    };
-
-    onScroll(); // ilk durum
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, [fullscreenProjectId]);
-
-  useEffect(() => {
-    const prev = prevActiveProjectIdRef.current;
-    if (prev && prev !== activeProjectId) {
-      setSelectedUnitByProject((prevState) => {
-        if (!prevState[prev]) return prevState;
-        return { ...prevState, [prev]: null };
-      });
-      setSelectedInteriorByProject((prevState) => {
-        if (!prevState[prev]) return prevState;
-        return { ...prevState, [prev]: null };
-      });
-    }
-    prevActiveProjectIdRef.current = activeProjectId;
-  }, [activeProjectId]);
-
-  const getSelectedUnitName = (projectId: number) =>
-    selectedUnitByProject[projectId] ?? null;
-
-  const getUnitData = (
-    projectId: number,
-    unitName: string | null | undefined
-  ) => {
-    if (!unitName) return undefined;
-    return UNIT_CONFIG?.[projectId]?.[unitName];
-  };
-
-  const getProjectBgImage = (projectId: number, defaultImage: string) => {
-    const chosenInterior = selectedInteriorByProject[projectId];
-    if (chosenInterior) return chosenInterior;
-    const name = getSelectedUnitName(projectId);
-    const data = getUnitData(projectId, name);
-    return data?.image || defaultImage;
-  };
-
-  useEffect(() => {
-    if (navigationProps?.isNavigating && navigationProps?.targetProject) {
-      const targetSlide = document.querySelector(
-        `.hero-slide-${navigationProps.targetProject}`
-      );
-      const targetCopy = document.querySelector(
-        `.hero-copy-${navigationProps.targetProject}`
-      );
-      if (targetSlide && targetCopy) {
-        (targetSlide as HTMLElement).style.opacity = "1";
-        (targetCopy as HTMLElement).style.opacity = "1";
-        setTimeout(() => {
-          (targetSlide as HTMLElement).style.opacity = "";
-          (targetCopy as HTMLElement).style.opacity = "";
-        }, 900);
-      }
-    }
-  }, [navigationProps?.isNavigating, navigationProps?.targetProject]);
-
-  const closeFullscreen = () => {
-    setFullscreenProjectId(null);
-    document.documentElement.classList.remove("fs-lock");
-    document.body.style.overflow = "";
-
-    // FS kapanınca aktif projeyi "mevcut scroll yüzdesine" göre belirle
-    const apply = () => {
-      const { pct } = getScrollInfo();
-      setActiveProjectId(projectFromPct(pct));
-    };
-    apply();
-    requestAnimationFrame(apply); // bir sonraki frame'de tekrar (race temiz)
-  };
-
-  useEffect(() => {
-    if (fullscreenProjectId == null) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeFullscreen();
-    };
+    
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [fullscreenProjectId]);
+  }, [fullscreenProjectId, selectedUnitByProject]);
 
-  useEffect(() => {
-    if (fullscreenProjectId != null) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [fullscreenProjectId]);
+  const thumbs = selectedName ? (UNIT_INTERIORS[currentProject]?.[selectedName] ?? []) : [];
 
   return (
     <>
-      <div className="featured-hero fixed top-80px left-0 w-full h-[calc(100vh-80px)] z-[46] overflow-hidden">
-        {projects.map((p) => {
-          const selectedName = getSelectedUnitName(p.id);
-          const bgImage = getProjectBgImage(p.id, p.image);
-          return (
-            <div key={p.id} className={`hero-slide hero-slide-${p.id} z-[1]`}>
-              <Image
-                src={bgImage}
-                alt={p.title}
-                fill
-                priority={p.id === 1}
-                style={{ objectFit: "cover" }}
-                unoptimized
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/15 to-black/30" />
-            </div>
-          );
-        })}
-
-        {projects.map((p) => {
-          const selectedName = getSelectedUnitName(p.id);
-          const unitData = getUnitData(p.id, selectedName);
-          const displayTitle = selectedName || p.title;
-
-          return (
-            <div
-              key={p.id}
-              className={`hero-copy hero-copy-${p.id} ${
-                selectedName ? "items-start pt-16" : "items-center"
-              }`}
-              style={{
-                pointerEvents:
-                  activeProjectId === p.id
-                    ? ("auto" as const)
-                    : ("none" as const),
-                zIndex: activeProjectId === p.id ? 3 : 2,
-              }}
+      {/* Modern Project Navigation Bar - positioned below main header */}
+      <div 
+        className="fixed top-20 left-0 z-40 w-full h-16 backdrop-blur-xl border-b shadow-lg"
+        style={{
+          backgroundColor: '#191970',
+          borderColor: 'rgba(235, 228, 215, 0.3)'
+        }}
+      >
+        <div className="h-full flex items-center justify-between px-6">
+          {/* Back button */}
+          <div className="flex items-center">
+            <button
+              onClick={onBack}
+              className="group inline-flex items-center gap-3 px-4 py-2.5 rounded-xl bg-black/5 hover:bg-black/10 border border-black/10 hover:border-orange-400/30 transition-all duration-300 text-gray-800 backdrop-blur-sm"
             >
-              <div className="px-[5%] text-left max-w-[1200px]">
-                {selectedName && (
-                  <div className="mb-4 flex items-center gap-2 pointer-events-auto">
-                    <button
-                      onClick={() => {
-                        setSelectedUnitByProject((prev) => ({
-                          ...prev,
-                          [p.id]: null,
-                        }));
-                        setSelectedInteriorByProject((prev) => ({
-                          ...prev,
-                          [p.id]: null,
-                        }));
-                      }}
-                      className="inline-flex items-center gap-2 rounded-xl bg-black/70 hover:bg-black/80 border border-white/25 px-3 py-2 text-white transition backdrop-blur-sm"
-                      title="Geri"
-                    >
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <path
-                          d="M15 18l-6-6 6-6"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <span className="text-sm">Geri</span>
-                    </button>
+              <svg 
+                width="18" 
+                height="18" 
+                viewBox="0 0 24 24" 
+                fill="none"
+                className="group-hover:text-orange-400 transition-colors"
+              >
+                <path
+                  d="M15 18l-6-6 6-6"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span className="text-sm font-medium">Projeler</span>
+            </button>
+          </div>
 
-                    <button
-                      onClick={() => setFullscreenProjectId(p.id)}
-                      className="inline-flex items-center gap-2 rounded-xl bg-black/70 hover:bg-black/80 border border-white/25 px-3 py-2 text-white transition backdrop-blur-sm"
-                      title="Tam ekran"
-                    >
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <path
-                          d="M9 3H3v6M21 9V3h-6M3 15v6h6M15 21h6v-6"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <span className="text-sm">Tam ekran</span>
-                    </button>
-
-                    {/* Unit name moved here with reduced font size */}
-                    <h2 className="text-2xl md:text-3xl font-extrabold text-orange-500 tracking-tight drop-shadow-[0_6px_16px_rgba(0,0,0,0.45)]">
-                      {displayTitle}
-                    </h2>
-                  </div>
-                )}
-
-                {!selectedName && (
-                  <h2 className="text-5xl md:text-7xl font-extrabold text-orange-500 tracking-tight mb-4 drop-shadow-[0_6px_16px_rgba(0,0,0,0.45)]">
-                    {displayTitle}
-                  </h2>
-                )}
-
-                {/* Description only shown when no unit is selected */}
-                {!selectedName && (
-                  <p className="max-w-3xl text-white/95 text-lg md:text-2xl font-light leading-relaxed drop-shadow-[0_4px_12px_rgba(0,0,0,0.45)]">
-                    {p.description}
-                  </p>
-                )}
-
-                <div
-                  className={`${
-                    selectedName ? "mt-4" : "mt-8"
-                  } pointer-events-auto`}
-                >
-                  <div className="text-sm uppercase tracking-widest text-white/80 mb-1 font-medium">
-                    Daire Tipleri
-                  </div>
-                  <div className="text-xs text-white/60 mb-4 font-light">
-                    Detay için tıklayın
-                  </div>
-                  <div
-                    className={`grid grid-cols-2 md:grid-cols-4 ${
-                      selectedName ? "gap-2" : "gap-3"
-                    } max-w-2xl`}
+          {/* Project Names Navigation - Centered */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <div className="flex items-center gap-1 bg-black/20 rounded-2xl p-1 backdrop-blur-xl border border-white/10">
+              {defaultProjects.map((project) => {
+                const isActive = currentProject === project.id;
+                
+                return (
+                  <button
+                    key={project.id}
+                    onClick={() => onProjectSelect?.(project.id)}
+                    className={`relative px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-300 whitespace-nowrap ${
+                      isActive
+                        ? 'text-white shadow-lg scale-105'
+                        : 'text-white hover:text-white/80 hover:bg-white/10'
+                    }`}
+                    style={isActive ? { backgroundColor: '#1F51FF' } : undefined}
                   >
-                    {p.unitTypes.map((u, index) => {
-                      const isActive = selectedName === u;
+                    {project.title}
+                    {isActive && (
+                      <div className="absolute inset-0 bg-blue-600/20 rounded-xl animate-pulse" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Navigation arrows */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onPrev}
+              disabled={!hasPrev}
+              className={`p-2.5 rounded-xl transition-all duration-300 ${
+                hasPrev 
+                  ? 'bg-black/5 hover:bg-black/10 text-gray-700 hover:text-blue-600 border border-black/10 hover:border-blue-400/30' 
+                  : 'text-gray-400 cursor-not-allowed bg-black/5 border border-black/5'
+              }`}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M15 18l-6-6 6-6"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+            
+            <button
+              onClick={onNext}
+              disabled={!hasNext}
+              className={`p-2.5 rounded-xl transition-all duration-300 ${
+                hasNext 
+                  ? 'bg-white/5 hover:bg-white/10 text-white hover:text-blue-600 border border-white/10 hover:border-blue-400/30' 
+                  : 'text-white/20 cursor-not-allowed bg-white/5 border border-white/5'
+              }`}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M9 18l6-6-6-6"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Project Details Banner - slides from left with smoother transition */}
+      <div 
+        key={bannerKey}
+        className={`fixed left-0 top-40 z-30 transition-all duration-700 ease-in-out ${
+          showBanner ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
+        }`}
+      >
+        <div 
+          className="rounded-r-2xl shadow-xl backdrop-blur-sm border-r border-t border-b border-white/10 px-6 py-5 max-w-md"
+          style={{ backgroundColor: '#191970' }}
+        >
+          {/* Project Title with Fullscreen Button */}
+          <div className="flex items-center justify-between mb-3">
+            <h2 
+              className="text-2xl md:text-3xl font-bold tracking-tight"
+              style={{ color: '#96DED1' }}
+            >
+              {activeProject.title}
+            </h2>
+            
+            {/* Fullscreen Button - only show when unit is selected */}
+            {selectedName && (
+              <button
+                onClick={() => setFullscreenProjectId(currentProject)}
+                className="inline-flex items-center gap-2 rounded-xl bg-black/20 hover:bg-black/30 border border-white/25 px-3 py-2 text-white transition backdrop-blur-sm ml-3"
+                title="Tam ekran"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M9 3H3v6M21 9V3h-6M3 15v6h6M15 21h6v-6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            )}
+          </div>
+          
+          {/* Project Description */}
+          <p className="text-white text-sm md:text-base font-light leading-relaxed mb-4">
+            {activeProject.description}
+          </p>
+          
+          {/* Unit Types Section */}
+          <div>
+            <div className="text-xs uppercase tracking-widest text-white/80 mb-2 font-medium">
+              Daire Tipleri
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {activeProject.unitTypes.map((unitType, index) => {
+                const isActive = selectedName === unitType;
+                return (
+                  <button
+                    key={unitType}
+                    onClick={() => handleUnitSelect(unitType)}
+                    className={`relative overflow-hidden rounded-lg border px-3 py-2 text-sm font-medium transition-all duration-300 ${
+                      isActive
+                        ? 'border-orange-400/80 bg-orange-400/10 text-white scale-105'
+                        : 'border-white/20 bg-white/5 text-white/90 hover:border-white/40 hover:bg-white/10'
+                    }`}
+                    style={{
+                      animationDelay: `${index * 100}ms`,
+                    }}
+                  >
+                    {unitType}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content - adjusted for two bars */}
+      <div className="fixed inset-0 pt-36">
+        <div className="relative w-full h-full">
+          {/* Background Image */}
+          <Image
+            src={bgImage}
+            alt={activeProject.title}
+            fill
+            priority
+            style={{ objectFit: "cover" }}
+            className="animate-fadeIn"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/15 to-black/30" />
+
+          {/* Unit Stats */}
+          {selectedName && unitData && (
+            <div className="fixed right-8 top-1/2 transform -translate-y-1/2 z-10 animate-slideInRight">
+              <div className="flex flex-col gap-3">
+                <div className="rounded-xl border border-white/20 backdrop-blur-md px-4 py-3 text-center min-w-[120px]" style={{ backgroundColor: 'rgba(0, 0, 128, 0.3)' }}>
+                  <div className="text-xs uppercase tracking-wider text-white/70">
+                    Metre Kare
+                  </div>
+                  <div className="text-xl md:text-2xl font-bold text-white mt-1">
+                    {unitData.stats?.m2 ?? "—"}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/20 backdrop-blur-md px-4 py-3 text-center min-w-[120px]" style={{ backgroundColor: 'rgba(0, 0, 128, 0.3)' }}>
+                  <div className="text-xs uppercase tracking-wider text-white/70">
+                    Banyo
+                  </div>
+                  <div className="text-xl md:text-2xl font-bold text-white mt-1">
+                    {unitData.stats?.banyo ?? "—"}
+                  </div>
+                </div>
+                <div className="rounded-xl border border-white/20 backdrop-blur-md px-4 py-3 text-center min-w-[120px]" style={{ backgroundColor: 'rgba(0, 0, 128, 0.3)' }}>
+                  <div className="text-xs uppercase tracking-wider text-white/70">
+                    Yatak Odası
+                  </div>
+                  <div className="text-xl md:text-2xl font-bold text-white mt-1">
+                    {unitData.stats?.yatak ?? "—"}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+         {/* Interior Thumbnails */}
+{selectedName && thumbs.length > 0 && (
+  <div className={`fixed left-0 right-0 bottom-0 z-[5] px-[5%] pb-6 pt-3 transition-transform duration-500 ${
+    showInteriorTray ? 'translate-y-0' : 'translate-y-full'
+  }`}>
+    <div className="flex justify-center">
+      <div className="rounded-2xl border border-white/15 backdrop-blur-xl shadow-2xl" style={{ backgroundColor: 'rgba(0, 0, 128, 0.3)' }}>
+        <div className="px-4 py-3 text-white/80 text-xs uppercase tracking-wider">
+          İç Mekan Görselleri
+        </div>
+                <div className="px-4 pb-4">
+                <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${thumbs.length}, minmax(100px, 120px))` }}>
+                    {thumbs.map((src) => {
+                      const isPicked = selectedInteriorByProject[currentProject] === src;
                       return (
-                        <div
-                          key={u}
-                          className={`group relative overflow-hidden rounded-xl border-3 border-orange-400/30 bg-black/60 ${
-                            selectedName ? "px-3 py-2" : "px-4 py-3"
-                          } backdrop-blur-lg shadow-xl transition-all duration-300 cursor-pointer ${
-                            isActive
-                              ? "scale-105 border-orange-400/80 ring-2 ring-orange-400"
-                              : "hover:scale-105 hover:border-orange-400/60"
+                        <button
+                          key={src}
+                          className={`group relative aspect-[4/3] overflow-hidden rounded-lg border transition-all duration-300 ${
+                            isPicked
+                              ? 'border-orange-400/80 ring-2 ring-orange-400'
+                              : 'border-white/15 hover:border-white/35'
                           }`}
-                          style={{
-                            animation: `unit-fade-in 0.6s ease-out forwards`,
-                            animationDelay: `${index * 0.1}s`,
-                            opacity: 0,
-                          }}
-                          onClick={() => {
-                            if (activeProjectId === p.id) {
-                              setSelectedUnitByProject((prev) => ({
-                                ...prev,
-                                [p.id]: u,
-                              }));
-                              setSelectedInteriorByProject((prev) => ({
-                                ...prev,
-                                [p.id]: null,
-                              }));
-                            }
-                          }}
-                          role="button"
-                          aria-pressed={isActive}
-                          tabIndex={0}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              if (activeProjectId === p.id) {
-                                setSelectedUnitByProject((prev) => ({
-                                  ...prev,
-                                  [p.id]: u,
-                                }));
-                                setSelectedInteriorByProject((prev) => ({
-                                  ...prev,
-                                  [p.id]: null,
-                                }));
-                              }
-                            }
-                          }}
+                          onClick={() => handleInteriorSelect(src)}
                         >
-                          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                          <div className="relative z-10 text-center">
-                            <div
-                              className={`${
-                                selectedName
-                                  ? "text-sm md:text-base"
-                                  : "text-base md:text-lg"
-                              } font-semibold text-white/95 mb-1`}
-                            >
-                              {u}
-                            </div>
-                            <div className="w-full h-0.5 bg-gradient-to-r from-orange-400/60 to-orange-500/60 rounded-full opacity-70" />
-                          </div>
-                        </div>
+                          <Image
+                            src={src}
+                            alt="Interior"
+                            fill
+                            style={{ objectFit: "cover" }}
+                            unoptimized
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </button>
                       );
                     })}
                   </div>
                 </div>
               </div>
+            </div>
+            </div>
+          )}
+        </div>
+      </div>
 
-              {/* Specifications moved to center right when unit is selected */}
-              {selectedName && (
-                <div className="fixed right-8 top-1/2 transform -translate-y-1/2 pointer-events-auto z-10">
-                  <div className="flex flex-col gap-3">
-                    <div className="rounded-xl border border-white/20 bg-black/70 backdrop-blur-md px-4 py-3 text-center min-w-[120px]">
-                      <div className="text-xs uppercase tracking-wider text-white/70">
-                        Metre Kare
-                      </div>
-                      <div className="text-xl md:text-2xl font-bold text-white mt-1">
-                        {unitData?.stats?.m2 ?? "—"}
-                      </div>
+      {/* Fullscreen Portal */}
+      {mounted && fullscreenProjectId != null && createPortal(
+        (() => {
+          const pid = fullscreenProjectId;
+          const unitName = selectedUnitByProject[pid];
+          if (!unitName) return null;
+          const activeImage =
+            selectedInteriorByProject[pid] ||
+            UNIT_CONFIG?.[pid]?.[unitName]?.image ||
+            projectImages[pid - 1] ||
+            "";
+          const fsThumbList = UNIT_INTERIORS[pid]?.[unitName] ?? [];
+
+          return (
+            <div className="fixed inset-0 z-[9999] bg-black animate-fadeIn">
+              <div className="absolute inset-0 z-[1]">
+                {activeImage && (
+                  <Image
+                    src={activeImage}
+                    alt="Fullscreen"
+                    fill
+                    style={{ objectFit: "contain" }}
+                    unoptimized
+                    priority
+                  />
+                )}
+              </div>
+
+              <button
+                onClick={closeFullscreen}
+                className="absolute top-4 left-4 z-[2] inline-flex items-center gap-2 rounded-xl bg-black/70 hover:bg-black/60 border border-white/25 px-3 py-2 text-white transition backdrop-blur-sm"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M15 18l-6-6 6-6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className="text-sm">Geri</span>
+              </button>
+
+              {fsThumbList.length > 0 && (
+                <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-[2] max-h-[80vh] overflow-y-auto">
+                  <div className="rounded-2xl border border-white/15 bg-transparent backdrop-blur-xl shadow-2xl p-4">
+                    <div className="text-white/80 text-xs uppercase tracking-wider mb-3 text-center">
+                      İç Mekan Görselleri
                     </div>
-                    <div className="rounded-xl border border-white/20 bg-black/70 backdrop-blur-md px-4 py-3 text-center min-w-[120px]">
-                      <div className="text-xs uppercase tracking-wider text-white/70">
-                        Banyo
-                      </div>
-                      <div className="text-xl md:text-2xl font-bold text-white mt-1">
-                        {unitData?.stats?.banyo ?? "—"}
-                      </div>
-                    </div>
-                    <div className="rounded-xl border border-white/20 bg-black/70 backdrop-blur-md px-4 py-3 text-center min-w-[120px]">
-                      <div className="text-xs uppercase tracking-wider text-white/70">
-                        Yatak Odası
-                      </div>
-                      <div className="text-xl md:text-2xl font-bold text-white mt-1">
-                        {unitData?.stats?.yatak ?? "—"}
-                      </div>
+                    <div className="flex flex-col gap-2 max-w-[120px]">
+                      {fsThumbList.map((src) => {
+                        const isPicked = selectedInteriorByProject[pid] === src;
+                        return (
+                          <button
+                            key={src}
+                            className={`group relative aspect-[4/3] overflow-hidden rounded-lg border transition-all duration-300 ${
+                              isPicked
+                                ? 'border-orange-400/80 ring-2 ring-orange-400'
+                                : 'border-white/15 hover:border-white/35'
+                            }`}
+                            onClick={() =>
+                              setSelectedInteriorByProject((prev) => ({
+                                ...prev,
+                                [pid]: src,
+                              }))
+                            }
+                          >
+                            <Image
+                              src={src}
+                              alt="Interior"
+                              fill
+                              style={{ objectFit: "cover" }}
+                              unoptimized
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
               )}
-
-              {selectedName &&
-                (() => {
-                  const thumbs = UNIT_INTERIORS[p.id]?.[selectedName] ?? [];
-                  if (!thumbs.length) return null;
-                  return (
-                    <div
-                      className={`thumb-tray fixed left-0 right-0 bottom-0 z-[5] px-[5%] pb-6 pt-3 ${
-                        activeProjectId === p.id ? "thumb-tray--open" : ""
-                      }`}
-                      style={{
-                        pointerEvents:
-                          activeProjectId === p.id ? "auto" : "none",
-                      }}
-                    >
-                      <div className="mx-auto max-w-[1200px] rounded-2xl border border-white/15 bg-black/50 backdrop-blur-xl shadow-2xl">
-                        <div className="px-4 py-3 text-white/80 text-xs uppercase tracking-wider">
-                          İç Mekan Görselleri
-                        </div>
-                        <div className="px-4 pb-4">
-                          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-2">
-                            {thumbs.map((src) => {
-                              const isPicked =
-                                selectedInteriorByProject[p.id] === src;
-                              return (
-                                <button
-                                  key={src}
-                                  className={`group relative aspect-[4/3] overflow-hidden rounded-lg border transition-all duration-300 ${
-                                    isPicked
-                                      ? "border-orange-400/80 ring-2 ring-orange-400"
-                                      : "border-white/15 hover:border-white/35"
-                                  }`}
-                                  onClick={() => {
-                                    if (activeProjectId === p.id) {
-                                      setSelectedInteriorByProject((prev) => ({
-                                        ...prev,
-                                        [p.id]: src,
-                                      }));
-                                    }
-                                  }}
-                                >
-                                  <Image
-                                    src={src}
-                                    alt="Interior"
-                                    fill
-                                    style={{ objectFit: "cover" }}
-                                    unoptimized
-                                  />
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })()}
             </div>
           );
-        })}
-      </div>
-
-      {mounted &&
-        createPortal(
-          (() => {
-            if (fullscreenProjectId == null) return null;
-            const pid = fullscreenProjectId;
-            const unitName = selectedUnitByProject[pid];
-            if (!unitName) return null;
-            const activeImage =
-              selectedInteriorByProject[pid] ||
-              UNIT_CONFIG?.[pid]?.[unitName]?.image ||
-              projects.find((pr) => pr.id === pid)?.image ||
-              "";
-            const thumbs = UNIT_INTERIORS[pid]?.[unitName] ?? [];
-
-            return (
-              <div className="fs-overlay fixed inset-0 z-[9999] pointer-events-auto">
-                <div className="absolute inset-0 bg-black" />
-                <div className="absolute inset-0 z-[1]">
-                  {activeImage && (
-                    <Image
-                      src={activeImage}
-                      alt="Fullscreen"
-                      fill
-                      style={{ objectFit: "contain" }}
-                      unoptimized
-                      priority
-                      className="fs-image"
-                    />
-                  )}
-                  <div className="absolute inset-0 bg-black/20" />
-                </div>
-
-                <div className="absolute top-4 left-4 z-[2]">
-                  <button
-                    onClick={closeFullscreen}
-                    className="inline-flex items-center gap-2 rounded-xl bg-black/70 hover:bg-black/60 border border-white/25 px-3 py-2 text-white transition backdrop-blur-sm"
-                    title="Kapat"
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M15 18l-6-6 6-6"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    <span className="text-sm">Geri</span>
-                  </button>
-                </div>
-
-                {thumbs.length > 0 && (
-                  <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-[2] max-h-[80vh] overflow-y-auto">
-                    <div className="rounded-2xl border border-white/15 bg-black/50 backdrop-blur-xl shadow-2xl p-4">
-                      <div className="text-white/80 text-xs uppercase tracking-wider mb-3 text-center">
-                        İç Mekan Görselleri
-                      </div>
-                      <div className="flex flex-col gap-2 max-w-[120px]">
-                        {thumbs.map((src) => {
-                          const isPicked =
-                            selectedInteriorByProject[pid] === src;
-                          return (
-                            <button
-                              key={src}
-                              className={`group relative aspect-[4/3] overflow-hidden rounded-lg border transition-all duration-300 ${
-                                isPicked
-                                  ? "border-orange-400/80 ring-2 ring-orange-400"
-                                  : "border-white/15 hover:border-white/35"
-                              }`}
-                              onClick={() =>
-                                setSelectedInteriorByProject((prev) => ({
-                                  ...prev,
-                                  [pid]: src,
-                                }))
-                              }
-                            >
-                              <Image
-                                src={src}
-                                alt="Interior"
-                                fill
-                                style={{ objectFit: "cover" }}
-                                unoptimized
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })(),
-          document.body
-        )}
+        })(),
+        document.body
+      )}
 
       <style jsx>{`
-        .top-80px {
-          top: 80px;
-        }
-
-        .hero-slide,
-        .hero-copy {
-          position: absolute;
-          inset: 0;
-          opacity: 0;
-        }
-        .hero-copy {
-          display: flex;
-          justify-content: flex-start;
-          transform: translateY(10px);
-          pointer-events: none; /* default kapalı; aktifte inline ile açıyoruz */
-          z-index: 2;
-        }
-
-        @keyframes unit-fade-in {
-          0% {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .hero-slide-1 {
-          animation: slide-in linear both;
-          animation-timeline: scroll(root);
-          animation-range: 82% 86%;
-        }
-        .hero-copy-1 {
-          animation: copy-in linear both;
-          animation-timeline: scroll(root);
-          animation-range: 82% 86%;
-        }
-
-        .hero-slide-2 {
-          animation: slide-in linear both;
-          animation-timeline: scroll(root);
-          animation-range: 86% 90%;
-        }
-        .hero-copy-2 {
-          animation: copy-in linear both;
-          animation-timeline: scroll(root);
-          animation-range: 86% 90%;
-        }
-
-        .hero-slide-3 {
-          animation: slide-in linear both;
-          animation-timeline: scroll(root);
-          animation-range: 90% 94%;
-        }
-        .hero-copy-3 {
-          animation: copy-in linear both;
-          animation-timeline: scroll(root);
-          animation-range: 90% 94%;
-        }
-
-        .hero-slide-4 {
-          animation: slide-last linear both;
-          animation-timeline: scroll(root);
-          animation-range: 94% 98%;
-        }
-        .hero-copy-4 {
-          animation: copy-last linear both;
-          animation-timeline: scroll(root);
-          animation-range: 94% 98%;
-        }
-
-        @keyframes slide-in {
-          0% {
-            opacity: 0;
-            transform: scale(1.02);
-          }
-          15% {
-            opacity: 1;
-            transform: scale(1);
-          }
-          85% {
-            opacity: 1;
-          }
-          100% {
-            opacity: 0;
-          }
-        }
-        @keyframes slide-last {
-          0% {
-            opacity: 0;
-            transform: scale(1.02);
-          }
-          30% {
-            opacity: 1;
-            transform: scale(1);
-          }
-          100% {
-            opacity: 1;
-          }
-        }
-
-        @keyframes copy-in {
-          0% {
-            opacity: 0;
-            transform: translateX(-100px);
-          }
-          25% {
-            opacity: 1;
-            transform: translateX(0);
-          }
-          75% {
-            opacity: 1;
-            transform: translateX(0);
-          }
-          100% {
-            opacity: 0;
-            transform: translateX(-100px);
-          }
-        }
-        @keyframes copy-last {
-          0% {
-            opacity: 0;
-            transform: translateX(-100px);
-          }
-          30% {
-            opacity: 1;
-            transform: translateX(0);
-          }
-          100% {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        .hero-copy {
-          will-change: transform, opacity;
-        }
-        .featured-hero {
-          contain: layout paint;
-          will-change: opacity, transform;
-        }
-
-        @media (max-width: 768px) {
-          .hero-copy :global(h2) {
-            font-size: 2.2rem;
-          }
-          .hero-copy :global(p) {
-            font-size: 1rem;
-          }
-        }
-
-        .thumb-tray {
-          transform: translateY(110%);
-          transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .thumb-tray--open {
-          transform: translateY(0%);
-        }
-
-        .fs-overlay {
-          animation: fs-fade 240ms ease-out both;
-        }
-        @keyframes fs-fade {
+        @keyframes fadeIn {
           from {
             opacity: 0;
           }
@@ -999,27 +701,74 @@ export default function FeaturedProjectStory({
             opacity: 1;
           }
         }
-        2 .fs-image {
-          opacity: 0;
-          animation: fs-img-in 260ms ease-out forwards;
-        }
-        @keyframes fs-img-in {
+
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
           to {
             opacity: 1;
+            transform: translateY(0);
           }
         }
 
-        :global(html.fs-lock) .featured-hero .hero-slide,
-        :global(html.fs-lock) .featured-hero .hero-copy {
-          animation-play-state: paused !important;
+        @keyframes slideUpDelay {
+          0% {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          30% {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
 
-        .hero-slide {
-          pointer-events: none;
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
-        .hero-copy,
-        .thumb-tray {
-          touch-action: manipulation;
+
+        @keyframes slideInRight {
+          from {
+            opacity: 0;
+            transform: translate(30px, -50%);
+          }
+          to {
+            opacity: 1;
+            transform: translate(0, -50%);
+          }
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.5s ease-out;
+        }
+
+        .animate-slideUp {
+          animation: slideUp 0.6s ease-out;
+        }
+
+        .animate-slideUpDelay {
+          animation: slideUpDelay 0.8s ease-out;
+        }
+
+        .animate-fadeInUp {
+          opacity: 0;
+          animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .animate-slideInRight {
+          animation: slideInRight 0.6s ease-out;
         }
       `}</style>
     </>

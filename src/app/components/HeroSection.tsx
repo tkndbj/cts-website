@@ -1,8 +1,3 @@
-interface HeroSectionProps {
-  scrollToTop: () => void;
-  onTapAdvance: () => void;
-}
-
 import { useEffect, useState } from "react";
 
 export default function HeroSection({
@@ -37,11 +32,11 @@ export default function HeroSection({
     return () => observer.disconnect();
   }, []);
 
-  // Desktop/Tablet View (unchanged)
+  // Desktop/Tablet View - No header, just hero content
   if (!isMobile) {
     return (
       <>
-        <div className="hero-header fixed top-0 left-0 z-50 w-full h-screen flex items-center justify-center">
+        <div className="hero-container">
           <div className="video-container absolute inset-0 w-full h-full overflow-hidden">
             <video
               className="video-background absolute top-0 left-0 w-full h-full object-cover"
@@ -57,60 +52,36 @@ export default function HeroSection({
             <div className="video-overlay absolute inset-0 bg-black/40 pointer-events-none"></div>
           </div>
 
-          <div
-            className="company-title cursor-pointer relative z-10"
-            onClick={scrollToTop}
-          >
-            <h1 className="company-title__h1 font-bold text-white tracking-tight hover:text-orange-200 transition-colors duration-300 drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
-              <span className="nowrap">Ceyhun Tunalı</span>
-              <br />
-              <span className="text-orange-500 hover:text-orange-400">
-                &amp; Sons
-              </span>
-            </h1>
-          </div>
+          {/* Main content - Always visible */}
+          <div className="hero-content fixed inset-0 flex items-center justify-center">
+            <div className="text-center relative z-10">
+              <h1 className="company-title__h1 font-bold text-white tracking-tight drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] mb-8">
+                <span className="block">Ceyhun Tunalı</span>
+                <span className="text-orange-500">
+                  &amp; Sons
+                </span>
+              </h1>
+              
+              <p className="subtitle text-2xl md:text-3xl text-gray-100 font-light tracking-wide mb-12">
+                Hoşgeldiniz
+              </p>
 
-          <p className="subtitle text-2xl md:text-3xl text-gray-100 font-light tracking-wide text-center relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-            Hoşgeldiniz
-          </p>
-
-          <nav className="nav-menu flex items-center space-x-8 relative z-10">
-            <a
-              href="/aboutus"
-              className="text-white hover:text-orange-400 transition-colors text-lg font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
-            >
-              Hakkımızda
-            </a>
-            <a
-              href="#projelerimiz"
-              className="text-white hover:text-orange-400 transition-colors text-lg font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
-            >
-              Projelerimiz
-            </a>
-            <a
-              href="#iletisim"
-              className="text-white hover:text-orange-400 transition-colors text-lg font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
-            >
-              İletişim
-            </a>
-          </nav>
-
-          <div className="scroll-mouse absolute bottom-16 z-10 hidden md:block">
-            <div className="mouse-container flex flex-col items-center">
-              <div className="mouse w-6 h-10 border-2 border-white rounded-full flex justify-center">
-                <div className="mouse-wheel w-1 h-3 bg-white rounded-full mt-2"></div>
-              </div>
-              <span className="scroll-text mt-4 text-white text-sm font-light">
-                Kaydırın
-              </span>
+              <button
+                onClick={onTapAdvance}
+                className="advance-button inline-flex flex-col items-center gap-3 px-6 py-4 rounded-lg hover:bg-white/10 transition-all"
+              >
+                <div className="mouse-container flex flex-col items-center">
+                  <div className="mouse w-6 h-10 border-2 border-white rounded-full flex justify-center">
+                    <div className="mouse-wheel w-1 h-3 bg-white rounded-full mt-2 animate-scroll"></div>
+                  </div>
+                </div>
+                <span className="text-white text-sm font-light">İlerlemek için tıklayın</span>
+              </button>
             </div>
           </div>
         </div>
 
         <style jsx>{`
-          .nowrap {
-            white-space: nowrap;
-          }
           .company-title__h1 {
             font-size: 3.75rem;
             line-height: 1.05;
@@ -122,136 +93,47 @@ export default function HeroSection({
             }
           }
 
-          .hero-header {
-            animation: hero-to-header linear both;
-            animation-timeline: scroll(root);
-            animation-range: 0% 55%;
-          }
-          .video-container {
-            animation: video-fade linear both;
-            animation-timeline: scroll(root);
-            animation-range: 0% 60%;
-          }
-          .video-overlay {
-            animation: overlay-adjust linear both;
-            animation-timeline: scroll(root);
-            animation-range: 0% 60%;
-          }
-          .company-title {
-            position: absolute;
-            text-align: center;
-            animation: title-to-left linear both;
-            animation-timeline: scroll(root);
-            animation-range: 0% 60%;
-            transform-origin: center center;
-          }
-          .subtitle {
-            position: absolute;
-            top: 60%;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: subtitle-fade linear both;
-            animation-timeline: scroll(root);
-            animation-range: 0% 40%;
-          }
-          .nav-menu {
-            position: absolute;
-            opacity: 0;
-            animation: nav-appear linear both;
-            animation-timeline: scroll(root);
-            animation-range: 30% 60%;
-          }
-          .scroll-mouse {
-            left: 50%;
-            transform: translateX(-50%);
-            animation: mouse-fade linear both;
-            animation-timeline: scroll(root);
-            animation-range: 0% 30%;
+          .hero-content {
+            animation: fadeIn 0.8s ease-out;
           }
 
-          @keyframes hero-to-header {
-            0% {
-              height: 100vh;
-              background: transparent;
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+              transform: scale(0.95);
             }
-            100% {
-              height: 80px;
-              background: rgba(31, 41, 55, 0.95);
-              backdrop-filter: blur(10px);
-            }
-          }
-          @keyframes video-fade {
-            0% {
+            to {
               opacity: 1;
               transform: scale(1);
             }
-            100% {
-              opacity: 0;
-              transform: scale(1.1);
+          }
+
+          @keyframes scroll {
+            0%, 100% {
+              transform: translateY(0);
+            }
+            50% {
+              transform: translateY(5px);
             }
           }
-          @keyframes overlay-adjust {
-            0% {
-              background: rgba(0, 0, 0, 0.4);
-            }
-            100% {
-              background: rgba(0, 0, 0, 0.8);
-            }
+
+          .mouse-wheel {
+            animation: scroll 2s infinite;
           }
-          @keyframes title-to-left {
-            0% {
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%) scale(1);
-              text-align: center;
-            }
-            100% {
-              top: 40px;
-              left: 2rem;
-              transform: translate(0, -50%) scale(0.3);
-              text-align: left;
-            }
+
+          .advance-button {
+            cursor: pointer;
           }
-          @keyframes subtitle-fade {
-            0% {
-              opacity: 1;
-              transform: translateX(-50%) translateY(0);
-            }
-            100% {
-              opacity: 0;
-              transform: translateX(-50%) translateY(20px);
-            }
-          }
-          @keyframes nav-appear {
-            0% {
-              opacity: 0;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%) translateY(20px);
-            }
-            100% {
-              opacity: 1;
-              top: 40px;
-              left: 50%;
-              transform: translate(-50%, -50%) translateY(0);
-            }
-          }
-          @keyframes mouse-fade {
-            0% {
-              opacity: 1;
-              transform: translateX(-50%) translateY(0);
-            }
-            100% {
-              opacity: 0;
-              transform: translateX(-50%) translateY(20px);
-            }
+
+          .advance-button:hover .mouse-wheel {
+            animation-duration: 1s;
           }
         `}</style>
       </>
     );
   }
 
-  // Mobile View
+  // Mobile View (unchanged)
   return (
     <>
       {mobilePhase === "welcome" && (
@@ -280,10 +162,7 @@ export default function HeroSection({
             <button
               type="button"
               className="mt-6 inline-flex flex-col items-center gap-2 active:scale-95 transition animate-fadeInDelay"
-              onClick={() => {
-                setMobilePhase("main");
-                onTapAdvance();
-              }}
+              onClick={onTapAdvance}
               aria-label="Devam etmek için dokunun"
             >
               <svg

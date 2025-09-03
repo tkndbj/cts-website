@@ -50,20 +50,13 @@ function MobileNavigation({
 }
 
 export default function Home() {
-  const [isNavigating, setIsNavigating] = useState(false);
-  const [targetProject, setTargetProject] = useState<number | null>(null);
+  const [currentSection, setCurrentSection] = useState<'hero' | 'gallery' | 'projects'>('hero');
+  const [currentProjectIndex, setCurrentProjectIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileProject, setMobileProject] = useState(1);
   const [mobileShowProjects, setMobileShowProjects] = useState(false);
   const [mobileShowDetails, setMobileShowDetails] = useState(false);
-  const scrollTimeoutRef = useRef<number | null>(null);
-
-  const SCROLL_PROXY_VH = 700;
-  const STEP_MARKS = [0, 0.7, 0.83, 0.87, 0.91, 0.95, 0.98];
-
-  const snappingRef = useRef(false);
-  const cooldownRef = useRef(0);
-  const lastTouchYRef = useRef<number | null>(null);
 
   const projects = [
     {
@@ -103,190 +96,84 @@ export default function Home() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const isDesktop = () =>
-    typeof window !== "undefined" &&
-    window.matchMedia("(min-width: 768px)").matches;
-
-  const getScrollInfo = () => {
-    const proxy = document.querySelector(".scroll-proxy") as HTMLElement | null;
-    const vh = window.innerHeight;
-    const maxScroll = proxy
-      ? Math.max(proxy.offsetHeight - vh, 1)
-      : Math.max(document.body.scrollHeight - vh, 1);
-    const y = window.scrollY;
-    const pct = Math.min(Math.max(y / maxScroll, 0), 1);
-    return { y, maxScroll, pct };
-  };
-
-  const scrollToPct = (pct: number, behavior: ScrollBehavior = "smooth") => {
-    const { maxScroll } = getScrollInfo();
-    const top = pct * maxScroll;
-    setIsNavigating(true);
-    document.body.classList.add("direct-navigation");
-    window.scrollTo({ top, behavior });
-    if (scrollTimeoutRef.current) {
-      window.clearTimeout(scrollTimeoutRef.current);
-    }
-    scrollTimeoutRef.current = window.setTimeout(() => {
-      document.body.classList.remove("direct-navigation");
-      setIsNavigating(false);
-    }, 900);
-  };
-
-  const nearestStep = (pct: number, dir: "next" | "prev") => {
-    if (dir === "next") {
-      for (const s of STEP_MARKS) if (s - pct > 0.001) return s;
-      return STEP_MARKS[STEP_MARKS.length - 1];
-    } else {
-      for (let i = STEP_MARKS.length - 1; i >= 0; i--) {
-        if (pct - STEP_MARKS[i] > 0.001) return STEP_MARKS[i];
-      }
-      return STEP_MARKS[0];
-    }
-  };
-
-  // Desktop scroll handling (unchanged)
+  // Prevent scrolling
   useEffect(() => {
-    if (!isDesktop()) return;
-
-    const MIN_DELTA = 28;
-    const COOLDOWN_MS = 520;
-    let wheelTimer: number | null = null;
-
-    const onWheel = (e: WheelEvent) => {
-      if (
-        snappingRef.current ||
-        isNavigating ||
-        cooldownRef.current > Date.now()
-      )
-        return;
-      const dy = e.deltaY;
-      if (Math.abs(dy) < MIN_DELTA) return;
-      e.preventDefault();
-      const { pct } = getScrollInfo();
-      const dir = dy > 0 ? "next" : "prev";
-      const target = nearestStep(pct, dir);
-      snappingRef.current = true;
-      cooldownRef.current = Date.now() + COOLDOWN_MS;
-      scrollToPct(target, "smooth");
-      if (wheelTimer) clearTimeout(wheelTimer);
-      wheelTimer = window.setTimeout(() => {
-        snappingRef.current = false;
-      }, COOLDOWN_MS + 100);
-    };
-
-    const onKey = (e: KeyboardEvent) => {
-      if (
-        snappingRef.current ||
-        isNavigating ||
-        cooldownRef.current > Date.now()
-      )
-        return;
-
-      const keysNext = ["PageDown", " ", "ArrowDown"];
-      const keysPrev = ["PageUp", "ArrowUp"];
-      if (![...keysNext, ...keysPrev].includes(e.key)) return;
-
-      e.preventDefault();
-      const { pct } = getScrollInfo();
-      const dir = keysNext.includes(e.key) ? "next" : "prev";
-      const target = nearestStep(pct, dir);
-      snappingRef.current = true;
-      cooldownRef.current = Date.now() + COOLDOWN_MS;
-      scrollToPct(target, "smooth");
-      setTimeout(() => (snappingRef.current = false), COOLDOWN_MS + 100);
-    };
-
-    const onTouchStart = (e: TouchEvent) => {
-      lastTouchYRef.current = e.touches[0]?.clientY ?? null;
-    };
-    const onTouchMove = (e: TouchEvent) => {
-      if (
-        snappingRef.current ||
-        isNavigating ||
-        cooldownRef.current > Date.now()
-      )
-        return;
-      if (lastTouchYRef.current == null) return;
-
-      const dy = lastTouchYRef.current - e.touches[0].clientY;
-      if (Math.abs(dy) < 28) return;
-      e.preventDefault();
-
-      const { pct } = getScrollInfo();
-      const dir = dy > 0 ? "next" : "prev";
-      const target = nearestStep(pct, dir);
-      snappingRef.current = true;
-      cooldownRef.current = Date.now() + 520;
-      scrollToPct(target, "smooth");
-      setTimeout(() => (snappingRef.current = false), 520 + 120);
-      lastTouchYRef.current = null;
-    };
-
-    window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("keydown", onKey, { passive: false });
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
     return () => {
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     };
-  }, [isNavigating]);
+  }, []);
 
-  const scrollToTop = () => {
-    if (isMobile) {
-      setMobileProject(1);
-      setMobileShowProjects(false);
-      setMobileShowDetails(false);
-      return;
-    }
-
-    const overlay = document.createElement("div");
-    overlay.className = "fade-overlay";
-    overlay.style.cssText = `
-      position: fixed; inset: 0; background: black; z-index: 9999;
-      opacity: 0; transition: opacity 0.4s ease-in-out; pointer-events: none;
-    `;
-    document.body.appendChild(overlay);
-    requestAnimationFrame(() => (overlay.style.opacity = "1"));
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: "auto" });
-      overlay.style.opacity = "0";
-      setTimeout(() => document.body.removeChild(overlay), 400);
-    }, 400);
-  };
-
-  const scrollToProject = (projectId: number) => {
-    const map: Record<number, number> = { 1: 0.83, 2: 0.87, 3: 0.91, 4: 0.95 };
-    const pct = map[projectId] ?? 0.83;
-    setIsNavigating(true);
-    setTargetProject(projectId);
-    document.body.classList.add("direct-navigation");
-    scrollToPct(pct, "smooth");
-    setTimeout(() => {
-      document.body.classList.remove("direct-navigation");
-      setIsNavigating(false);
-      setTargetProject(null);
-    }, 900);
-  };
-
-  const navigationProps = { isNavigating, targetProject };
-
-  const handleMobileAdvance = () => {
+  const handleAdvanceToGallery = () => {
     if (!isMobile) {
-      scrollToPct(0.7, "smooth");
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentSection('gallery');
+        setIsTransitioning(false);
+      }, 400);
     } else {
       document.body.classList.add("mobile-second", "mobile-no-scroll");
       setMobileShowProjects(true);
     }
   };
 
-  const handleMobileProjectSelect = (projectId: number) => {
-    setMobileProject(projectId);
-    setMobileShowDetails(false);
+  const handleProjectSelect = (projectId: number) => {
+    if (!isMobile) {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentSection('projects');
+        setCurrentProjectIndex(projectId - 1);
+        setIsTransitioning(false);
+      }, 400);
+    } else {
+      setMobileProject(projectId);
+    }
+  };
+
+  const handleBackToHero = () => {
+    if (isMobile) {
+      setMobileProject(1);
+      setMobileShowProjects(false);
+      setMobileShowDetails(false);
+      document.body.classList.remove("mobile-second", "mobile-no-scroll");
+    } else {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentSection('hero');
+        setCurrentProjectIndex(0);
+        setIsTransitioning(false);
+      }, 400);
+    }
+  };
+
+  const handleBackToGallery = () => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentSection('gallery');
+      setIsTransitioning(false);
+    }, 400);
+  };
+
+  const handleNextProject = () => {
+    if (currentProjectIndex < projects.length - 1) {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentProjectIndex(currentProjectIndex + 1);
+        setIsTransitioning(false);
+      }, 300);
+    }
+  };
+
+  const handlePrevProject = () => {
+    if (currentProjectIndex > 0) {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentProjectIndex(currentProjectIndex - 1);
+        setIsTransitioning(false);
+      }, 300);
+    }
   };
 
   const handleMobileDetailsClick = () => {
@@ -297,6 +184,9 @@ export default function Home() {
     setMobileShowDetails(false);
   };
 
+  // Show header for all sections except hero
+  const showHeader = currentSection !== 'hero' && !isMobile;
+
   return (
     <>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -306,26 +196,59 @@ export default function Home() {
         rel="stylesheet"
       />
 
+      {/* Global Header - Only show when not in hero section */}
+      {showHeader && (
+        <HeaderBackground onLogoClick={handleBackToHero} />
+      )}
+
       <div
         className={`stage fixed inset-0 z-[1] ${
-          isNavigating ? "navigating" : ""
+          isTransitioning ? "transitioning" : ""
         }`}
         style={{ fontFamily: "Figtree, sans-serif" }}
       >
-        <HeroSection
-          scrollToTop={scrollToTop}
-          onTapAdvance={handleMobileAdvance}
-        />
-
-        {/* Desktop components */}
-        <div className="hidden md:block">
-          <ImageGallerySection
-            scrollToProject={scrollToProject}
-            navigationProps={navigationProps}
+        {/* Hero Section */}
+        <div className={`section-hero absolute inset-0 ${
+          currentSection === 'hero' ? 'active' : ''
+        }`}>
+          <HeroSection
+            scrollToTop={handleBackToHero}
+            onTapAdvance={handleAdvanceToGallery}
           />
-          <HeaderBackground />
-          <FeaturedProjectStory navigationProps={navigationProps} />
         </div>
+
+        {/* Desktop Gallery & Projects */}
+        {!isMobile && (
+          <>
+            {/* Gallery Section */}
+            <div className={`section-gallery absolute inset-0 ${
+              currentSection === 'gallery' ? 'active' : ''
+            }`}>
+              <ImageGallerySection
+                scrollToProject={handleProjectSelect}
+                navigationProps={{ isNavigating: false, targetProject: null }}
+                onBackToHero={handleBackToHero}
+              />
+            </div>
+
+            {/* Projects Section */}
+            <div className={`section-projects absolute inset-0 ${
+              currentSection === 'projects' ? 'active' : ''
+            }`}>
+              <FeaturedProjectStory
+                navigationProps={{ isNavigating: false, targetProject: currentProjectIndex + 1 }}
+                currentProject={currentProjectIndex + 1}
+                onBack={handleBackToGallery}
+                onNext={handleNextProject}
+                onPrev={handlePrevProject}
+                hasNext={currentProjectIndex < projects.length - 1}
+                hasPrev={currentProjectIndex > 0}
+                projects={projects}
+                onProjectSelect={handleProjectSelect}
+              />
+            </div>
+          </>
+        )}
 
         {/* Mobile project display */}
         {isMobile && mobileShowProjects && !mobileShowDetails && (
@@ -358,7 +281,6 @@ export default function Home() {
                         <p className="text-white/90 text-sm leading-relaxed mb-4">
                           {project.description}
                         </p>
-                        {/* Details Button */}
                         <button
                           onClick={handleMobileDetailsClick}
                           className="inline-flex items-center gap-2 rounded-lg bg-orange-500 hover:bg-orange-600 active:bg-orange-700 px-4 py-2 text-white font-medium text-sm transition-colors"
@@ -389,7 +311,7 @@ export default function Home() {
             <MobileNavigation
               projects={projects}
               currentProject={mobileProject}
-              onProjectSelect={handleMobileProjectSelect}
+              onProjectSelect={handleProjectSelect}
             />
           </div>
         )}
@@ -403,15 +325,6 @@ export default function Home() {
         )}
       </div>
 
-      {/* Desktop scroll proxy */}
-      <div
-        className="scroll-proxy relative z-0 hidden md:block"
-        style={{
-          height: `${SCROLL_PROXY_VH}vh`,
-          background: "linear-gradient(180deg,#111827,#0b0b0b)",
-        }}
-      />
-
       <style jsx global>{`
         html,
         body {
@@ -419,69 +332,69 @@ export default function Home() {
           margin: 0;
           overscroll-behavior: none;
           background: #0b0b12;
+          overflow: hidden;
         }
 
-        .stage .featured-hero {
+        .stage {
+          overflow: hidden;
+        }
+
+        /* Section transitions - smoother and faster */
+        .section-hero,
+        .section-gallery,
+        .section-projects {
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+        }
+
+        .section-hero {
+          transform: scale(1.02);
+        }
+
+        .section-gallery {
+          transform: translateY(40px);
+        }
+
+        .section-projects {
+          transform: translateX(40px);
+        }
+
+        .section-hero.active,
+        .section-gallery.active,
+        .section-projects.active {
+          opacity: 1;
           pointer-events: auto;
-        }
-        .nav-menu,
-        .title-card-1,
-        .title-card-2,
-        .title-card-3,
-        .title-card-4,
-        .project-titles-container,
-        .company-title {
-          pointer-events: auto;
+          transform: scale(1) translate(0, 0);
         }
 
-        body.direct-navigation .hero-slide,
-        body.direct-navigation .hero-copy {
-          animation: none !important;
-          transition: opacity 0.6s ease-in-out !important;
-        }
-        body.direct-navigation .title-card-1 .title-content,
-        body.direct-navigation .title-card-2 .title-content,
-        body.direct-navigation .title-card-3 .title-content,
-        body.direct-navigation .title-card-4 .title-content {
-          animation: none !important;
-          animation-timeline: none !important;
-          animation-range: none !important;
-        }
-
-        .stage.navigating::after {
+        /* Remove black flash - smoother transition overlay */
+        .stage.transitioning::after {
           content: "";
           position: fixed;
           inset: 0;
-          background: black;
+          background: linear-gradient(135deg, rgba(15, 23, 42, 0.3), rgba(0, 0, 0, 0.2));
           opacity: 0;
-          animation: navigation-fade 0.8s ease-in-out;
+          animation: smooth-transition 0.4s ease-in-out;
           pointer-events: none;
           z-index: 100;
+          backdrop-filter: blur(1px);
         }
-        @keyframes navigation-fade {
+
+        @keyframes smooth-transition {
           0% {
             opacity: 0;
           }
-          40% {
-            opacity: 0.7;
-          }
-          60% {
-            opacity: 0.7;
+          50% {
+            opacity: 0.3;
           }
           100% {
             opacity: 0;
           }
         }
 
-        /* Mobile: Disable ALL scroll animations */
+        /* Mobile specific styles */
         @media (max-width: 767px) {
-          .stage * {
-            animation: none !important;
-            animation-timeline: initial !important;
-            animation-range: initial !important;
-            scroll-behavior: auto !important;
-          }
-
           body.mobile-no-scroll {
             overflow: hidden !important;
             height: 100vh !important;
