@@ -269,18 +269,6 @@ export default function MobileProjectDetails({
     setShowInteriorTray(true);
   };
 
-  const handleUnitDeselect = () => {
-    setSelectedUnitByProject(prev => ({
-      ...prev,
-      [currentProject]: null
-    }));
-    setSelectedInteriorByProject(prev => ({
-      ...prev,
-      [currentProject]: null
-    }));
-    setShowInteriorTray(false);
-  };
-
   const handleInteriorSelect = (src: string) => {
     setSelectedInteriorByProject(prev => ({
       ...prev,
@@ -331,8 +319,8 @@ export default function MobileProjectDetails({
 
   return (
     <>
-      {/* Mobile Project Navigation Bar */}
-      <div className="fixed top-14 left-0 z-40 w-full h-12 backdrop-blur-xl border-b shadow-lg md:hidden"
+      {/* First Header - Back button and Navigation arrows */}
+      <div className="fixed top-14 left-0 z-40 w-full h-10 backdrop-blur-xl border-b shadow-lg md:hidden"
         style={{
           backgroundColor: '#191970',
           borderColor: 'rgba(235, 228, 215, 0.3)'
@@ -361,13 +349,6 @@ export default function MobileProjectDetails({
             </svg>
             <span className="text-xs font-medium text-white">Ana Sayfa</span>
           </button>
-
-          {/* Project Name Display */}
-          <div className="flex-1 text-center px-2">
-            <span className="text-sm font-bold text-white">
-              {activeProject.title}
-            </span>
-          </div>
 
           {/* Navigation arrows */}
           <div className="flex items-center gap-1">
@@ -414,9 +395,9 @@ export default function MobileProjectDetails({
         </div>
       </div>
 
-      {/* Project Selector Pills - Below navigation bar */}
-      <div className="fixed top-26 left-0 right-0 z-30 px-3 py-2 md:hidden">
-        <div className="overflow-x-auto">
+      {/* Second Header - Project Names Only */}
+      <div className="fixed top-24 left-0 right-0 z-30 bg-black/20 backdrop-blur-sm border-b border-white/10 md:hidden">
+        <div className="px-3 py-2 overflow-x-auto">
           <div className="flex gap-2" style={{ width: "max-content" }}>
             {defaultProjects.map((project) => {
               const isActive = currentProject === project.id;
@@ -424,10 +405,10 @@ export default function MobileProjectDetails({
                 <button
                   key={project.id}
                   onClick={() => onProjectSelect?.(project.id)}
-                  className={`relative px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-300 whitespace-nowrap ${
+                  className={`relative px-4 py-1.5 rounded-lg text-xs font-medium transition-all duration-300 whitespace-nowrap ${
                     isActive
                       ? 'text-white shadow-lg scale-105'
-                      : 'text-white bg-black/20 hover:bg-black/30 border border-white/10'
+                      : 'text-white/80 hover:text-white bg-white/5 hover:bg-white/10'
                   }`}
                   style={isActive ? { backgroundColor: '#1F51FF' } : undefined}
                 >
@@ -456,7 +437,7 @@ export default function MobileProjectDetails({
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/15 to-black/30" />
         </div>
 
-        {/* Project Details Banner */}
+        {/* Project Details Banner with Icon Buttons */}
         <div 
           key={bannerKey}
           className={`relative z-10 transition-all duration-700 ease-in-out ${
@@ -464,74 +445,76 @@ export default function MobileProjectDetails({
           }`}
         >
           <div className="bg-black/60 backdrop-blur-sm rounded-r-2xl shadow-xl border-r border-t border-b border-white/10 px-4 py-3 mr-8 mb-3">
-            <h2 className="text-xl font-bold mb-2" style={{ color: '#96DED1' }}>
-              {activeProject.title}
-            </h2>
-            <p className="text-white/90 text-sm leading-relaxed">
-              {activeProject.description}
-            </p>
+            <div className="flex items-start gap-3">
+              <div className="flex-1">
+                <h2 className="text-xl font-bold mb-2" style={{ color: '#96DED1' }}>
+                  {activeProject.title}
+                </h2>
+                <p className="text-white/90 text-sm leading-relaxed">
+                  {activeProject.description}
+                </p>
+              </div>
+              
+              {/* Icon buttons in side banner */}
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={() => setShowMap(true)}
+                  className="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 transition"
+                  title="Harita"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                      stroke="white"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <circle cx="12" cy="10" r="3" stroke="white" strokeWidth="2" />
+                  </svg>
+                </button>
+                
+                {selectedName && (
+                  <button
+                    onClick={() => setFullscreenProjectId(currentProject)}
+                    className="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 transition"
+                    title="Tam Ekran"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M9 3H3v6M21 9V3h-6M3 15v6h6M15 21h6v-6"
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Action Buttons Row - Map and Fullscreen */}
-        <div className="relative z-10 px-4 mb-3">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setShowMap(true)}
-              className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-black/60 backdrop-blur-sm border border-white/25 px-3 py-2 text-white transition"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2" />
-              </svg>
-              <span className="text-sm">Haritada Göster</span>
-            </button>
-            
-            {selectedName && (
-              <button
-                onClick={() => setFullscreenProjectId(currentProject)}
-                className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-black/60 backdrop-blur-sm border border-white/25 px-3 py-2 text-white transition"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M9 3H3v6M21 9V3h-6M3 15v6h6M15 21h6v-6"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <span className="text-sm">Tam Ekran</span>
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Unit Stats - shown when unit is selected */}
+        {/* Unit Stats - Vertical on Right Edge */}
         {selectedName && unitData?.stats && (
-          <div className="relative z-10 px-4 mb-3">
-            <div className="flex gap-2">
-              <div className="flex-1 rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm py-2 text-center">
-                <div className="text-xs text-white/60">M²</div>
-                <div className="text-lg font-bold text-white">
+          <div className="fixed right-2 top-1/2 transform -translate-y-1/2 z-10">
+            <div className="flex flex-col gap-2">
+              <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm px-2 py-1.5 text-center min-w-[60px]">
+                <div className="text-[10px] text-white/60">M²</div>
+                <div className="text-sm font-bold text-white">
                   {unitData.stats.m2}
                 </div>
               </div>
-              <div className="flex-1 rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm py-2 text-center">
-                <div className="text-xs text-white/60">Banyo</div>
-                <div className="text-lg font-bold text-white">
+              <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm px-2 py-1.5 text-center min-w-[60px]">
+                <div className="text-[10px] text-white/60">Banyo</div>
+                <div className="text-sm font-bold text-white">
                   {unitData.stats.banyo}
                 </div>
               </div>
-              <div className="flex-1 rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm py-2 text-center">
-                <div className="text-xs text-white/60">Yatak</div>
-                <div className="text-lg font-bold text-white">
+              <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm px-2 py-1.5 text-center min-w-[60px]">
+                <div className="text-[10px] text-white/60">Yatak</div>
+                <div className="text-sm font-bold text-white">
                   {unitData.stats.yatak}
                 </div>
               </div>
