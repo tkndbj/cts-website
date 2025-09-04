@@ -269,18 +269,6 @@ export default function MobileProjectDetails({
     setShowInteriorTray(true);
   };
 
-  const handleUnitDeselect = () => {
-    setSelectedUnitByProject(prev => ({
-      ...prev,
-      [currentProject]: null
-    }));
-    setSelectedInteriorByProject(prev => ({
-      ...prev,
-      [currentProject]: null
-    }));
-    setShowInteriorTray(false);
-  };
-
   const handleInteriorSelect = (src: string) => {
     setSelectedInteriorByProject(prev => ({
       ...prev,
@@ -331,8 +319,8 @@ export default function MobileProjectDetails({
 
   return (
     <>
-      {/* Mobile Project Navigation Bar */}
-      <div className="fixed top-14 left-0 z-40 w-full h-12 backdrop-blur-xl border-b shadow-lg md:hidden"
+      {/* First Header - Back button and Navigation arrows */}
+      <div className="fixed top-14 left-0 z-40 w-full h-10 backdrop-blur-xl border-b shadow-lg md:hidden"
         style={{
           backgroundColor: '#191970',
           borderColor: 'rgba(235, 228, 215, 0.3)'
@@ -407,20 +395,20 @@ export default function MobileProjectDetails({
         </div>
       </div>
 
-      {/* Project Selector Pills - Below navigation bar */}
-      <div className="fixed top-26 left-0 right-0 z-30 px-3 py-2 md:hidden">
-        <div className="overflow-x-auto">
-          <div className="flex gap-2" style={{ width: "max-content" }}>
+      {/* Second Header - Project Names Only */}
+      <div className="fixed top-24 left-0 right-0 z-30 bg-black/20 backdrop-blur-sm border-b border-white/10 md:hidden overflow-x-auto">
+        <div className="px-3 py-2">
+          <div className="inline-flex gap-2 min-w-full">
             {defaultProjects.map((project) => {
               const isActive = currentProject === project.id;
               return (
                 <button
                   key={project.id}
                   onClick={() => onProjectSelect?.(project.id)}
-                  className={`relative px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-300 whitespace-nowrap ${
+                  className={`relative px-4 py-1.5 rounded-lg text-xs font-medium transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
                     isActive
                       ? 'text-white shadow-lg scale-105'
-                      : 'text-white bg-black/20 hover:bg-black/30 border border-white/10'
+                      : 'text-white/80 hover:text-white bg-white/5 hover:bg-white/10'
                   }`}
                   style={isActive ? { backgroundColor: '#1F51FF' } : undefined}
                 >
@@ -457,68 +445,74 @@ export default function MobileProjectDetails({
           }`}
         >
           <div className="bg-black/60 backdrop-blur-sm rounded-r-2xl shadow-xl border-r border-t border-b border-white/10 px-4 py-3 mr-8 mb-3">
-            <h2 className="text-xl font-bold mb-2" style={{ color: '#96DED1' }}>
-              {activeProject.title}
-            </h2>
-            <p className="text-white/90 text-sm leading-relaxed mb-3">
-              {activeProject.description}
-            </p>
-            
-            {/* Icon buttons inside banner */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => setShowMap(true)}
-                className="p-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition"
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <circle cx="12" cy="10" r="3" stroke="white" strokeWidth="2" />
-                </svg>
-              </button>
+            <div className="flex items-start gap-3">
+              <div className="flex-1">
+                <h2 className="text-xl font-bold mb-2" style={{ color: '#96DED1' }}>
+                  {activeProject.title}
+                </h2>
+                <p className="text-white/90 text-sm leading-relaxed">
+                  {activeProject.description}
+                </p>
+              </div>
               
-              {selectedName && (
+              {/* Icon buttons in side banner */}
+              <div className="flex flex-col gap-2">
                 <button
-                  onClick={() => setFullscreenProjectId(currentProject)}
-                  className="p-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition"
+                  onClick={() => setShowMap(true)}
+                  className="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 transition"
+                  title="Harita"
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path
-                      d="M9 3H3v6M21 9V3h-6M3 15v6h6M15 21h6v-6"
+                      d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
                       stroke="white"
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     />
+                    <circle cx="12" cy="10" r="3" stroke="white" strokeWidth="2" />
                   </svg>
                 </button>
-              )}
+                
+                {selectedName && (
+                  <button
+                    onClick={() => setFullscreenProjectId(currentProject)}
+                    className="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 transition"
+                    title="Tam Ekran"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M9 3H3v6M21 9V3h-6M3 15v6h6M15 21h6v-6"
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Unit Stats - Vertical on Right Edge */}
         {selectedName && unitData?.stats && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 z-10">
+          <div className="fixed right-2 top-1/2 transform -translate-y-1/2 z-10">
             <div className="flex flex-col gap-2">
-              <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm px-2 py-1.5 text-center">
+              <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm px-2 py-1.5 text-center min-w-[60px]">
                 <div className="text-[10px] text-white/60">M²</div>
                 <div className="text-sm font-bold text-white">
                   {unitData.stats.m2}
                 </div>
               </div>
-              <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm px-2 py-1.5 text-center">
+              <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm px-2 py-1.5 text-center min-w-[60px]">
                 <div className="text-[10px] text-white/60">Banyo</div>
                 <div className="text-sm font-bold text-white">
                   {unitData.stats.banyo}
                 </div>
               </div>
-              <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm px-2 py-1.5 text-center">
+              <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm px-2 py-1.5 text-center min-w-[60px]">
                 <div className="text-[10px] text-white/60">Yatak</div>
                 <div className="text-sm font-bold text-white">
                   {unitData.stats.yatak}
