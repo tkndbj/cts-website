@@ -393,35 +393,7 @@ export default function MobileProjectDetails({
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Second Header - Project Names Only */}
-      <div className="fixed top-24 left-0 right-0 z-30 bg-black/20 backdrop-blur-sm border-b border-white/10 md:hidden overflow-x-auto">
-        <div className="px-3 py-2">
-          <div className="inline-flex gap-2 min-w-full">
-            {defaultProjects.map((project) => {
-              const isActive = currentProject === project.id;
-              return (
-                <button
-                  key={project.id}
-                  onClick={() => onProjectSelect?.(project.id)}
-                  className={`relative px-4 py-1.5 rounded-lg text-xs font-medium transition-all duration-300 whitespace-nowrap flex-shrink-0 ${
-                    isActive
-                      ? 'text-white shadow-lg scale-105'
-                      : 'text-white/80 hover:text-white bg-white/5 hover:bg-white/10'
-                  }`}
-                  style={isActive ? { backgroundColor: '#1F51FF' } : undefined}
-                >
-                  {project.title}
-                  {isActive && (
-                    <div className="absolute inset-0 bg-blue-600/20 rounded-lg animate-pulse" />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+      </div>     
 
       {/* Main Content Area */}
       <div className="fixed inset-0 z-20 pt-32 bg-gray-900 md:hidden flex flex-col">
