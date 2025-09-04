@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 
 export default function AboutUs() {
-  const [activeTab, setActiveTab] = useState<'story' | 'team' | 'values'>('story');
+  const [activeTab, setActiveTab] = useState<'story' | 'team' | 'values' | 'projects' | 'contact'>('story');
   const [countStarted, setCountStarted] = useState(false);
   const [counts, setCounts] = useState({ years: 0, projects: 0, clients: 0, awards: 0 });
   const [isMobile, setIsMobile] = useState(false);
@@ -184,7 +184,7 @@ export default function AboutUs() {
               40 Yıllık <span style={{ color: '#96DED1' }}>Güven</span> ve <span style={{ color: '#96DED1' }}>Tecrübe</span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-200 animate-fadeIn animation-delay-200">
-              Kıbrıs'ın en prestijli konut projelerini hayata geçiren aile şirketi
+              Kıbrıs&apos;ın en prestijli konut projelerini hayata geçiren aile şirketi
             </p>
           </div>
         </div>
@@ -263,13 +263,13 @@ export default function AboutUs() {
                   <div className="space-y-4 text-gray-700">
                     <p className="leading-relaxed">
                       1976 yılında Ceyhun Tunalı tarafından kurulan şirketimiz, 40 yıllık köklü geçmişiyle 
-                      Kıbrıs'ın en güvenilir inşaat firmalarından biri haline gelmiştir. Aile şirketi olarak 
+                      Kıbrıs&apos;ın en güvenilir inşaat firmalarından biri haline gelmiştir. Aile şirketi olarak 
                       başladığımız bu yolculukta, kalite ve müşteri memnuniyetini her zaman ön planda tuttuk.
                     </p>
                     <p className="leading-relaxed">
                       İkinci nesil ile birlikte büyüyen firmamız, modern mimari anlayışı ve yenilikçi 
                       yaklaşımlarla sektörde öncü projeler üretmektedir. Four Seasons Life, The Sign, 
-                      Aurora Bay ve Carob Hill gibi prestijli projelerimizle Kıbrıs'ın yaşam standartlarını 
+                      Aurora Bay ve Carob Hill gibi prestijli projelerimizle Kıbrıs&apos;ın yaşam standartlarını 
                       yükseltmeye devam ediyoruz.
                     </p>
                     <p className="leading-relaxed">
@@ -420,21 +420,25 @@ export default function AboutUs() {
             40 yıllık tecrübemizle, güvenilir ve kaliteli yaşam alanları sunuyoruz.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/"
+            <button
+              onClick={() => {
+                setActiveTab('projects');
+              }}
               className="inline-flex items-center justify-center gap-2 bg-white text-[#191970] px-8 py-4 rounded-full font-semibold hover:shadow-xl transition-all hover:scale-105"
             >
               Projelerimizi İnceleyin
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M13 7l5 5-5 5M6 12h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
               </svg>
-            </a>
-            <a
-              href="/contact"
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab('contact');
+              }}
               className="inline-flex items-center justify-center gap-2 bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-[#191970] transition-all"
             >
               İletişime Geçin
-            </a>
+            </button>
           </div>
         </div>
       </section>
