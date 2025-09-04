@@ -153,6 +153,7 @@ export default function Home() {
   const [mobileShowProjects, setMobileShowProjects] = useState(false);
   const [mobileShowDetails, setMobileShowDetails] = useState(false);
   const [mobileShowContact, setMobileShowContact] = useState(false);
+  const [mobileShowAbout, setMobileShowAbout] = useState(false);
   
   // Add mounted state to prevent initial flash
   const [mounted, setMounted] = useState(false);
@@ -221,11 +222,18 @@ export default function Home() {
   };
 
   const handleAboutClick = () => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setCurrentSection('about');
-      setIsTransitioning(false);
-    }, 400);
+    if (isMobile) {
+      setMobileShowGallery(false);
+      setMobileShowProjects(false);
+      setMobileShowContact(false);
+      setMobileShowAbout(true);
+    } else {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentSection('about');
+        setIsTransitioning(false);
+      }, 400);
+    }
   };
 
   const handleProjectSelect = (projectId: number) => {
@@ -250,6 +258,7 @@ export default function Home() {
       setMobileShowProjects(false);
       setMobileShowDetails(false);
       setMobileShowContact(false);
+      setMobileShowAbout(false);
       document.body.classList.remove("mobile-second", "mobile-no-scroll");
       setCurrentSection('hero');
     } else {
@@ -306,7 +315,7 @@ export default function Home() {
   };
 
   const showHeader = currentSection !== 'hero' && !isMobile;
-  const showMobileHeader = isMobile && (mobileShowGallery || mobileShowProjects || mobileShowDetails || mobileShowContact);
+  const showMobileHeader = isMobile && (mobileShowGallery || mobileShowProjects || mobileShowDetails || mobileShowContact || mobileShowAbout);
 
   // Don't render anything until mounted to prevent flash
   if (!mounted) {
@@ -606,6 +615,40 @@ export default function Home() {
             onBack={handleMobileDetailsBack}
           />
         )}
+
+{isMobile && mobileShowAbout && (
+  <div className="mobile-about fixed inset-0 z-45 pt-16 bg-white">
+    <div className="relative h-full">
+      <button
+        onClick={() => {
+          setMobileShowAbout(false);
+          setMobileShowGallery(true);
+        }}
+        className="fixed top-20 left-4 z-50 inline-flex items-center gap-2 px-3 py-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg"
+      >
+        <svg 
+          width="16" 
+          height="16" 
+          viewBox="0 0 24 24" 
+          fill="none"
+        >
+          <path
+            d="M15 18l-6-6 6-6"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        <span className="text-gray-700 font-medium text-sm">Geri</span>
+      </button>
+      
+      <div className="h-full overflow-y-auto">
+        <AboutUs />
+      </div>
+    </div>
+  </div>
+)}
       </div>
 
       <style jsx global>{`
