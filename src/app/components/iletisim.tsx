@@ -81,12 +81,14 @@ export default function ContactForm() {
     
     if (existingScript) {
       // Script already loaded, just check if Google Maps is ready
-      if (window.google && window.google.maps) {
-        setMapLoaded(true);
-      } else {
-        // Wait for existing script to load
-        existingScript.addEventListener('load', () => setMapLoaded(true));
-      }
+      const checkGoogleMaps = () => {
+        if (window.google && window.google.maps && window.google.maps.Map) {
+          setMapLoaded(true);
+        } else {
+          setTimeout(checkGoogleMaps, 100);
+        }
+      };
+      checkGoogleMaps();
       return;
     }
     
@@ -99,7 +101,9 @@ export default function ContactForm() {
       script.id = 'google-maps-script';
       
       window.initMap = () => {
-        setMapLoaded(true);
+        if (window.google && window.google.maps && window.google.maps.Map) {
+          setMapLoaded(true);
+        }
       };
       
       document.head.appendChild(script);
@@ -108,13 +112,19 @@ export default function ContactForm() {
         // Clean up only the callback, not the script itself
         delete window.initMap;
       };
-    } else if (window.google && window.google.maps) {
+    } else if (window.google && window.google.maps && window.google.maps.Map) {
       setMapLoaded(true);
     }
   }, []);
 
   useEffect(() => {
-    if (mapLoaded && mapRef.current && window.google) {
+    if (mapLoaded && mapRef.current && window.google && window.google.maps) {
+      // Check for maps.Map constructor specifically
+      if (!window.google.maps.Map) {
+        console.log('Google Maps API not fully loaded yet');
+        return;
+      }
+      
       // Initialize the map
       const map = new window.google.maps.Map(mapRef.current, {
         center: officeLocation,
@@ -130,7 +140,7 @@ export default function ContactForm() {
           }
         ]
       });
-
+  
       // Add a marker for the office
       new window.google.maps.Marker({
         position: officeLocation,
