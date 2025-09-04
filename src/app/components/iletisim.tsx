@@ -179,11 +179,33 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50" style={{ paddingTop: '64px' }}>
+    <div className="h-screen flex flex-col bg-gray-50 md:pt-16">
       {/* Full-width Map Section */}
       <div className="relative h-[35vh] w-full">
         {/* Google Maps Container */}
         <div ref={mapRef} className="absolute inset-0 w-full h-full" />
+        
+        {/* Back Button for Mobile - Top Left */}
+        <button
+          onClick={() => window.history.back()}
+          className="md:hidden absolute top-4 left-4 z-10 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg p-2.5 flex items-center gap-2"
+        >
+          <svg 
+            width="16" 
+            height="16" 
+            viewBox="0 0 24 24" 
+            fill="none"
+          >
+            <path
+              d="M15 18l-6-6 6-6"
+              stroke="#000000"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span className="text-sm font-medium text-gray-700">Geri</span>
+        </button>
         
         {/* Directions Button - Top Right */}
         <button
@@ -207,13 +229,13 @@ export default function ContactForm() {
         </button>
       </div>
 
-      {/* Main Content Section */}
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full max-w-7xl mx-auto px-4 py-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-full">
+      {/* Main Content Section - Modified for better mobile scrolling */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             
             {/* Left Side - Contact Info */}
-            <div className="lg:col-span-1 space-y-3 overflow-y-auto">
+            <div className="lg:col-span-1 space-y-3">
               {/* Header */}
               <div className="mb-3">
                 <h1 className="text-3xl font-bold text-gray-900">
@@ -315,12 +337,12 @@ export default function ContactForm() {
             </div>
 
             {/* Right Side - Contact Form */}
-            <div className="lg:col-span-2 h-full">
-              <div className="bg-white rounded-xl shadow-xl p-6 h-full flex flex-col border border-gray-100">
-                <h2 className="text-2xl font-bold text-gray-900 mb-1">Hızlı İletişim Formu</h2>
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-xl shadow-xl p-4 md:p-6 border border-gray-100">
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-1">Hızlı İletişim Formu</h2>
                 <p className="text-sm text-gray-600 mb-4">Size en kısa sürede dönüş yapacağız</p>
                 
-                <div className="flex-1 overflow-y-auto pr-2 space-y-4">
+                <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Name Field */}
                     <div>
@@ -333,7 +355,7 @@ export default function ContactForm() {
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all"
+                        className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all placeholder-gray-500"
                         placeholder="Adınız ve soyadınız"
                       />
                     </div>
@@ -349,7 +371,7 @@ export default function ContactForm() {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all"
+                        className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all placeholder-gray-500"
                         placeholder="ornek@email.com"
                       />
                     </div>
@@ -365,7 +387,7 @@ export default function ContactForm() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
-                        className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all"
+                        className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all placeholder-gray-500"
                         placeholder="+90 5xx xxx xx xx"
                       />
                     </div>
@@ -380,7 +402,7 @@ export default function ContactForm() {
                         name="projectInterest"
                         value={formData.projectInterest}
                         onChange={handleChange}
-                        className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all"
+                        className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all text-gray-500"
                       >
                         <option value="">Seçiniz</option>
                         <option value="Four Seasons Life">Four Seasons Life</option>
@@ -403,7 +425,7 @@ export default function ContactForm() {
                       name="subject"
                       value={formData.subject}
                       onChange={handleChange}
-                      className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all"
+                      className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all placeholder-gray-500"
                       placeholder="Mesajınızın konusu"
                     />
                   </div>
@@ -419,7 +441,7 @@ export default function ContactForm() {
                       value={formData.message}
                       onChange={handleChange}
                       rows={4}
-                      className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all resize-none"
+                      className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all resize-none placeholder-gray-500"
                       placeholder="Mesajınızı buraya yazınız..."
                     />
                   </div>
