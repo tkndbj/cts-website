@@ -51,7 +51,6 @@ export default function ImageGallerySection({
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const slideInterval = useRef<NodeJS.Timeout | null>(null);
-  const mobileContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -96,139 +95,93 @@ export default function ImageGallerySection({
     setTimeout(() => setIsAutoPlaying(true), 10000);
   };
 
-  const scrollToProjectView = () => {
-    if (isMobile && mobileContainerRef.current) {
-      // Scroll to next section (project view) on mobile
-      mobileContainerRef.current.scrollTo({
-        left: window.innerWidth,
-        behavior: 'smooth'
-      });
-    } else {
-      // Desktop: scroll to project
-      scrollToProject(1);
-    }
-  };
-
-  // Mobile Layout with horizontal scroll
+  // Mobile Layout
   if (isMobile) {
     return (
       <div className="fixed inset-0 bg-white">
-        <div 
-          ref={mobileContainerRef}
-          className="h-full overflow-x-auto overflow-y-hidden snap-x snap-mandatory flex"
-          style={{ scrollBehavior: 'smooth' }}
-        >
-          {/* Section 1: Hero Slider */}
-          <div className="flex-shrink-0 w-screen h-full snap-start relative">
-            <div className="relative h-full">
-              {sliderData.map((slide, index) => (
-                <div
-                  key={slide.id}
-                  className={`absolute inset-0 transition-all duration-700 ${
-                    index === currentSlide 
-                      ? 'opacity-100 z-10' 
-                      : 'opacity-0 z-0'
-                  }`}
-                >
-                  <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${slide.image})` }}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60" />
-                  </div>
+        <div className="relative h-full">
+          {sliderData.map((slide, index) => (
+            <div
+              key={slide.id}
+              className={`absolute inset-0 transition-all duration-700 ${
+                index === currentSlide 
+                  ? 'opacity-100 z-10' 
+                  : 'opacity-0 z-0'
+              }`}
+            >
+              <div
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url(${slide.image})` }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60" />
+              </div>
 
-                  <div className="relative h-full flex flex-col justify-end pb-24 px-6">
-                    <span className="text-[#87CEEB] text-sm font-semibold tracking-wider uppercase mb-2">
-                      {slide.subtitle}
-                    </span>
-                    <h1 className="text-3xl font-bold text-white mb-3">
-                      {slide.title}
-                    </h1>
-                    <p className="text-base text-gray-200 mb-6">
-                      {slide.description}
-                    </p>
-                    
-                    {/* CTA Buttons on every slide */}
-                    <div className="flex gap-3">
-                      <button
-                        onClick={scrollToProjectView}
-                        className="flex-1 bg-[#191970] text-white px-4 py-3 rounded-full font-semibold flex items-center justify-center gap-2"
-                      >
-                        <span>Projelerimiz</span>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                          <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                        </svg>
-                      </button>
-                      <button
-                        onClick={onBackToHero}
-                        className="flex-1 bg-white/20 backdrop-blur border border-white/40 text-white px-4 py-3 rounded-full font-semibold"
-                      >
-                        İletişim
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              {/* Mobile Slider Controls */}
-              <div className="absolute bottom-8 left-6 right-6 flex justify-between items-center z-20">
-                <div className="flex gap-2">
-                  {sliderData.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentSlide(index)}
-                      className={`transition-all duration-300 ${
-                        index === currentSlide
-                          ? 'w-8 h-2 bg-white'
-                          : 'w-2 h-2 bg-white/50'
-                      } rounded-full`}
-                    />
-                  ))}
-                </div>
-                <div className="flex gap-2">
+              <div className="relative h-full flex flex-col justify-end pb-24 px-6">
+                <span className="text-[#87CEEB] text-sm font-semibold tracking-wider uppercase mb-2">
+                  {slide.subtitle}
+                </span>
+                <h1 className="text-3xl font-bold text-white mb-3">
+                  {slide.title}
+                </h1>
+                <p className="text-base text-gray-200 mb-6">
+                  {slide.description}
+                </p>
+                
+                {/* CTA Buttons on every slide */}
+                <div className="flex gap-3">
                   <button
-                    onClick={prevSlide}
-                    className="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center"
+                    onClick={() => scrollToProject(1)}
+                    className="flex-1 bg-[#191970] text-white px-4 py-3 rounded-full font-semibold flex items-center justify-center gap-2"
                   >
+                    <span>Projelerimiz</span>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path d="M15 19l-7-7 7-7" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                      <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                     </svg>
                   </button>
                   <button
-                    onClick={nextSlide}
-                    className="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center"
+                    onClick={onBackToHero}
+                    className="flex-1 bg-white/20 backdrop-blur border border-white/40 text-white px-4 py-3 rounded-full font-semibold"
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path d="M9 5l7 7-7 7" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-                    </svg>
+                    İletişim
                   </button>
                 </div>
               </div>
             </div>
-          </div>
+          ))}
 
-          {/* Section 2: Project View (placeholder for projects) */}
-          <div className="flex-shrink-0 w-screen h-full snap-start flex flex-col justify-center items-center px-6 bg-gradient-to-b from-gray-50 to-white">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Projelerimiz</h2>
-            <p className="text-base text-gray-600 text-center mb-6">
-              Projeler burada görüntülenecek
-            </p>
-            <button
-              onClick={() => {
-                if (mobileContainerRef.current) {
-                  mobileContainerRef.current.scrollTo({
-                    left: 0,
-                    behavior: 'smooth'
-                  });
-                }
-              }}
-              className="bg-[#191970] text-white px-6 py-3 rounded-full font-semibold flex items-center gap-2"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
-              <span>Geri Dön</span>
-            </button>
+          {/* Mobile Slider Controls */}
+          <div className="absolute bottom-8 left-6 right-6 flex justify-between items-center z-20">
+            <div className="flex gap-2">
+              {sliderData.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`transition-all duration-300 ${
+                    index === currentSlide
+                      ? 'w-8 h-2 bg-white'
+                      : 'w-2 h-2 bg-white/50'
+                  } rounded-full`}
+                />
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={prevSlide}
+                className="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M15 19l-7-7 7-7" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+              <button
+                onClick={nextSlide}
+                className="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M9 5l7 7-7 7" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
