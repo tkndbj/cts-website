@@ -6,6 +6,7 @@ import HeaderBackground from "./components/HeaderBackground";
 import ImageGallerySection from "./components/ImageGallerySection";
 import FeaturedProjectStory from "./components/FeaturedProjectStory";
 import MobileProjectDetails from "./components/MobileProjectDetails";
+import ContactForm from "./components/iletisim";
 import Image from "next/image";
 
 // Mobile Navigation Component
@@ -39,7 +40,7 @@ function MobileNavigation({
                     : "bg-white/10 text-white/70 active:bg-white/20"
                 }`}
                 style={{
-                  color: currentProject === p.id ? '#96DED1' : undefined // Changed active text color
+                  color: currentProject === p.id ? '#96DED1' : undefined
                 }}
               >
                 {p.title}
@@ -53,7 +54,7 @@ function MobileNavigation({
 }
 
 export default function Home() {
-  const [currentSection, setCurrentSection] = useState<'hero' | 'gallery' | 'projects'>('hero');
+  const [currentSection, setCurrentSection] = useState<'hero' | 'gallery' | 'projects' | 'contact'>('hero');
   const [currentProjectIndex, setCurrentProjectIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -61,14 +62,14 @@ export default function Home() {
   const [mobileShowGallery, setMobileShowGallery] = useState(false);
   const [mobileShowProjects, setMobileShowProjects] = useState(false);
   const [mobileShowDetails, setMobileShowDetails] = useState(false);
+  const [mobileShowContact, setMobileShowContact] = useState(false);
 
   const projects = [
     {
       id: 1,
       image: "/fourseasons.jpg",
       title: "Four Seasons Life",
-      description:
-        "Çağdaş tasarım çözümleri ile geleceğin yapılarını inşa ediyoruz",
+      description: "Çağdaş tasarım çözümleri ile geleceğin yapılarını inşa ediyoruz",
     },
     {
       id: 2,
@@ -118,7 +119,6 @@ export default function Home() {
         setIsTransitioning(false);
       }, 400);
     } else {
-      // Mobile: Show gallery instead of directly going to projects
       document.body.classList.add("mobile-second", "mobile-no-scroll");
       setMobileShowGallery(true);
     }
@@ -133,7 +133,6 @@ export default function Home() {
         setIsTransitioning(false);
       }, 400);
     } else {
-      // Mobile: Show projects from gallery
       setMobileShowGallery(false);
       setMobileShowProjects(true);
       setMobileProject(projectId);
@@ -142,16 +141,12 @@ export default function Home() {
 
   const handleBackToHero = () => {
     if (isMobile) {
-      // Complete reset of all mobile states
       setMobileProject(1);
       setMobileShowGallery(false);
       setMobileShowProjects(false);
       setMobileShowDetails(false);
-      
-      // Remove all mobile-specific classes
+      setMobileShowContact(false);
       document.body.classList.remove("mobile-second", "mobile-no-scroll");
-      
-      // Force reset to hero section
       setCurrentSection('hero');
     } else {
       setIsTransitioning(true);
@@ -167,6 +162,7 @@ export default function Home() {
     if (isMobile) {
       setMobileShowProjects(false);
       setMobileShowDetails(false);
+      setMobileShowContact(false);
       setMobileShowGallery(true);
     } else {
       setIsTransitioning(true);
@@ -208,8 +204,8 @@ export default function Home() {
   // Show header for all sections except hero
   const showHeader = currentSection !== 'hero' && !isMobile;
   
-  // Show mobile header when in gallery or projects
-  const showMobileHeader = isMobile && (mobileShowGallery || mobileShowProjects || mobileShowDetails);
+  // Show mobile header when in gallery, projects, details, or contact
+  const showMobileHeader = isMobile && (mobileShowGallery || mobileShowProjects || mobileShowDetails || mobileShowContact);
 
   return (
     <>
@@ -222,10 +218,27 @@ export default function Home() {
 
       {/* Desktop Header - Only show when not in hero section */}
       {showHeader && (
-        <HeaderBackground onLogoClick={handleBackToHero} />
-      )}
+  <HeaderBackground 
+    onLogoClick={handleBackToHero}
+    onProjectsClick={() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentSection('projects');
+        setCurrentProjectIndex(0);
+        setIsTransitioning(false);
+      }, 400);
+    }}
+    onContactClick={() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setCurrentSection('contact');
+        setIsTransitioning(false);
+      }, 400);
+    }}
+  />
+)}
 
-      {/* Mobile Header - Show when in gallery or projects */}
+      {/* Mobile Header - Show when in gallery, projects, details, or contact */}
       {showMobileHeader && (
         <MobileHeader onLogoClick={handleBackToHero} />
       )}
@@ -236,18 +249,17 @@ export default function Home() {
         }`}
         style={{ fontFamily: "Figtree, sans-serif" }}
       >
-       
         {/* Hero Section */}
-<div className={`section-hero absolute inset-0 ${
-  (currentSection === 'hero' && (!isMobile || (!mobileShowGallery && !mobileShowProjects && !mobileShowDetails))) ? 'active' : ''
-}`}>
-  <HeroSection
-    scrollToTop={handleBackToHero}
-    onTapAdvance={handleAdvanceToGallery}
-  />
-</div>
+        <div className={`section-hero absolute inset-0 ${
+          (currentSection === 'hero' && (!isMobile || (!mobileShowGallery && !mobileShowProjects && !mobileShowDetails && !mobileShowContact))) ? 'active' : ''
+        }`}>
+          <HeroSection
+            scrollToTop={handleBackToHero}
+            onTapAdvance={handleAdvanceToGallery}
+          />
+        </div>
 
-        {/* Desktop Gallery & Projects */}
+        {/* Desktop Gallery, Projects & Contact */}
         {!isMobile && (
           <>
             {/* Gallery Section */}
@@ -258,6 +270,13 @@ export default function Home() {
                 scrollToProject={handleProjectSelect}
                 navigationProps={{ isNavigating: false, targetProject: null }}
                 onBackToHero={handleBackToHero}
+                onContactClick={() => {
+                  setIsTransitioning(true);
+                  setTimeout(() => {
+                    setCurrentSection('contact');
+                    setIsTransitioning(false);
+                  }, 400);
+                }}
               />
             </div>
 
@@ -277,17 +296,89 @@ export default function Home() {
                 onProjectSelect={handleProjectSelect}
               />
             </div>
+
+            {/* Contact Section - Desktop */}
+            <div className={`section-contact absolute inset-0 ${
+              currentSection === 'contact' ? 'active' : ''
+            }`}>
+              <div className="relative h-full">
+                <button
+                  onClick={handleBackToGallery}
+                  className="fixed top-20 left-4 z-50 inline-flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
+                >
+                  <svg 
+                    width="20" 
+                    height="20" 
+                    viewBox="0 0 24 24" 
+                    fill="none"
+                    className="group-hover:-translate-x-1 transition-transform"
+                  >
+                    <path
+                      d="M15 18l-6-6 6-6"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span className="text-gray-700 font-medium">Geri</span>
+                </button>
+                
+                <div className="h-full overflow-y-auto">
+                  <ContactForm />
+                </div>
+              </div>
+            </div>
           </>
         )}
 
         {/* Mobile Gallery Display */}
-        {isMobile && mobileShowGallery && !mobileShowProjects && !mobileShowDetails && (
+        {isMobile && mobileShowGallery && !mobileShowProjects && !mobileShowDetails && !mobileShowContact && (
           <div className="mobile-gallery fixed inset-0 z-45 pt-16 bg-white">
             <ImageGallerySection
               scrollToProject={handleProjectSelect}
               navigationProps={{ isNavigating: false, targetProject: null }}
               onBackToHero={handleBackToHero}
+              onContactClick={() => {
+                setMobileShowGallery(false);
+                setMobileShowContact(true);
+              }}
             />
+          </div>
+        )}
+
+        {/* Mobile Contact Display - SEPARATE SECTION */}
+        {isMobile && mobileShowContact && (
+          <div className="mobile-contact fixed inset-0 z-45 pt-16 bg-white">
+            <div className="relative h-full">
+              <button
+                onClick={() => {
+                  setMobileShowContact(false);
+                  setMobileShowGallery(true);
+                }}
+                className="fixed top-20 left-4 z-50 inline-flex items-center gap-2 px-3 py-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg"
+              >
+                <svg 
+                  width="16" 
+                  height="16" 
+                  viewBox="0 0 24 24" 
+                  fill="none"
+                >
+                  <path
+                    d="M15 18l-6-6 6-6"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className="text-gray-700 font-medium text-sm">Geri</span>
+              </button>
+              
+              <div className="h-full overflow-y-auto">
+                <ContactForm />
+              </div>
+            </div>
           </div>
         )}
 
@@ -384,7 +475,8 @@ export default function Home() {
         /* Section transitions - smoother and faster */
         .section-hero,
         .section-gallery,
-        .section-projects {
+        .section-projects,
+        .section-contact {
           opacity: 0;
           pointer-events: none;
           transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
@@ -402,9 +494,14 @@ export default function Home() {
           transform: translateX(40px);
         }
 
+        .section-contact {
+          transform: translateY(40px);
+        }
+
         .section-hero.active,
         .section-gallery.active,
-        .section-projects.active {
+        .section-projects.active,
+        .section-contact.active {
           opacity: 1;
           pointer-events: auto;
           transform: scale(1) translate(0, 0);
@@ -460,13 +557,22 @@ export default function Home() {
 }
 
 // Mobile Header Component - Updated with Figtree font
-function MobileHeader({ onLogoClick }: { onLogoClick?: () => void }) {
+// Mobile Header Component - Updated with Figtree font
+function MobileHeader({ 
+  onLogoClick,
+  onProjectsClick,
+  onContactClick 
+}: { 
+  onLogoClick?: () => void;
+  onProjectsClick?: () => void;
+  onContactClick?: () => void;
+}) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <header 
       className="fixed top-0 left-0 right-0 h-16 z-50 bg-[#191970]/95 backdrop-blur-md shadow-lg flex items-center justify-between px-4"
-      style={{ fontFamily: 'Figtree, sans-serif' }} // Added Figtree font
+      style={{ fontFamily: 'Figtree, sans-serif' }}
     >
       <button
         className="text-white font-semibold text-sm tracking-tight flex items-center"
@@ -503,26 +609,32 @@ function MobileHeader({ onLogoClick }: { onLogoClick?: () => void }) {
         {menuOpen && (
           <div
             className="absolute right-0 mt-2 w-48 rounded-xl bg-[#191970]/95 backdrop-blur border border-white/20 shadow-xl overflow-hidden"
-            onClick={() => setMenuOpen(false)}
           >
             <a
               href="/aboutus"
               className="block px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
+              onClick={() => setMenuOpen(false)}
             >
               Hakkımızda
             </a>
-            <a
-              href="#projeler"
-              className="block px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                onProjectsClick?.();
+              }}
+              className="block w-full text-left px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
             >
               Projeler
-            </a>
-            <a
-              href="#iletisim"
-              className="block px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
+            </button>
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                onContactClick?.();
+              }}
+              className="block w-full text-left px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
             >
               İletişim
-            </a>
+            </button>
           </div>
         )}
       </div>

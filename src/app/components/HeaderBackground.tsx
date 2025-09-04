@@ -1,11 +1,21 @@
-export default function HeaderBackground({ onLogoClick }: { onLogoClick?: () => void }) {
+interface HeaderBackgroundProps {
+  onLogoClick?: () => void;
+  onProjectsClick?: () => void;
+  onContactClick?: () => void;
+}
+
+export default function HeaderBackground({ 
+  onLogoClick, 
+  onProjectsClick, 
+  onContactClick 
+}: HeaderBackgroundProps) {
   return (
     <div 
       className="fixed top-0 left-0 z-50 w-full h-20 backdrop-blur-lg border-b"
       style={{
         backgroundColor: '#191970',
         borderColor: 'rgba(235, 228, 215, 0.3)',
-        fontFamily: 'Figtree, sans-serif' // Added Figtree font
+        fontFamily: 'Figtree, sans-serif'
       }}
     >
       <div className="h-full flex items-center justify-between px-8 relative">
@@ -32,18 +42,18 @@ export default function HeaderBackground({ onLogoClick }: { onLogoClick?: () => 
           >
             Hakkımızda
           </a>
-          <a
-            href="#projelerimiz"
+          <button
+            onClick={onProjectsClick}
             className="text-white hover:text-blue-300 transition-colors text-lg font-medium"
           >
             Projelerimiz
-          </a>
-          <a
-            href="#iletisim"
+          </button>
+          <button
+            onClick={onContactClick}
             className="text-white hover:text-blue-300 transition-colors text-lg font-medium"
           >
             İletişim
-          </a>
+          </button>
         </nav>
       </div>
     </div>

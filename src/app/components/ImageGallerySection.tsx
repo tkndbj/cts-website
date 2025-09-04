@@ -8,6 +8,7 @@ interface ImageGallerySectionProps {
     targetProject: number | null;
   };
   onBackToHero?: () => void;
+  onContactClick?: () => void;
 }
 
 // Slider images data
@@ -46,6 +47,7 @@ export default function ImageGallerySection({
   scrollToProject,
   navigationProps,
   onBackToHero,
+  onContactClick,
 }: ImageGallerySectionProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -262,7 +264,7 @@ export default function ImageGallerySection({
                   </button>
 
                   <button
-                    onClick={onBackToHero}
+                    onClick={onContactClick || onBackToHero}
                     className="inline-flex items-center justify-center gap-3 bg-white/20 backdrop-blur-sm border-2 border-white/40 hover:bg-white/30 text-white px-10 py-5 rounded-full font-semibold transition-all duration-300 text-lg"
                   >
                     <span>İletişim</span>
