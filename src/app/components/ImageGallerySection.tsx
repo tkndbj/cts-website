@@ -225,13 +225,13 @@ export default function ImageGallerySection({
           <div className="flex-shrink-0 w-screen h-full snap-start flex flex-col justify-center px-6 bg-gradient-to-b from-gray-50 to-white">
             <div className="text-center mb-8">
               <span className="text-[#191970] text-xs font-semibold tracking-wider uppercase mb-3 block">
-                1984'ten Beri
+                1984&apos;ten Beri
               </span>
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
                 Ceyhun Tunalı <span className="text-[#191970]">&amp; Sons</span>
               </h2>
               <p className="text-base text-gray-600">
-                40 yılı aşkın deneyimimizle, Kıbrıs'ın en prestijli projelerine imza atıyoruz.
+                40 yılı aşkın deneyimimizle, Kıbrıs&apos;ın en prestijli projelerine imza atıyoruz.
               </p>
             </div>
 
@@ -532,13 +532,13 @@ export default function ImageGallerySection({
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
           }`}>
             <span className="inline-block text-[#191970] text-sm font-semibold tracking-wider uppercase mb-4">
-              1984'ten Beri
+              1984&apos;ten Beri
             </span>
             <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
               Ceyhun Tunalı <span className="text-[#191970]">&amp; Sons</span>
             </h2>
             <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto">
-              40 yılı aşkın deneyimimizle, Kıbrıs'ın en prestijli projelerine imza atıyoruz. 
+              40 yılı aşkın deneyimimizle, Kıbrıs&apos;ın en prestijli projelerine imza atıyoruz. 
               Modern mimari, kaliteli malzeme ve uzman kadromuzla hayallerinizi gerçeğe dönüştürüyoruz.
             </p>
           </div>
