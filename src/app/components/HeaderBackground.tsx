@@ -2,12 +2,15 @@ interface HeaderBackgroundProps {
   onLogoClick?: () => void;
   onProjectsClick?: () => void;
   onContactClick?: () => void;
+  onAboutClick?: () => void;
 }
 
 export default function HeaderBackground({ 
   onLogoClick, 
   onProjectsClick, 
-  onContactClick 
+  onContactClick,
+  onAboutClick
+
 }: HeaderBackgroundProps) {
   return (
     <div 
@@ -36,12 +39,12 @@ export default function HeaderBackground({
 
         {/* Centered Navigation */}
         <nav className="absolute left-1/2 transform -translate-x-1/2 flex items-center space-x-8">
-          <a
-            href="/aboutus"
+          <button
+            onClick={onAboutClick}
             className="text-white hover:text-blue-300 transition-colors text-lg font-medium"
           >
             Hakkımızda
-          </a>
+          </button>
           <button
             onClick={onProjectsClick}
             className="text-white hover:text-blue-300 transition-colors text-lg font-medium"

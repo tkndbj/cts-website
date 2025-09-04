@@ -7,6 +7,7 @@ import ImageGallerySection from "./components/ImageGallerySection";
 import FeaturedProjectStory from "./components/FeaturedProjectStory";
 import MobileProjectDetails from "./components/MobileProjectDetails";
 import ContactForm from "./components/iletisim";
+import AboutUs from "./components/aboutus";
 import Image from "next/image";
 
 // Mobile Navigation Component
@@ -54,7 +55,7 @@ function MobileNavigation({
 }
 
 export default function Home() {
-  const [currentSection, setCurrentSection] = useState<'hero' | 'gallery' | 'projects' | 'contact'>('hero');
+  const [currentSection, setCurrentSection] = useState<'hero' | 'gallery' | 'projects' | 'contact' | 'about'>('hero');
   const [currentProjectIndex, setCurrentProjectIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -122,6 +123,14 @@ export default function Home() {
       document.body.classList.add("mobile-second", "mobile-no-scroll");
       setMobileShowGallery(true);
     }
+  };
+
+  const handleAboutClick = () => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentSection('about');
+      setIsTransitioning(false);
+    }, 400);
   };
 
   const handleProjectSelect = (projectId: number) => {
@@ -235,6 +244,7 @@ export default function Home() {
         setIsTransitioning(false);
       }, 400);
     }}
+    onAboutClick={handleAboutClick}
   />
 )}
 
@@ -252,6 +262,7 @@ export default function Home() {
       setMobileShowProjects(false);
       setMobileShowContact(true);
     }}
+    onAboutClick={handleAboutClick}
   />
 )}
 
@@ -341,6 +352,38 @@ export default function Home() {
                 </div>
               </div>
             </div>
+            {/* About Section - Desktop */}
+<div className={`section-about absolute inset-0 ${
+  currentSection === 'about' ? 'active' : ''
+}`}>
+  <div className="relative h-full">
+    <button
+      onClick={handleBackToGallery}
+      className="fixed top-20 left-4 z-50 inline-flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
+    >
+      <svg 
+        width="20" 
+        height="20" 
+        viewBox="0 0 24 24" 
+        fill="none"
+        className="group-hover:-translate-x-1 transition-transform"
+      >
+        <path
+          d="M15 18l-6-6 6-6"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+      <span className="text-gray-700 font-medium">Geri</span>
+    </button>
+    
+    <div className="h-full overflow-y-auto">
+      <AboutUs />
+    </div>
+  </div>
+</div>
           </>
         )}
 
@@ -486,13 +529,14 @@ export default function Home() {
 
         /* Section transitions - smoother and faster */
         .section-hero,
-        .section-gallery,
-        .section-projects,
-        .section-contact {
-          opacity: 0;
-          pointer-events: none;
-          transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
-        }
+.section-gallery,
+.section-projects,
+.section-contact,
+.section-about {  /* Add .section-about here */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
 
         .section-hero {
           transform: scale(1.02);
@@ -513,7 +557,8 @@ export default function Home() {
         .section-hero.active,
         .section-gallery.active,
         .section-projects.active,
-        .section-contact.active {
+        .section-contact.active,
+        .section-about.active {
           opacity: 1;
           pointer-events: auto;
           transform: scale(1) translate(0, 0);
@@ -563,6 +608,15 @@ export default function Home() {
             display: none;
           }
         }
+          .section-about {
+  transform: translateY(40px);
+}
+
+.section-about.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1) translate(0, 0);
+}
       `}</style>
     </>
   );
@@ -572,11 +626,14 @@ export default function Home() {
 function MobileHeader({ 
   onLogoClick,
   onProjectsClick,
-  onContactClick 
+  onContactClick,
+  onAboutClick
+
 }: { 
   onLogoClick?: () => void;
   onProjectsClick?: () => void;
   onContactClick?: () => void;
+  onAboutClick?: () => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -621,13 +678,15 @@ function MobileHeader({
           <div
             className="absolute right-0 mt-2 w-48 rounded-xl bg-[#191970]/95 backdrop-blur border border-white/20 shadow-xl overflow-hidden"
           >
-            <a
-              href="/aboutus"
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                onAboutClick?.();  // ✅ This is already correct
+              }}
               className="block px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
-              onClick={() => setMenuOpen(false)}
             >
               Hakkımızda
-            </a>
+            </button>
             <button
               onClick={() => {
                 setMenuOpen(false);
