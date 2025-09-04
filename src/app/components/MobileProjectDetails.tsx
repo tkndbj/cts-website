@@ -396,9 +396,9 @@ export default function MobileProjectDetails({
       </div>     
 
       {/* Main Content Area */}
-      <div className="fixed inset-0 z-20 pt-32 bg-gray-900 md:hidden flex flex-col">
+      <div className="fixed inset-0 z-20 pt-24 bg-gray-900 md:hidden flex flex-col">
         {/* Background Image */}
-        <div className="absolute inset-0 top-32">
+        <div className="absolute inset-0 top-24">
           <Image
             src={bgImage}
             alt={activeProject.title}
