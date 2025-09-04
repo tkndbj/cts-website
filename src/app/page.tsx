@@ -10,7 +10,7 @@ import ContactForm from "./components/iletisim";
 import AboutUs from "./components/aboutus";
 import Image from "next/image";
 
-// Mobile Navigation Component
+// Mobile Navigation Component (unchanged)
 function MobileNavigation({
   projects,
   currentProject,
@@ -54,6 +54,95 @@ function MobileNavigation({
   );
 }
 
+// Mobile Header Component (unchanged)
+function MobileHeader({ 
+  onLogoClick,
+  onProjectsClick,
+  onContactClick,
+  onAboutClick
+}: { 
+  onLogoClick?: () => void;
+  onProjectsClick?: () => void;
+  onContactClick?: () => void;
+  onAboutClick?: () => void;
+}) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  return (
+    <header 
+      className="fixed top-0 left-0 right-0 h-16 z-50 bg-[#191970]/95 backdrop-blur-md shadow-lg flex items-center justify-between px-4"
+      style={{ fontFamily: 'Figtree, sans-serif' }}
+    >
+      <button
+        className="text-white font-semibold text-sm tracking-tight flex items-center"
+        onClick={onLogoClick}
+        aria-label="Ana sayfa"
+      >
+        <span>Ceyhun Tunalı</span>
+        <span className="text-[#96DED1] ml-1">&amp; Sons</span>
+      </button>
+
+      <div className="relative">
+        <button
+          aria-label="Menüyü aç"
+          className="p-2 rounded-md border border-white/20 text-white"
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+
+        {menuOpen && (
+          <div
+            className="absolute right-0 mt-2 w-48 rounded-xl bg-[#191970]/95 backdrop-blur border border-white/20 shadow-xl overflow-hidden"
+          >
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                onAboutClick?.();
+              }}
+              className="block px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
+            >
+              Hakkımızda
+            </button>
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                onProjectsClick?.();
+              }}
+              className="block w-full text-left px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
+            >
+              Projeler
+            </button>
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                onContactClick?.();
+              }}
+              className="block w-full text-left px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
+            >
+              İletişim
+            </button>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+}
+
 export default function Home() {
   const [currentSection, setCurrentSection] = useState<'hero' | 'gallery' | 'projects' | 'contact' | 'about'>('hero');
   const [currentProjectIndex, setCurrentProjectIndex] = useState(0);
@@ -64,6 +153,9 @@ export default function Home() {
   const [mobileShowProjects, setMobileShowProjects] = useState(false);
   const [mobileShowDetails, setMobileShowDetails] = useState(false);
   const [mobileShowContact, setMobileShowContact] = useState(false);
+  
+  // Add mounted state to prevent initial flash
+  const [mounted, setMounted] = useState(false);
 
   const projects = [
     {
@@ -93,6 +185,10 @@ export default function Home() {
   ];
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
     const checkMobile = () => {
       const mobile = window.matchMedia("(max-width: 767px)").matches;
       setIsMobile(mobile);
@@ -102,7 +198,6 @@ export default function Home() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Prevent scrolling
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
@@ -210,11 +305,13 @@ export default function Home() {
     setMobileShowDetails(false);
   };
 
-  // Show header for all sections except hero
   const showHeader = currentSection !== 'hero' && !isMobile;
-  
-  // Show mobile header when in gallery, projects, details, or contact
   const showMobileHeader = isMobile && (mobileShowGallery || mobileShowProjects || mobileShowDetails || mobileShowContact);
+
+  // Don't render anything until mounted to prevent flash
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <>
@@ -225,46 +322,46 @@ export default function Home() {
         rel="stylesheet"
       />
 
-      {/* Desktop Header - Only show when not in hero section */}
+      {/* Desktop Header */}
       {showHeader && (
-  <HeaderBackground 
-    onLogoClick={handleBackToHero}
-    onProjectsClick={() => {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentSection('projects');
-        setCurrentProjectIndex(0);
-        setIsTransitioning(false);
-      }, 400);
-    }}
-    onContactClick={() => {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentSection('contact');
-        setIsTransitioning(false);
-      }, 400);
-    }}
-    onAboutClick={handleAboutClick}
-  />
-)}
+        <HeaderBackground 
+          onLogoClick={handleBackToHero}
+          onProjectsClick={() => {
+            setIsTransitioning(true);
+            setTimeout(() => {
+              setCurrentSection('projects');
+              setCurrentProjectIndex(0);
+              setIsTransitioning(false);
+            }, 400);
+          }}
+          onContactClick={() => {
+            setIsTransitioning(true);
+            setTimeout(() => {
+              setCurrentSection('contact');
+              setIsTransitioning(false);
+            }, 400);
+          }}
+          onAboutClick={handleAboutClick}
+        />
+      )}
 
-      {/* Mobile Header - Show when in gallery, projects, details, or contact */}
+      {/* Mobile Header */}
       {showMobileHeader && (
-  <MobileHeader 
-    onLogoClick={handleBackToHero}
-    onProjectsClick={() => {
-      setMobileShowGallery(false);
-      setMobileShowProjects(true);
-      setMobileProject(1);
-    }}
-    onContactClick={() => {
-      setMobileShowGallery(false);
-      setMobileShowProjects(false);
-      setMobileShowContact(true);
-    }}
-    onAboutClick={handleAboutClick}
-  />
-)}
+        <MobileHeader 
+          onLogoClick={handleBackToHero}
+          onProjectsClick={() => {
+            setMobileShowGallery(false);
+            setMobileShowProjects(true);
+            setMobileProject(1);
+          }}
+          onContactClick={() => {
+            setMobileShowGallery(false);
+            setMobileShowProjects(false);
+            setMobileShowContact(true);
+          }}
+          onAboutClick={handleAboutClick}
+        />
+      )}
 
       <div
         className={`stage fixed inset-0 z-[1] ${
@@ -272,7 +369,7 @@ export default function Home() {
         }`}
         style={{ fontFamily: "Figtree, sans-serif" }}
       >
-        {/* Hero Section */}
+        {/* Hero Section - Always render this first */}
         <div className={`section-hero absolute inset-0 ${
           (currentSection === 'hero' && (!isMobile || (!mobileShowGallery && !mobileShowProjects && !mobileShowDetails && !mobileShowContact))) ? 'active' : ''
         }`}>
@@ -282,8 +379,8 @@ export default function Home() {
           />
         </div>
 
-        {/* Desktop Gallery, Projects & Contact */}
-        {!isMobile && (
+        {/* Desktop sections - Only render when not in hero to prevent flash */}
+        {!isMobile && currentSection !== 'hero' && (
           <>
             {/* Gallery Section */}
             <div className={`section-gallery absolute inset-0 ${
@@ -320,7 +417,7 @@ export default function Home() {
               />
             </div>
 
-            {/* Contact Section - Desktop */}
+            {/* Contact Section */}
             <div className={`section-contact absolute inset-0 ${
               currentSection === 'contact' ? 'active' : ''
             }`}>
@@ -352,42 +449,43 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            {/* About Section - Desktop */}
-<div className={`section-about absolute inset-0 ${
-  currentSection === 'about' ? 'active' : ''
-}`}>
-  <div className="relative h-full">
-    <button
-      onClick={handleBackToGallery}
-      className="fixed top-20 left-4 z-50 inline-flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
-    >
-      <svg 
-        width="20" 
-        height="20" 
-        viewBox="0 0 24 24" 
-        fill="none"
-        className="group-hover:-translate-x-1 transition-transform"
-      >
-        <path
-          d="M15 18l-6-6 6-6"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-      <span className="text-gray-700 font-medium">Geri</span>
-    </button>
-    
-    <div className="h-full overflow-y-auto">
-      <AboutUs />
-    </div>
-  </div>
-</div>
+
+            {/* About Section */}
+            <div className={`section-about absolute inset-0 ${
+              currentSection === 'about' ? 'active' : ''
+            }`}>
+              <div className="relative h-full">
+                <button
+                  onClick={handleBackToGallery}
+                  className="fixed top-20 left-4 z-50 inline-flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
+                >
+                  <svg 
+                    width="20" 
+                    height="20" 
+                    viewBox="0 0 24 24" 
+                    fill="none"
+                    className="group-hover:-translate-x-1 transition-transform"
+                  >
+                    <path
+                      d="M15 18l-6-6 6-6"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span className="text-gray-700 font-medium">Geri</span>
+                </button>
+                
+                <div className="h-full overflow-y-auto">
+                  <AboutUs />
+                </div>
+              </div>
+            </div>
           </>
         )}
 
-        {/* Mobile Gallery Display */}
+        {/* Mobile sections */}
         {isMobile && mobileShowGallery && !mobileShowProjects && !mobileShowDetails && !mobileShowContact && (
           <div className="mobile-gallery fixed inset-0 z-45 pt-16 bg-white">
             <ImageGallerySection
@@ -402,7 +500,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Mobile Contact Display - SEPARATE SECTION */}
         {isMobile && mobileShowContact && (
           <div className="mobile-contact fixed inset-0 z-45 pt-16 bg-white">
             <div className="relative h-full">
@@ -437,7 +534,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Mobile project display */}
         {isMobile && mobileShowProjects && !mobileShowDetails && (
           <div className="mobile-projects fixed inset-0 z-45 pt-16 pb-20 bg-gray-900">
             <div className="h-full overflow-hidden">
@@ -503,7 +599,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Mobile Project Details View */}
         {isMobile && mobileShowDetails && (
           <MobileProjectDetails
             projects={projects}
@@ -527,18 +622,27 @@ export default function Home() {
           overflow: hidden;
         }
 
-        /* Section transitions - smoother and faster */
-        .section-hero,
-.section-gallery,
-.section-projects,
-.section-contact,
-.section-about {  /* Add .section-about here */
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
-}
+        /* Initially hide all sections except hero */
+        .section-gallery,
+        .section-projects,
+        .section-contact,
+        .section-about {
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+        }
 
+        /* Hero starts visible */
         .section-hero {
+          opacity: 1;
+          pointer-events: auto;
+          transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+          transform: scale(1);
+        }
+
+        .section-hero:not(.active) {
+          opacity: 0;
+          pointer-events: none;
           transform: scale(1.02);
         }
 
@@ -550,7 +654,8 @@ export default function Home() {
           transform: translateX(40px);
         }
 
-        .section-contact {
+        .section-contact,
+        .section-about {
           transform: translateY(40px);
         }
 
@@ -564,7 +669,6 @@ export default function Home() {
           transform: scale(1) translate(0, 0);
         }
 
-        /* Remove black flash - smoother transition overlay */
         .stage.transitioning::after {
           content: "";
           position: fixed;
@@ -589,7 +693,6 @@ export default function Home() {
           }
         }
 
-        /* Mobile specific styles */
         @media (max-width: 767px) {
           body.mobile-no-scroll {
             overflow: hidden !important;
@@ -608,106 +711,7 @@ export default function Home() {
             display: none;
           }
         }
-          .section-about {
-  transform: translateY(40px);
-}
-
-.section-about.active {
-  opacity: 1;
-  pointer-events: auto;
-  transform: scale(1) translate(0, 0);
-}
       `}</style>
     </>
-  );
-}
-
-// Mobile Header Component - Updated with Figtree font
-function MobileHeader({ 
-  onLogoClick,
-  onProjectsClick,
-  onContactClick,
-  onAboutClick
-
-}: { 
-  onLogoClick?: () => void;
-  onProjectsClick?: () => void;
-  onContactClick?: () => void;
-  onAboutClick?: () => void;
-}) {
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  return (
-    <header 
-      className="fixed top-0 left-0 right-0 h-16 z-50 bg-[#191970]/95 backdrop-blur-md shadow-lg flex items-center justify-between px-4"
-      style={{ fontFamily: 'Figtree, sans-serif' }}
-    >
-      <button
-        className="text-white font-semibold text-sm tracking-tight flex items-center"
-        onClick={onLogoClick}
-        aria-label="Ana sayfa"
-      >
-        <span>Ceyhun Tunalı</span>
-        <span className="text-[#96DED1] ml-1">&amp; Sons</span>
-      </button>
-
-      <div className="relative">
-        <button
-          aria-label="Menüyü aç"
-          className="p-2 rounded-md border border-white/20 text-white"
-          onClick={() => setMenuOpen((v) => !v)}
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
-        </button>
-
-        {menuOpen && (
-          <div
-            className="absolute right-0 mt-2 w-48 rounded-xl bg-[#191970]/95 backdrop-blur border border-white/20 shadow-xl overflow-hidden"
-          >
-            <button
-              onClick={() => {
-                setMenuOpen(false);
-                onAboutClick?.();  // ✅ This is already correct
-              }}
-              className="block px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
-            >
-              Hakkımızda
-            </button>
-            <button
-              onClick={() => {
-                setMenuOpen(false);
-                onProjectsClick?.();  // ✅ This is already correct
-              }}
-              className="block w-full text-left px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
-            >
-              Projeler
-            </button>
-            <button
-              onClick={() => {
-                setMenuOpen(false);
-                onContactClick?.();  // ✅ This is already correct
-              }}
-              className="block w-full text-left px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
-            >
-              İletişim
-            </button>
-          </div>
-        )}
-      </div>
-    </header>
   );
 }

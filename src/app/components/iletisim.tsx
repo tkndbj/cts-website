@@ -76,25 +76,41 @@ export default function ContactForm() {
   const officeLocation = { lat: 35.322848, lng: 33.963165 };
 
   useEffect(() => {
-    // Load Google Maps script
-    if (!window.google) {
+    // Check if script already exists
+    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+    
+    if (existingScript) {
+      // Script already loaded, just check if Google Maps is ready
+      if (window.google && window.google.maps) {
+        setMapLoaded(true);
+      } else {
+        // Wait for existing script to load
+        existingScript.addEventListener('load', () => setMapLoaded(true));
+      }
+      return;
+    }
+    
+    // Only load script if it doesn't exist
+    if (!window.google && !existingScript) {
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&callback=initMap`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&callback=initMap&loading=async`;
       script.async = true;
       script.defer = true;
+      script.id = 'google-maps-script';
       
       window.initMap = () => {
         setMapLoaded(true);
       };
       
       document.head.appendChild(script);
-    } else {
+      
+      return () => {
+        // Clean up only the callback, not the script itself
+        delete window.initMap;
+      };
+    } else if (window.google && window.google.maps) {
       setMapLoaded(true);
     }
-
-    return () => {
-      delete window.initMap;
-    };
   }, []);
 
   useEffect(() => {
@@ -142,29 +158,44 @@ export default function ContactForm() {
       });
       return;
     }
-
+  
     setIsSubmitting(true);
     setSubmitStatus({ type: null, message: '' });
-
+  
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      setSubmitStatus({
-        type: 'success',
-        message: 'Mesajınız başarıyla gönderildi!'
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
-      
-      // Reset form
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: "",
-        projectInterest: ""
-      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        setSubmitStatus({
+          type: 'success',
+          message: data.message || 'Mesajınız başarıyla gönderildi!'
+        });
+        
+        // Reset form
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
+          projectInterest: ""
+        });
+      } else {
+        setSubmitStatus({
+          type: 'error',
+          message: data.error || 'Mesaj gönderilemedi. Lütfen daha sonra tekrar deneyin.'
+        });
+      }
     } catch (error) {
+      console.error('Form submission error:', error);
       setSubmitStatus({
         type: 'error',
         message: 'Mesaj gönderilemedi. Lütfen daha sonra tekrar deneyin.'
