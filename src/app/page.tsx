@@ -360,7 +360,8 @@ export default function Home() {
         {/* Mobile Project Details View */}
         {isMobile && mobileShowDetails && (
           <MobileProjectDetails
-            projectId={mobileProject}
+            projects={projects}
+            currentProject={mobileProject}
             onBack={handleMobileDetailsBack}
           />
         )}
