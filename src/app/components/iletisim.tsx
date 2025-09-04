@@ -1,10 +1,46 @@
 import { useState, useEffect, useRef } from "react";
 
 // Declare google maps types
+interface GoogleMapStyle {
+  featureType?: string;
+  elementType?: string;
+  stylers?: Array<{ [key: string]: string | number }>;
+}
+
+interface GoogleMap {
+  setCenter(location: { lat: number; lng: number }): void;
+}
+
+interface GoogleMapsMarker {
+  setPosition(location: { lat: number; lng: number }): void;
+}
+
+interface GoogleMapsConstructors {
+  Map: new (element: HTMLElement, options: {
+    center: { lat: number; lng: number };
+    zoom: number;
+    mapTypeControl?: boolean;
+    fullscreenControl?: boolean;
+    streetViewControl?: boolean;
+    styles?: GoogleMapStyle[];
+  }) => GoogleMap;
+  Marker: new (options: {
+    position: { lat: number; lng: number };
+    map: GoogleMap;
+    title?: string;
+    animation?: number;
+  }) => GoogleMapsMarker;
+  Animation: {
+    DROP: number;
+  };
+}
+
 declare global {
   interface Window {
-    google: any;
-    initMap: () => void;
+    google: {
+      maps: GoogleMapsConstructors;
+    };
+    initMap?: () => void;
   }
 }
 
@@ -57,7 +93,7 @@ export default function ContactForm() {
     }
 
     return () => {
-      delete (window as any).initMap;
+      delete window.initMap;
     };
   }, []);
 
