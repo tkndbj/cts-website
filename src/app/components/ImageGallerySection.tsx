@@ -141,7 +141,7 @@ export default function ImageGallerySection({
                     </svg>
                   </button>
                   <button
-                    onClick={onBackToHero}
+                    onClick={onContactClick}
                     className="flex-1 bg-white/20 backdrop-blur border border-white/40 text-white px-4 py-3 rounded-full font-semibold"
                   >
                     İletişim

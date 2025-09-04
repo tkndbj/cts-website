@@ -203,7 +203,7 @@ export default function ContactForm() {
               fill="currentColor"
             />
           </svg>
-          <span className="text-sm font-medium text-gray-700 hidden sm:inline">Directions</span>
+          <span className="text-sm font-medium text-gray-700 hidden sm:inline">Yön</span>
         </button>
       </div>
 

@@ -240,8 +240,20 @@ export default function Home() {
 
       {/* Mobile Header - Show when in gallery, projects, details, or contact */}
       {showMobileHeader && (
-        <MobileHeader onLogoClick={handleBackToHero} />
-      )}
+  <MobileHeader 
+    onLogoClick={handleBackToHero}
+    onProjectsClick={() => {
+      setMobileShowGallery(false);
+      setMobileShowProjects(true);
+      setMobileProject(1);
+    }}
+    onContactClick={() => {
+      setMobileShowGallery(false);
+      setMobileShowProjects(false);
+      setMobileShowContact(true);
+    }}
+  />
+)}
 
       <div
         className={`stage fixed inset-0 z-[1] ${
@@ -557,7 +569,6 @@ export default function Home() {
 }
 
 // Mobile Header Component - Updated with Figtree font
-// Mobile Header Component - Updated with Figtree font
 function MobileHeader({ 
   onLogoClick,
   onProjectsClick,
@@ -620,7 +631,7 @@ function MobileHeader({
             <button
               onClick={() => {
                 setMenuOpen(false);
-                onProjectsClick?.();
+                onProjectsClick?.();  // ✅ This is already correct
               }}
               className="block w-full text-left px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
             >
@@ -629,7 +640,7 @@ function MobileHeader({
             <button
               onClick={() => {
                 setMenuOpen(false);
-                onContactClick?.();
+                onContactClick?.();  // ✅ This is already correct
               }}
               className="block w-full text-left px-4 py-3 text-sm text-white/90 hover:bg-white/10 transition-colors"
             >
