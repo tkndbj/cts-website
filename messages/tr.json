@@ -177,5 +177,17 @@
     "errorMessage": "Mesaj gönderilemedi. Lütfen daha sonra tekrar deneyin.",
     "errorFillFields": "Lütfen tüm zorunlu alanları doldurun."
   }
+},
+"MobileProjectDetails": {
+  "map": "Harita",
+  "fullscreen": "Tam Ekran",
+  "interior": "İç Mekan",
+  "interiorImages": "İç Mekan Görselleri",
+  "unitTypes": "Daire Tipleri",
+  "stats": {
+    "squareMeters": "M²",
+    "bathroom": "Banyo",
+    "bedroom": "Yatak"
+  }
 }
   }

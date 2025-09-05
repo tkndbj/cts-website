@@ -177,5 +177,17 @@
     "errorMessage": "Не удалось отправить сообщение. Пожалуйста, попробуйте позже.",
     "errorFillFields": "Пожалуйста, заполните все обязательные поля."
   }
+},
+"MobileProjectDetails": {
+  "map": "Карта",
+  "fullscreen": "Полный экран",
+  "interior": "Интерьер",
+  "interiorImages": "Изображения интерьера",
+  "unitTypes": "Типы квартир",
+  "stats": {
+    "squareMeters": "М²",
+    "bathroom": "Ванная",
+    "bedroom": "Спальня"
+  }
 }
   }

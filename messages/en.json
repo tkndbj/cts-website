@@ -177,5 +177,17 @@
     "errorMessage": "Failed to send message. Please try again later.",
     "errorFillFields": "Please fill in all required fields."
   }
+},
+"MobileProjectDetails": {
+  "map": "Map",
+  "fullscreen": "Fullscreen",
+  "interior": "Interior",
+  "interiorImages": "Interior Images",
+  "unitTypes": "Unit Types",
+  "stats": {
+    "squareMeters": "M²",
+    "bathroom": "Bathroom",
+    "bedroom": "Bedroom"
+  }
 }
   }

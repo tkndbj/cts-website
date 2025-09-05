@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
+import { useTranslations } from 'next-intl';
 import MapView from './MapView';
 
 interface NavigationProps {
@@ -189,27 +190,28 @@ export default function MobileProjectDetails({
   projects = [],
   onProjectSelect,
 }: MobileProjectDetailsProps) {
+  const t = useTranslations('MobileProjectDetails');
+  const tProjects = useTranslations('ProjectDetails');
+  const tNav = useTranslations('Navigation');
+  const tButtons = useTranslations('Buttons');
+
   const defaultProjects = [
     {
       id: 1,
       title: "FOUR SEASONS LIFE",
-      description:
-        "Çağdaş tasarım çözümleri ile geleceğin yapılarını inşa ediyoruz. Her mevsimin güzelliğini yaşayabileceğiniz modern yaşam alanları.",
+      description: tProjects('project1Description'),
       unitTypes: ["Studio", "Loft", "2+1", "1+1"],
     },
-    
     {
       id: 2,
       title: "AURORA BAY",
-      description:
-        "Çevre dostu yapılar ile doğaya saygılı inşaat. Denizin kucakladığı huzurlu yaşam alanları.",
+      description: tProjects('project2Description'),
       unitTypes: ["1+1", "Loft", "2+1 Garden", "2+1 Infinity"],
     },
     {
       id: 3,
       title: "CAROB HILL",
-      description:
-        "Zamanında teslimat ve müşteri memnuniyeti odaklı hizmet. Tepenin zirvesinde lüks yaşamın adresi.",
+      description: tProjects('project3Description'),
       unitTypes: ["1+1", "Loft", "2+1"],
     },
   ];
@@ -349,7 +351,7 @@ export default function MobileProjectDetails({
                 strokeLinejoin="round"
               />
             </svg>
-            <span className="text-xs font-medium text-white">Ana Sayfa</span>
+            <span className="text-xs font-medium text-white">{tNav('home')}</span>
           </button>
 
           {/* Navigation arrows */}
@@ -362,6 +364,7 @@ export default function MobileProjectDetails({
                   ? 'bg-black/5 hover:bg-black/10 text-white border border-white/10 hover:border-blue-400/30' 
                   : 'text-white/20 cursor-not-allowed bg-white/5 border border-white/5'
               }`}
+              aria-label={tButtons('previous')}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path
@@ -382,6 +385,7 @@ export default function MobileProjectDetails({
                   ? 'bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-blue-400/30' 
                   : 'text-white/20 cursor-not-allowed bg-white/5 border border-white/5'
               }`}
+              aria-label={tButtons('next')}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path
@@ -434,7 +438,7 @@ export default function MobileProjectDetails({
                 <button
                   onClick={() => setShowMap(true)}
                   className="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 transition"
-                  title="Harita"
+                  title={t('map')}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path
@@ -452,7 +456,7 @@ export default function MobileProjectDetails({
                   <button
                     onClick={() => setFullscreenProjectId(currentProject)}
                     className="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 transition"
-                    title="Tam Ekran"
+                    title={t('fullscreen')}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <path
@@ -475,19 +479,19 @@ export default function MobileProjectDetails({
           <div className="fixed right-2 top-1/2 transform -translate-y-1/2 z-10">
             <div className="flex flex-col gap-2">
               <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm px-2 py-1.5 text-center min-w-[60px]">
-                <div className="text-[10px] text-white/60">M²</div>
+                <div className="text-[10px] text-white/60">{t('stats.squareMeters')}</div>
                 <div className="text-sm font-bold text-white">
                   {unitData.stats.m2}
                 </div>
               </div>
               <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm px-2 py-1.5 text-center min-w-[60px]">
-                <div className="text-[10px] text-white/60">Banyo</div>
+                <div className="text-[10px] text-white/60">{t('stats.bathroom')}</div>
                 <div className="text-sm font-bold text-white">
                   {unitData.stats.banyo}
                 </div>
               </div>
               <div className="rounded-lg border border-white/20 bg-black/60 backdrop-blur-sm px-2 py-1.5 text-center min-w-[60px]">
-                <div className="text-[10px] text-white/60">Yatak</div>
+                <div className="text-[10px] text-white/60">{t('stats.bedroom')}</div>
                 <div className="text-sm font-bold text-white">
                   {unitData.stats.yatak}
                 </div>
@@ -508,7 +512,7 @@ export default function MobileProjectDetails({
             }`}>
               <div className="p-2">
                 <div className="text-xs uppercase tracking-wider text-white/60 mb-2 px-2">
-                  İç Mekan Görselleri
+                  {t('interiorImages')}
                 </div>
                 <div className="overflow-x-auto">
                   <div className="flex gap-2" style={{ width: "max-content" }}>
@@ -526,7 +530,7 @@ export default function MobileProjectDetails({
                         >
                           <Image
                             src={src}
-                            alt={`Interior ${index + 1}`}
+                            alt={`${t('interior')} ${index + 1}`}
                             fill
                             style={{ objectFit: "cover" }}
                             unoptimized
@@ -543,7 +547,7 @@ export default function MobileProjectDetails({
           {/* Unit Types Bottom Bar */}
           <div className="bg-black/70 backdrop-blur-sm border-t border-white/20 p-3 pb-safe">
             <div className="text-xs uppercase tracking-wider text-white/60 mb-2 px-2">
-              Daire Tipleri
+              {t('unitTypes')}
             </div>
             <div className="overflow-x-auto">
               <div className="flex gap-2" style={{ width: "max-content" }}>
@@ -598,7 +602,7 @@ export default function MobileProjectDetails({
                       strokeLinejoin="round"
                     />
                   </svg>
-                  <span className="text-sm">Geri</span>
+                  <span className="text-sm">{tButtons('back')}</span>
                 </button>
               </div>
 
@@ -618,7 +622,7 @@ export default function MobileProjectDetails({
               {fsThumbList.length > 0 && (
                 <div className="flex-shrink-0 bg-black/80 border-t border-white/20 p-4">
                   <div className="text-xs uppercase tracking-wider text-white/60 mb-2">
-                    İç Mekan Görselleri
+                    {t('interiorImages')}
                   </div>
                   <div className="overflow-x-auto">
                     <div className="flex gap-3" style={{ width: "max-content" }}>
@@ -641,7 +645,7 @@ export default function MobileProjectDetails({
                           >
                             <Image
                               src={src}
-                              alt={`Interior ${index + 1}`}
+                              alt={`${t('interior')} ${index + 1}`}
                               fill
                               style={{ objectFit: "cover" }}
                               unoptimized

@@ -4,10 +4,9 @@ import { createPortal } from 'react-dom';
 
 // Project coordinates - you'll need to update these with actual coordinates
 const PROJECT_COORDINATES = {
-  1: { lng: 33.969086, lat: 35.325450, name: "FOUR SEASONS LIFE" }, // Antalya example
-  2: { lng: 33.470041, lat: 35.218940, name: "THE SIGN" },
-  3: { lng: 33.739072, lat: 35.399245, name: "AURORA BAY" },
-  4: { lng: 33.726335, lat: 35.383708, name: "CAROB HILL" },
+  1: { lng: 33.969086, lat: 35.325450, name: "FOUR SEASONS LIFE" }, // Antalya example  
+  2: { lng: 33.739072, lat: 35.399245, name: "AURORA BAY" },
+  3: { lng: 33.726335, lat: 35.383708, name: "CAROB HILL" },
 };
 
 interface MapViewProps {
