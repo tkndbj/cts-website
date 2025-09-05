@@ -20,23 +20,17 @@ const sliderData = [
     subtitle: "Geleceğin Yapıları",
     description: "40 yıllık deneyimimizle, en ince detayları dikkate alarak hayallerinizi gerçeğe dönüştürüyoruz."
   },
+  
   {
     id: 2,
-    image: "/thesign.jpg",
-    title: "Lüks Konutlar",
-    subtitle: "Yaşam Alanlarınız",
-    description: "Konfor ve estetiği bir araya getiren, modern yaşam alanları tasarlıyoruz."
-  },
-  {
-    id: 3,
-    image: "/aurora.jpg",
+    image: "/aurora.png",
     title: "Yatırım Fırsatları",
     subtitle: "Geleceğiniz İçin",
     description: "Yatırım fırsatlarınızın en iyi şekilde yararlanması için tasarlıyoruz."
   },
   {
-    id: 4,
-    image: "/carob.jpg",
+    id: 3,
+    image: "/carob.png",
     title: "Sürdürülebilir Yapılar",
     subtitle: "Yapı Teknolojileri",
     description: "Doğayla uyumlu, enerji verimli ve sürdürülebilir projeler geliştiriyoruz."

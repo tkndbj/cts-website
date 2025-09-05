@@ -1,15 +1,6 @@
 // app/api/contact/route.ts
 import { NextResponse } from 'next/server';
 
-// SendGrid configuration type
-type SendGridMail = {
-  to: string;
-  from: string;
-  subject: string;
-  text: string;
-  html: string;
-};
-
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -32,13 +23,22 @@ export async function POST(request: Request) {
       );
     }
 
-    // Get SendGrid API key from environment variables
+    // Check for required environment variables
     const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+    const SENDGRID_FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL;
     
     if (!SENDGRID_API_KEY) {
-      console.error('SendGrid API key is not configured');
+      console.error('SENDGRID_API_KEY is not configured');
       return NextResponse.json(
-        { error: 'E-posta servisi yapılandırılmamış.' },
+        { error: 'E-posta servisi yapılandırılmamış. (API Key missing)' },
+        { status: 500 }
+      );
+    }
+
+    if (!SENDGRID_FROM_EMAIL) {
+      console.error('SENDGRID_FROM_EMAIL is not configured');
+      return NextResponse.json(
+        { error: 'E-posta servisi yapılandırılmamış. (From email missing)' },
         { status: 500 }
       );
     }
@@ -124,17 +124,12 @@ ${message}
 Gönderim Tarihi: ${new Date().toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' })}
     `;
 
-    // Prepare SendGrid mail object
-    const mail: SendGridMail = {
-      to: 'office@ctscyprushomes.com',
-      from: process.env.SENDGRID_FROM_EMAIL || 'noreply@ctscyprushomes.com', // You need to set this verified sender email
-      subject: `CTS Website İletişim Formu - ${subject}`,
-      text: textContent,
-      html: htmlContent,
-    };
+    // Log the attempt (for debugging)
+    console.log('Attempting to send email to:', 'office@ctscyprushomes.com');
+    console.log('From email:', SENDGRID_FROM_EMAIL);
 
     // Send email using SendGrid API
-    const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+    const sendGridResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${SENDGRID_API_KEY}`,
@@ -143,49 +138,88 @@ Gönderim Tarihi: ${new Date().toLocaleString('tr-TR', { timeZone: 'Europe/Istan
       body: JSON.stringify({
         personalizations: [
           {
-            to: [{ email: mail.to }],
+            to: [{ email: 'office@ctscyprushomes.com' }],
           },
         ],
         from: { 
-          email: mail.from,
+          email: SENDGRID_FROM_EMAIL,
           name: 'CTS Cyprus Homes'
         },
         reply_to: {
           email: email,
           name: name
         },
-        subject: mail.subject,
+        subject: `CTS Website İletişim Formu - ${subject}`,
         content: [
           {
             type: 'text/plain',
-            value: mail.text,
+            value: textContent,
           },
           {
             type: 'text/html',
-            value: mail.html,
+            value: htmlContent,
           },
         ],
       }),
     });
 
-    if (response.ok) {
+    // Check response
+    if (sendGridResponse.ok || sendGridResponse.status === 202) {
+      console.log('Email sent successfully');
       return NextResponse.json(
-        { message: 'E-posta başarıyla gönderildi.' },
+        { message: 'Mesajınız başarıyla gönderildi!' },
         { status: 200 }
       );
     } else {
-      const errorData = await response.text();
-      console.error('SendGrid error:', errorData);
+      const errorText = await sendGridResponse.text();
+      console.error('SendGrid error response:', {
+        status: sendGridResponse.status,
+        statusText: sendGridResponse.statusText,
+        error: errorText
+      });
+      
+      // Parse error if possible
+      let errorMessage = 'E-posta gönderilemedi.';
+      try {
+        const errorData = JSON.parse(errorText);
+        if (errorData.errors && errorData.errors.length > 0) {
+          errorMessage = errorData.errors[0].message || errorMessage;
+        }
+      } catch (e) {
+        // Couldn't parse error, use default message
+      }
+
       return NextResponse.json(
-        { error: 'E-posta gönderilemedi. Lütfen daha sonra tekrar deneyin.' },
+        { error: `${errorMessage} Lütfen daha sonra tekrar deneyin.` },
         { status: 500 }
       );
     }
   } catch (error) {
     console.error('Contact form error:', error);
+    
+    // More detailed error logging
+    if (error instanceof Error) {
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack
+      });
+    }
+    
     return NextResponse.json(
       { error: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyin.' },
       { status: 500 }
     );
   }
+}
+
+// Optional: Add OPTIONS handler for CORS if needed
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
 }

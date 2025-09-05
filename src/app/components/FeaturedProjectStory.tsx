@@ -38,62 +38,45 @@ const UNIT_CONFIG: UnitConfig = {
       image: "/units/fourseasons/loft.jpg",
       stats: { m2: "60-75", banyo: "1", yatak: "1" },
     },
-    "2+1": {
-      image: "/units/fourseasons/2p1.jpg",
-      stats: { m2: "95-110", banyo: "2", yatak: "2" },
+    "1+1": {
+      image: "/units/fourseasons/1+1.jpg",
+      stats: { m2: "95-110", banyo: "1", yatak: "2" },
     },
-    "3+1": {
-      image: "/units/fourseasons/3p1.jpg",
-      stats: { m2: "130-150", banyo: "2", yatak: "3" },
+    "2+1": {
+      image: "/units/fourseasons/2+1.jpg",
+      stats: { m2: "130-150", banyo: "1", yatak: "2" },
     },
   },
+  
   2: {
-    Studio: {
-      image: "/units/sign/studio.jpg",
-      stats: { m2: "40-50", banyo: "1", yatak: "1" },
-    },
-    "Grand Studio": {
-      image: "/units/sign/grand-studio.jpg",
-      stats: { m2: "55-65", banyo: "1", yatak: "1" },
-    },
     "1+1": {
-      image: "/units/sign/1p1.jpg",
-      stats: { m2: "70-80", banyo: "1", yatak: "1" },
+      image: "/units/aurora/1+1.png",
+      stats: { m2: "65-75", banyo: "1", yatak: "1" },
     },
-    "2+1": {
-      image: "/units/sign/2p1.jpg",
-      stats: { m2: "95-110", banyo: "2", yatak: "2" },
+    Loft: {
+      image: "/units/aurora/loft.png",
+      stats: { m2: "75-90", banyo: "1", yatak: "1" },
+    },
+    "2+1 Garden": {
+      image: "/units/aurora/2+1-garden.png",
+      stats: { m2: "100-115", banyo: "2", yatak: "2" },
+    },
+    "2+1 Infinity": {
+      image: "/units/aurora/2+1-infinity.png",
+      stats: { m2: "110-125", banyo: "2", yatak: "2" },
     },
   },
   3: {
     "1+1": {
-      image: "/units/aurora/1+1.jpg",
-      stats: { m2: "65-75", banyo: "1", yatak: "1" },
-    },
-    Loft: {
-      image: "/units/aurora/loft.jpg",
-      stats: { m2: "75-90", banyo: "1", yatak: "1" },
-    },
-    "2+1 Garden": {
-      image: "/units/aurora/2+1-garden.jpg",
-      stats: { m2: "100-115", banyo: "2", yatak: "2" },
-    },
-    "2+1 Infinity": {
-      image: "/units/aurora/2+1-infinity.jpg",
-      stats: { m2: "110-125", banyo: "2", yatak: "2" },
-    },
-  },
-  4: {
-    "1+1": {
-      image: "/units/carob/1+1.jpg",
+      image: "/units/carob/1+1.png",
       stats: { m2: "60-70", banyo: "1", yatak: "1" },
     },
     Loft: {
-      image: "/units/carob/loft.jpg",
+      image: "/units/carob/loft.png",
       stats: { m2: "70-85", banyo: "1", yatak: "1" },
     },
     "2+1": {
-      image: "/units/carob/2+1.jpg",
+      image: "/units/carob/2+1.png",
       stats: { m2: "95-110", banyo: "2", yatak: "2" },
     },
   },
@@ -107,64 +90,94 @@ const UNIT_INTERIORS: InteriorConfig = {
     ],
     Loft: [
       "/units/fourseasons/interior/loft/1.jpg",
-      "/units/fourseasons/interior/loft/2.jpg",
+      
     ],
     "2+1": [
-      "/units/fourseasons/interior/2+1/1.jpg",
-      "/units/fourseasons/interior/2+1/2.jpg",
+      "/units/fourseasons/interior/2+1/4.jpg",
+      "/units/fourseasons/interior/2+1/5.jpg",
+      "/units/fourseasons/interior/2+1/6.jpg",
+      "/units/fourseasons/interior/2+1/7.jpg",
+      "/units/fourseasons/interior/2+1/8.jpg",
+      "/units/fourseasons/interior/2+1/9.jpg",
+      "/units/fourseasons/interior/2+1/10.jpg",
+      "/units/fourseasons/interior/2+1/11.jpg",
+      "/units/fourseasons/interior/2+1/12.jpg",
+      
     ],
-    "3+1": [
-      "/units/fourseasons/interior/3+1/1.jpg",
-      "/units/fourseasons/interior/3+1/2.jpg",
+    "1+1": [
+      "/units/fourseasons/interior/1+1/1.jpg",
+      "/units/fourseasons/interior/1+1/2.jpg",
+      "/units/fourseasons/interior/1+1/3.jpg",
+      "/units/fourseasons/interior/1+1/4.jpg",
     ],
   },
+  
   2: {
-    Studio: [
-      "/units/sign/interior/studio/1.jpg",
-      "/units/sign/interior/studio/2.jpg",
-    ],
-    "Grand Studio": [
-      "/units/sign/interior/grand-studio/1.jpg",
-      "/units/sign/interior/grand-studio/2.jpg",
-    ],
-    "1+1": ["/units/sign/interior/1+1/1.jpg", "/units/sign/interior/1+1/2.jpg"],
-    "2+1": ["/units/sign/interior/2+1/1.jpg", "/units/sign/interior/2+1/2.jpg"],
-  },
-  3: {
     "1+1": [
       "/units/aurora/interior/1+1/1.jpg",
       "/units/aurora/interior/1+1/2.jpg",
+      "/units/aurora/interior/1+1/3.jpg",
+      "/units/aurora/interior/1+1/4.jpg",
+      "/units/aurora/interior/1+1/5.jpg",
+      "/units/aurora/interior/1+1/6.jpg",
+      "/units/aurora/interior/1+1/7.jpg",
+      
     ],
     Loft: [
-      "/units/aurora/interior/loft/1.jpg",
-      "/units/aurora/interior/loft/2.jpg",
+      "/units/aurora/interior/loft/1.png",
+      "/units/aurora/interior/loft/2.png",
+      "/units/aurora/interior/loft/3.png",
+      "/units/aurora/interior/loft/4.png",
     ],
     "2+1 Garden": [
-      "/units/aurora/interior/2+1-garden/1.jpg",
-      "/units/aurora/interior/2+1-garden/2.jpg",
-      "/units/aurora/interior/2+1-garden/3.jpg",
+      "/units/aurora/interior/2+1-garden/1.png",
+      "/units/aurora/interior/2+1-garden/2.png",
+      "/units/aurora/interior/2+1-garden/3.png",
+      "/units/aurora/interior/2+1-garden/4.png",
+      "/units/aurora/interior/2+1-garden/5.png",
+      "/units/aurora/interior/2+1-garden/6.png",
+      "/units/aurora/interior/2+1-garden/7.png",
+      "/units/aurora/interior/2+1-garden/8.png",
+      "/units/aurora/interior/2+1-garden/9.png",      
     ],
     "2+1 Infinity": [
-      "/units/aurora/interior/2+1-infinity/1.jpg",
-      "/units/aurora/interior/2+1-infinity/2.jpg",
-      "/units/aurora/interior/2+1-infinity/3.jpg",
-      "/units/aurora/interior/2+1-infinity/4.jpg",
-      "/units/aurora/interior/2+1-infinity/5.jpg",
-      "/units/aurora/interior/2+1-infinity/6.jpg",
+      "/units/aurora/interior/2+1-infinity/1.png",
+      "/units/aurora/interior/2+1-infinity/2.png",
+      "/units/aurora/interior/2+1-infinity/3.png",
+      "/units/aurora/interior/2+1-infinity/4.png",
+      "/units/aurora/interior/2+1-infinity/5.png",
+      "/units/aurora/interior/2+1-infinity/6.png",
+      "/units/aurora/interior/2+1-infinity/7.png",
+      "/units/aurora/interior/2+1-infinity/8.png",
     ],
   },
-  4: {
+  3: {
     "1+1": [
       "/units/carob/interior/1+1/1.jpg",
       "/units/carob/interior/1+1/2.jpg",
+      "/units/carob/interior/1+1/3.jpg",
+      "/units/carob/interior/1+1/4.jpg",
+      "/units/carob/interior/1+1/5.jpg",
+      "/units/carob/interior/1+1/6.jpg",
+      "/units/carob/interior/1+1/7.jpg",
+      
     ],
     Loft: [
-      "/units/carob/interior/loft/1.jpg",
-      "/units/carob/interior/loft/2.jpg",
+      "/units/carob/interior/loft/1.png",
+      "/units/carob/interior/loft/2.png",
+      "/units/carob/interior/loft/3.png",
+      "/units/carob/interior/loft/4.png",
     ],
     "2+1": [
-      "/units/carob/interior/2+1/1.jpg",
-      "/units/carob/interior/2+1/2.jpg",
+        "/units/carob/interior/2+1/1.png",
+        "/units/carob/interior/2+1/2.png",
+        "/units/carob/interior/2+1/3.png",
+        "/units/carob/interior/2+1/4.png",
+        "/units/carob/interior/2+1/5.png",
+        "/units/carob/interior/2+1/6.png",
+        "/units/carob/interior/2+1/7.png",
+        "/units/carob/interior/2+1/8.png",
+        "/units/carob/interior/2+1/9.png",
     ],
   },
 };
@@ -186,24 +199,18 @@ export default function FeaturedProjectStory({
       title: "FOUR SEASONS LIFE",
       description:
         "Çağdaş tasarım çözümleri ile geleceğin yapılarını inşa ediyoruz. Her mevsimin güzelliğini yaşayabileceğiniz modern yaşam alanları.",
-      unitTypes: ["Studio", "Loft", "2+1", "3+1"],
+      unitTypes: ["Studio", "Loft", "2+1", "1+1"],
     },
+    
     {
       id: 2,
-      title: "THE SIGN",
-      description:
-        "Uzman ekibimiz ile her detayda mükemmellik arayışı. Şehrin kalbinde prestijli yaşamın yeni adresi.",
-      unitTypes: ["Studio", "Grand Studio", "1+1", "2+1"],
-    },
-    {
-      id: 3,
       title: "AURORA BAY",
       description:
         "Çevre dostu yapılar ile doğaya saygılı inşaat. Denizin kucakladığı huzurlu yaşam alanları.",
       unitTypes: ["1+1", "Loft", "2+1 Garden", "2+1 Infinity"],
     },
     {
-      id: 4,
+      id: 3,
       title: "CAROB HILL",
       description:
         "Zamanında teslimat ve müşteri memnuniyeti odaklı hizmet. Tepenin zirvesinde lüks yaşamın adresi.",
@@ -213,9 +220,9 @@ export default function FeaturedProjectStory({
 
   const projectImages = [
     "/fourseasons.jpg",
-    "/thesign.jpg", 
-    "/aurora.jpg",
-    "/carob.jpg"
+    
+    "/aurora.png",
+    "/carob.png"
   ];
 
   const [selectedUnitByProject, setSelectedUnitByProject] = useState<
