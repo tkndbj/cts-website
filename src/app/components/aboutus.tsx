@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import { useTranslations } from 'next-intl';
 
 export default function AboutUs() {
   const [activeTab, setActiveTab] = useState<'story' | 'team' | 'values' | 'projects' | 'contact'>('story');
@@ -8,6 +9,9 @@ export default function AboutUs() {
   const [counts, setCounts] = useState({ years: 0, projects: 0, clients: 0, awards: 0 });
   const [isMobile, setIsMobile] = useState(false);
   const statsRef = useRef<HTMLDivElement>(null);
+  
+  const t = useTranslations('About');
+  const tButtons = useTranslations('Buttons');
 
   useEffect(() => {
     const checkMobile = () => {
@@ -18,96 +22,125 @@ export default function AboutUs() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Updated team members data
+  // Updated team members data - using translation keys
   const teamMembers = [
     {
       name: "Ceyhun Tunalı",
-      role: "Direktör",
-      bio: "40 yıllık sektör deneyimi ile şirketimizin vizyonunu belirleyen lider."
+      role: t('team.director'),
+      bio: t('team.directorBio')
     },
     {
       name: "Uğur Erhan Candan",
-      role: "Direktör Yardımcısı",
-      bio: "Stratejik planlama ve operasyonel mükemmellikte uzman yönetici."
+      role: t('team.assistantDirector'),
+      bio: t('team.assistantDirectorBio')
     },
     {
       name: "Serem Aşman",
-      role: "Üst Düzey Yönetici Asistanı",
-      bio: "Yönetim koordinasyonu ve kurumsal iletişimden sorumlu profesyonel."
+      role: t('team.executiveAssistant'),
+      bio: t('team.executiveAssistantBio')
     },
     {
       name: "Viktoriia Noskovets",
-      role: "Satış Temsilcisi",
-      bio: "Uluslararası müşteri ilişkileri ve satış uzmanı."
+      role: t('team.salesRepresentative'),
+      bio: t('team.salesRep1Bio')
     },
     {
       name: "Nejdet Derebey",
-      role: "Satış Temsilcisi",
-      bio: "Müşteri memnuniyeti odaklı deneyimli satış profesyoneli."
+      role: t('team.salesRepresentative'),
+      bio: t('team.salesRep2Bio')
     },
     {
       name: "Mine Durmuş",
-      role: "Satış Temsilcisi",
-      bio: "Proje tanıtım ve müşteri ilişkileri uzmanı."
+      role: t('team.salesRepresentative'),
+      bio: t('team.salesRep3Bio')
     },
     {
       name: "Tuğba",
-      role: "Muhasebe",
-      bio: "Mali işlemler ve finansal raporlama uzmanı."
+      role: t('team.accounting'),
+      bio: t('team.accounting1Bio')
     },
     {
       name: "Berna",
-      role: "Muhasebe",
-      bio: "Bütçe planlama ve maliyet analizi profesyoneli."
+      role: t('team.accounting'),
+      bio: t('team.accounting2Bio')
     },
     {
       name: "Dilara",
-      role: "Muhasebe",
-      bio: "Finansal kontrol ve denetim uzmanı."
+      role: t('team.accounting'),
+      bio: t('team.accounting3Bio')
     },
     {
       name: "Onur",
-      role: "Şantiye Şefi",
-      bio: "Saha operasyonları ve kalite kontrol yöneticisi."
+      role: t('team.siteChief'),
+      bio: t('team.siteChiefBio')
     },
     {
       name: "Onur Kaçaröz",
-      role: "Güvenlik Amiri",
-      bio: "İş güvenliği ve sahada güvenlik koordinatörü."
+      role: t('team.securityOfficer'),
+      bio: t('team.securityOfficerBio')
     },
     {
       name: "Anastasiia",
-      role: "Ofis Sorumlusu",
-      bio: "Ofis yönetimi ve idari işler koordinatörü."
+      role: t('team.officeManager'),
+      bio: t('team.officeManagerBio')
     },
     {
       name: "Tekin Dabaj",
-      role: "IT Birimi",
-      bio: "Bilgi teknolojileri ve dijital altyapı uzmanı."
+      role: t('team.itUnit'),
+      bio: t('team.itUnitBio')
     }
   ];
 
-  // Values data
+  // Values data using translations
   const values = [
     {
       icon: "🏆",
-      title: "Mükemmellik",
-      description: "Her projede en yüksek kalite standartlarını hedefleriz."
+      title: t('values.excellence'),
+      description: t('values.excellenceDesc')
     },
     {
       icon: "🤝",
-      title: "Güven",
-      description: "Müşterilerimizle şeffaf ve güvene dayalı ilişkiler kurarız."
+      title: t('values.trust'),
+      description: t('values.trustDesc')
     },
     {
       icon: "💡",
-      title: "İnovasyon",
-      description: "Sürdürülebilir ve modern çözümler üretiriz."
+      title: t('values.innovation'),
+      description: t('values.innovationDesc')
     },
     {
       icon: "⏰",
-      title: "Zamanında Teslimat",
-      description: "Verdiğimiz sözleri zamanında yerine getiririz."
+      title: t('values.delivery'),
+      description: t('values.deliveryDesc')
+    }
+  ];
+
+  // Timeline data using translations
+  const timelineData = [
+    { 
+      year: "1976", 
+      title: t('timeline.1976.title'), 
+      description: t('timeline.1976.description') 
+    },
+    { 
+      year: "1995", 
+      title: t('timeline.1995.title'), 
+      description: t('timeline.1995.description') 
+    },
+    { 
+      year: "2005", 
+      title: t('timeline.2005.title'), 
+      description: t('timeline.2005.description') 
+    },
+    { 
+      year: "2015", 
+      title: t('timeline.2015.title'), 
+      description: t('timeline.2015.description') 
+    },
+    { 
+      year: "2024", 
+      title: t('timeline.2024.title'), 
+      description: t('timeline.2024.description') 
     }
   ];
 
@@ -181,10 +214,13 @@ export default function AboutUs() {
         <div className="relative h-full flex items-center justify-center text-center px-4">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 animate-slideUp">
-              40 Yıllık <span style={{ color: '#96DED1' }}>Güven</span> ve <span style={{ color: '#96DED1' }}>Tecrübe</span>
+              {t.rich('hero.title', {
+                trust: (chunks) => <span style={{ color: '#96DED1' }}>{chunks}</span>,
+                experience: (chunks) => <span style={{ color: '#96DED1' }}>{chunks}</span>
+              })}
             </h1>
             <p className="text-xl md:text-2xl text-gray-200 animate-fadeIn animation-delay-200">
-              Kıbrıs&apos;ın en prestijli konut projelerini hayata geçiren aile şirketi
+              {t('hero.subtitle')}
             </p>
           </div>
         </div>
@@ -205,25 +241,25 @@ export default function AboutUs() {
               <div className="text-4xl md:text-5xl font-bold text-[#191970] mb-2">
                 {counts.years}+
               </div>
-              <div className="text-gray-600 font-medium">Yıllık Tecrübe</div>
+              <div className="text-gray-600 font-medium">{t('stats.yearsExperience')}</div>
             </div>
             <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-[#191970] mb-2">
                 {counts.projects}+
               </div>
-              <div className="text-gray-600 font-medium">Tamamlanan Proje</div>
+              <div className="text-gray-600 font-medium">{t('stats.completedProjects')}</div>
             </div>
             <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-[#191970] mb-2">
                 {counts.clients}+
               </div>
-              <div className="text-gray-600 font-medium">Mutlu Müşteri</div>
+              <div className="text-gray-600 font-medium">{t('stats.happyClients')}</div>
             </div>
             <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-[#191970] mb-2">
                 {counts.awards}+
               </div>
-              <div className="text-gray-600 font-medium">Ödül ve Sertifika</div>
+              <div className="text-gray-600 font-medium">{t('stats.awardsAndCertificates')}</div>
             </div>
           </div>
         </div>
@@ -245,7 +281,7 @@ export default function AboutUs() {
                       : 'text-gray-700 hover:text-[#191970]'
                   }`}
                 >
-                  {tab === 'story' ? 'Hikayemiz' : tab === 'team' ? 'Ekibimiz' : 'Değerlerimiz'}
+                  {t(`tabs.${tab}`)}
                 </button>
               ))}
             </div>
@@ -257,25 +293,18 @@ export default function AboutUs() {
             {activeTab === 'story' && (
               <div className="animate-fadeIn">
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">
-                  Aile Geleneğinden Gelen Güç
+                  {t('story.title')}
                 </h2>
                 <div className="grid md:grid-cols-2 gap-8 items-center">
                   <div className="space-y-4 text-gray-700">
                     <p className="leading-relaxed">
-                      1976 yılında Ceyhun Tunalı tarafından kurulan şirketimiz, 40 yıllık köklü geçmişiyle 
-                      Kıbrıs&apos;ın en güvenilir inşaat firmalarından biri haline gelmiştir. Aile şirketi olarak 
-                      başladığımız bu yolculukta, kalite ve müşteri memnuniyetini her zaman ön planda tuttuk.
+                      {t('story.paragraph1')}
                     </p>
                     <p className="leading-relaxed">
-                      İkinci nesil ile birlikte büyüyen firmamız, modern mimari anlayışı ve yenilikçi 
-                      yaklaşımlarla sektörde öncü projeler üretmektedir. Four Seasons Life, The Sign, 
-                      Aurora Bay ve Carob Hill gibi prestijli projelerimizle Kıbrıs&apos;ın yaşam standartlarını 
-                      yükseltmeye devam ediyoruz.
+                      {t('story.paragraph2')}
                     </p>
                     <p className="leading-relaxed">
-                      Bugün, deneyimli ekibimiz ve güçlü altyapımızla, hayalinizdeki yaşam alanlarını 
-                      gerçeğe dönüştürmek için çalışıyoruz. Her projemizde, aile değerlerimizi ve 
-                      profesyonel yaklaşımımızı harmanlayarak, nesiller boyu değer katacak yapılar inşa ediyoruz.
+                      {t('story.paragraph3')}
                     </p>
                   </div>
                   <div className="relative h-[400px] rounded-xl overflow-hidden shadow-2xl">
@@ -295,7 +324,7 @@ export default function AboutUs() {
             {activeTab === 'team' && (
               <div className="animate-fadeIn">
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">
-                  Profesyonel Ekibimiz
+                  {t('team.title')}
                 </h2>
                 <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {teamMembers.map((member, index) => (
@@ -327,7 +356,7 @@ export default function AboutUs() {
             {activeTab === 'values' && (
               <div className="animate-fadeIn">
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">
-                  Değerlerimiz
+                  {t('values.title')}
                 </h2>
                 <div className="grid md:grid-cols-2 gap-6">
                   {values.map((value, index) => (
@@ -357,18 +386,12 @@ export default function AboutUs() {
       <section className="py-16 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
-            Kilometre Taşlarımız
+            {t('timeline.title')}
           </h2>
           
           {/* Mobile Timeline */}
           <div className="block md:hidden space-y-4">
-            {[
-              { year: "1976", title: "Kuruluş", description: "Ceyhun Tunalı tarafından şirket kuruldu" },
-              { year: "1995", title: "İlk Büyük Proje", description: "100 konutluk ilk büyük projemiz tamamlandı" },
-              { year: "2005", title: "Uluslararası Standartlar", description: "ISO 9001 kalite sertifikası alındı" },
-              { year: "2015", title: "Yeni Nesil", description: "İkinci nesil yönetime katıldı" },
-              { year: "2024", title: "40. Yıl", description: "150+ proje ile sektör lideri konumundayız" }
-            ].map((item, index) => (
+            {timelineData.map((item, index) => (
               <div key={index} className="bg-white rounded-lg shadow-lg p-4 border-l-4 border-[#191970]">
                 <span className="text-[#191970] font-bold text-lg">{item.year}</span>
                 <h3 className="text-xl font-bold text-gray-900 mt-1">{item.title}</h3>
@@ -380,13 +403,7 @@ export default function AboutUs() {
           {/* Desktop Timeline */}
           <div className="hidden md:block relative">
             <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-[#191970]/20"></div>
-            {[
-              { year: "1976", title: "Kuruluş", description: "Ceyhun Tunalı tarafından şirket kuruldu" },
-              { year: "1995", title: "İlk Büyük Proje", description: "100 konutluk ilk büyük projemiz tamamlandı" },
-              { year: "2005", title: "Uluslararası Standartlar", description: "ISO 9001 kalite sertifikası alındı" },
-              { year: "2015", title: "Yeni Nesil", description: "İkinci nesil yönetime katıldı" },
-              { year: "2024", title: "40. Yıl", description: "150+ proje ile sektör lideri konumundayız" }
-            ].map((item, index) => (
+            {timelineData.map((item, index) => (
               <div
                 key={index}
                 className={`flex items-center mb-8 ${
@@ -414,10 +431,10 @@ export default function AboutUs() {
       <section className="py-16 px-4 bg-gradient-to-br from-[#191970] to-[#4169E1]">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Hayalinizdeki Evi Birlikte İnşa Edelim
+            {t('cta.title')}
           </h2>
           <p className="text-xl text-gray-200 mb-8">
-            40 yıllık tecrübemizle, güvenilir ve kaliteli yaşam alanları sunuyoruz.
+            {t('cta.subtitle')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
@@ -426,7 +443,7 @@ export default function AboutUs() {
               }}
               className="inline-flex items-center justify-center gap-2 bg-white text-[#191970] px-8 py-4 rounded-full font-semibold hover:shadow-xl transition-all hover:scale-105"
             >
-              Projelerimizi İnceleyin
+              {t('cta.viewProjects')}
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M13 7l5 5-5 5M6 12h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
               </svg>
@@ -437,7 +454,7 @@ export default function AboutUs() {
               }}
               className="inline-flex items-center justify-center gap-2 bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-[#191970] transition-all"
             >
-              İletişime Geçin
+              {t('cta.contact')}
             </button>
           </div>
         </div>

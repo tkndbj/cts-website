@@ -1,4 +1,6 @@
+"use client";
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from 'next-intl';
 
 // Declare google maps types
 interface GoogleMapStyle {
@@ -71,9 +73,22 @@ export default function ContactForm() {
   
   const mapRef = useRef<HTMLDivElement>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  const t = useTranslations('Contact');
+  const tButtons = useTranslations('Buttons');
 
   // Office coordinates
   const officeLocation = { lat: 35.322848, lng: 33.963165 };
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     // Check if script already exists
@@ -164,7 +179,7 @@ export default function ContactForm() {
     if (!formData.name || !formData.email || !formData.phone || !formData.subject || !formData.message) {
       setSubmitStatus({
         type: 'error',
-        message: 'Lütfen tüm zorunlu alanları doldurun.'
+        message: t('form.errorFillFields')
       });
       return;
     }
@@ -186,7 +201,7 @@ export default function ContactForm() {
       if (response.ok) {
         setSubmitStatus({
           type: 'success',
-          message: data.message || 'Mesajınız başarıyla gönderildi!'
+          message: data.message || t('form.successMessage')
         });
         
         // Reset form
@@ -201,14 +216,14 @@ export default function ContactForm() {
       } else {
         setSubmitStatus({
           type: 'error',
-          message: data.error || 'Mesaj gönderilemedi. Lütfen daha sonra tekrar deneyin.'
+          message: data.error || t('form.errorMessage')
         });
       }
     } catch (error) {
       console.error('Form submission error:', error);
       setSubmitStatus({
         type: 'error',
-        message: 'Mesaj gönderilemedi. Lütfen daha sonra tekrar deneyin.'
+        message: t('form.errorMessage')
       });
     } finally {
       setIsSubmitting(false);
@@ -220,9 +235,9 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50 md:pt-16">
-      {/* Full-width Map Section */}
-      <div className="relative h-[35vh] w-full">
+    <div className={`${isMobile ? 'min-h-screen' : 'h-screen flex flex-col'} bg-gray-50 md:pt-16`}>
+      {/* Map Section - Not sticky on mobile */}
+      <div className={`relative ${isMobile ? 'h-[40vh]' : 'h-[35vh]'} w-full`}>
         {/* Google Maps Container */}
         <div ref={mapRef} className="absolute inset-0 w-full h-full" />
         
@@ -245,14 +260,14 @@ export default function ContactForm() {
               strokeLinejoin="round"
             />
           </svg>
-          <span className="text-sm font-medium text-gray-700">Geri</span>
+          <span className="text-sm font-medium text-gray-700">{tButtons('back')}</span>
         </button>
         
         {/* Directions Button - Top Right */}
         <button
           onClick={openDirections}
           className="absolute top-4 right-4 bg-white hover:bg-gray-50 rounded-lg shadow-lg p-3 flex items-center gap-2 transition-all hover:shadow-xl group"
-          title="Get Directions"
+          title={t('getDirections')}
         >
           <svg 
             width="20" 
@@ -266,12 +281,12 @@ export default function ContactForm() {
               fill="currentColor"
             />
           </svg>
-          <span className="text-sm font-medium text-gray-700 hidden sm:inline">Yön</span>
+          <span className="text-sm font-medium text-gray-700 hidden sm:inline">{t('directions')}</span>
         </button>
       </div>
 
-      {/* Main Content Section - Modified for better mobile scrolling */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Main Content Section - Scrollable on mobile */}
+      <div className={`${isMobile ? '' : 'flex-1 overflow-y-auto'}`}>
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             
@@ -280,10 +295,12 @@ export default function ContactForm() {
               {/* Header */}
               <div className="mb-3">
                 <h1 className="text-3xl font-bold text-gray-900">
-                  İletişime <span className="bg-gradient-to-r from-[#191970] to-[#4169E1] bg-clip-text text-transparent">Geçin</span>
+                  {t.rich('title', {
+                    gradient: (chunks) => <span className="bg-gradient-to-r from-[#191970] to-[#4169E1] bg-clip-text text-transparent">{chunks}</span>
+                  })}
                 </h1>
                 <p className="text-sm text-gray-600 mt-1">
-                  Size özel çözümlerimizi keşfedin
+                  {t('subtitle')}
                 </p>
               </div>
 
@@ -296,7 +313,7 @@ export default function ContactForm() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wide">Telefon</p>
+                    <p className="text-xs text-gray-500 uppercase tracking-wide">{t('phone')}</p>
                     <a href="tel:+905391100100" className="text-base font-semibold text-gray-900 hover:text-[#191970] transition-colors">
                       +90 539 110 01 00
                     </a>
@@ -313,7 +330,7 @@ export default function ContactForm() {
                     </svg>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-gray-500 uppercase tracking-wide">E-posta</p>
+                    <p className="text-xs text-gray-500 uppercase tracking-wide">{t('email')}</p>
                     <a href="mailto:office@ctscyprushomes.com" className="text-base font-semibold text-gray-900 hover:text-[#191970] transition-colors truncate block">
                       office@ctscyprushomes.com
                     </a>
@@ -330,8 +347,8 @@ export default function ContactForm() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wide">Çalışma Saatleri</p>
-                    <p className="text-base font-semibold text-gray-900">Pzt - Cuma: 08:00 - 17:00</p>
+                    <p className="text-xs text-gray-500 uppercase tracking-wide">{t('workingHours')}</p>
+                    <p className="text-base font-semibold text-gray-900">{t('workingHoursDetail')}</p>
                   </div>
                 </div>
               </div>
@@ -345,8 +362,8 @@ export default function ContactForm() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wide">Adres</p>
-                    <p className="text-base font-semibold text-gray-900">İskele, Kıbrıs</p>
+                    <p className="text-xs text-gray-500 uppercase tracking-wide">{t('address')}</p>
+                    <p className="text-base font-semibold text-gray-900">{t('addressDetail')}</p>
                   </div>
                 </div>
               </div>
@@ -355,7 +372,7 @@ export default function ContactForm() {
               <div className="bg-gradient-to-br from-[#191970] via-[#2e3192] to-[#4169E1] rounded-xl shadow-lg p-5 text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
                 <div className="relative z-10">
-                  <p className="text-base font-semibold mb-3">Bizi Takip Edin</p>
+                  <p className="text-base font-semibold mb-3">{t('followUs')}</p>
                   <div className="flex gap-2">
                     <a href="#" className="w-10 h-10 bg-white/20 hover:bg-white/30 backdrop-blur rounded-lg flex items-center justify-center transition-all hover:scale-110">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
@@ -380,15 +397,15 @@ export default function ContactForm() {
             {/* Right Side - Contact Form */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-xl shadow-xl p-4 md:p-6 border border-gray-100">
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-1">Hızlı İletişim Formu</h2>
-                <p className="text-sm text-gray-600 mb-4">Size en kısa sürede dönüş yapacağız</p>
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-1">{t('form.title')}</h2>
+                <p className="text-sm text-gray-600 mb-4">{t('form.subtitle')}</p>
                 
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Name Field */}
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1.5">
-                        Ad Soyad <span className="text-red-500">*</span>
+                        {t('form.name')} <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -397,14 +414,14 @@ export default function ContactForm() {
                         value={formData.name}
                         onChange={handleChange}
                         className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all placeholder-gray-500"
-                        placeholder="Adınız ve soyadınız"
+                        placeholder={t('form.namePlaceholder')}
                       />
                     </div>
 
                     {/* Email Field */}
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
-                        E-posta <span className="text-red-500">*</span>
+                        {t('form.email')} <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="email"
@@ -413,14 +430,14 @@ export default function ContactForm() {
                         value={formData.email}
                         onChange={handleChange}
                         className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all placeholder-gray-500"
-                        placeholder="ornek@email.com"
+                        placeholder={t('form.emailPlaceholder')}
                       />
                     </div>
 
                     {/* Phone Field */}
                     <div>
                       <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1.5">
-                        Telefon <span className="text-red-500">*</span>
+                        {t('form.phone')} <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="tel"
@@ -429,14 +446,14 @@ export default function ContactForm() {
                         value={formData.phone}
                         onChange={handleChange}
                         className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all placeholder-gray-500"
-                        placeholder="+90 5xx xxx xx xx"
+                        placeholder={t('form.phonePlaceholder')}
                       />
                     </div>
 
                     {/* Project Interest */}
                     <div>
                       <label htmlFor="projectInterest" className="block text-sm font-medium text-gray-700 mb-1.5">
-                        İlgilendiğiniz Proje
+                        {t('form.projectInterest')}
                       </label>
                       <select
                         id="projectInterest"
@@ -445,12 +462,12 @@ export default function ContactForm() {
                         onChange={handleChange}
                         className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all text-gray-500"
                       >
-                        <option value="">Seçiniz</option>
+                        <option value="">{t('form.selectProject')}</option>
                         <option value="Four Seasons Life">Four Seasons Life</option>
                         <option value="The Sign">The Sign</option>
                         <option value="Aurora Bay">Aurora Bay</option>
                         <option value="Carob Hill">Carob Hill</option>
-                        <option value="Genel Bilgi">Genel Bilgi</option>
+                        <option value="General">{t('form.generalInfo')}</option>
                       </select>
                     </div>
                   </div>
@@ -458,7 +475,7 @@ export default function ContactForm() {
                   {/* Subject Field */}
                   <div>
                     <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1.5">
-                      Konu <span className="text-red-500">*</span>
+                      {t('form.subject')} <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -467,14 +484,14 @@ export default function ContactForm() {
                       value={formData.subject}
                       onChange={handleChange}
                       className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all placeholder-gray-500"
-                      placeholder="Mesajınızın konusu"
+                      placeholder={t('form.subjectPlaceholder')}
                     />
                   </div>
 
                   {/* Message Field */}
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1.5">
-                      Mesajınız <span className="text-red-500">*</span>
+                      {t('form.message')} <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       id="message"
@@ -483,7 +500,7 @@ export default function ContactForm() {
                       onChange={handleChange}
                       rows={4}
                       className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#191970]/20 focus:border-[#191970] transition-all resize-none placeholder-gray-500"
-                      placeholder="Mesajınızı buraya yazınız..."
+                      placeholder={t('form.messagePlaceholder')}
                     />
                   </div>
 
@@ -526,11 +543,11 @@ export default function ContactForm() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                       </svg>
-                      Gönderiliyor...
+                      {t('form.sending')}
                     </span>
                   ) : (
                     <span className="flex items-center justify-center gap-2">
-                      Mesajı Gönder
+                      {t('form.sendMessage')}
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                         <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>

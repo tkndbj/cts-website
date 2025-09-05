@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from 'next-intl';
 
 interface ImageGallerySectionProps {
   scrollToProject: (projectId: number) => void;
@@ -11,32 +12,6 @@ interface ImageGallerySectionProps {
   onContactClick?: () => void;
 }
 
-// Slider images data
-const sliderData = [
-  {
-    id: 1,
-    image: "/fourseasons.jpg",
-    title: "Seçkin Projeler",
-    subtitle: "Geleceğin Yapıları",
-    description: "40 yıllık deneyimimizle, en ince detayları dikkate alarak hayallerinizi gerçeğe dönüştürüyoruz."
-  },
-  
-  {
-    id: 2,
-    image: "/aurora.png",
-    title: "Yatırım Fırsatları",
-    subtitle: "Geleceğiniz İçin",
-    description: "Yatırım fırsatlarınızın en iyi şekilde yararlanması için tasarlıyoruz."
-  },
-  {
-    id: 3,
-    image: "/carob.png",
-    title: "Sürdürülebilir Yapılar",
-    subtitle: "Yapı Teknolojileri",
-    description: "Doğayla uyumlu, enerji verimli ve sürdürülebilir projeler geliştiriyoruz."
-  }
-];
-
 export default function ImageGallerySection({
   scrollToProject,
   navigationProps,
@@ -47,6 +22,34 @@ export default function ImageGallerySection({
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const slideInterval = useRef<NodeJS.Timeout | null>(null);
+  
+  const t = useTranslations('Gallery');
+  const tNav = useTranslations('Navigation');
+
+  // Slider images data with translations
+  const sliderData = [
+    {
+      id: 1,
+      image: "/fourseasons.jpg",
+      title: t('slide1.title'),
+      subtitle: t('slide1.subtitle'),
+      description: t('slide1.description')
+    },
+    {
+      id: 2,
+      image: "/aurora.png",
+      title: t('slide2.title'),
+      subtitle: t('slide2.subtitle'),
+      description: t('slide2.description')
+    },
+    {
+      id: 3,
+      image: "/carob.png",
+      title: t('slide3.title'),
+      subtitle: t('slide3.subtitle'),
+      description: t('slide3.description')
+    }
+  ];
 
   useEffect(() => {
     const checkMobile = () => {
@@ -71,7 +74,7 @@ export default function ImageGallerySection({
         clearInterval(slideInterval.current);
       }
     };
-  }, [isAutoPlaying, currentSlide]);
+  }, [isAutoPlaying, currentSlide, sliderData.length]);
 
   const goToSlide = (index: number) => {
     setCurrentSlide(index);
@@ -129,7 +132,7 @@ export default function ImageGallerySection({
                     onClick={() => scrollToProject(1)}
                     className="flex-1 bg-[#191970] text-white px-4 py-3 rounded-full font-semibold flex items-center justify-center gap-2"
                   >
-                    <span>Projelerimiz</span>
+                    <span>{tNav('ourProjects')}</span>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                     </svg>
@@ -138,7 +141,7 @@ export default function ImageGallerySection({
                     onClick={onContactClick}
                     className="flex-1 bg-white/20 backdrop-blur border border-white/40 text-white px-4 py-3 rounded-full font-semibold"
                   >
-                    İletişim
+                    {tNav('contact')}
                   </button>
                 </div>
               </div>
@@ -164,6 +167,7 @@ export default function ImageGallerySection({
               <button
                 onClick={prevSlide}
                 className="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center"
+                aria-label={t('previousSlide')}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M15 19l-7-7 7-7" stroke="white" strokeWidth="2" strokeLinecap="round"/>
@@ -172,6 +176,7 @@ export default function ImageGallerySection({
               <button
                 onClick={nextSlide}
                 className="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center"
+                aria-label={t('nextSlide')}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                   <path d="M9 5l7 7-7 7" stroke="white" strokeWidth="2" strokeLinecap="round"/>
@@ -239,7 +244,7 @@ export default function ImageGallerySection({
                     onClick={() => scrollToProject(1)}
                     className="group inline-flex items-center justify-center gap-3 bg-[#191970] hover:bg-[#1e2050] text-white px-10 py-5 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-xl text-lg"
                   >
-                    <span>Projelerimiz</span>
+                    <span>{tNav('ourProjects')}</span>
                     <svg 
                       width="24" 
                       height="24" 
@@ -261,7 +266,7 @@ export default function ImageGallerySection({
                     onClick={onContactClick || onBackToHero}
                     className="inline-flex items-center justify-center gap-3 bg-white/20 backdrop-blur-sm border-2 border-white/40 hover:bg-white/30 text-white px-10 py-5 rounded-full font-semibold transition-all duration-300 text-lg"
                   >
-                    <span>İletişim</span>
+                    <span>{tNav('contact')}</span>
                   </button>
                 </div>
               </div>
@@ -274,7 +279,7 @@ export default function ImageGallerySection({
       <button
         onClick={prevSlide}
         className="absolute left-8 top-1/2 -translate-y-1/2 z-20 w-14 h-14 bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-300 group"
-        aria-label="Previous slide"
+        aria-label={t('previousSlide')}
       >
         <svg 
           width="24" 
@@ -296,7 +301,7 @@ export default function ImageGallerySection({
       <button
         onClick={nextSlide}
         className="absolute right-8 top-1/2 -translate-y-1/2 z-20 w-14 h-14 bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-300 group"
-        aria-label="Next slide"
+        aria-label={t('nextSlide')}
       >
         <svg 
           width="24" 
@@ -326,7 +331,7 @@ export default function ImageGallerySection({
                 ? 'w-16 h-3 bg-white'
                 : 'w-3 h-3 bg-white/50 hover:bg-white/70'
             } rounded-full`}
-            aria-label={`Go to slide ${index + 1}`}
+            aria-label={`${t('goToSlide')} ${index + 1}`}
           />
         ))}
       </div>

@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useTranslations } from 'next-intl';
 import MapView from './MapView';
 
 interface NavigationProps {
@@ -193,34 +194,33 @@ export default function FeaturedProjectStory({
   projects = [],
   onProjectSelect,
 }: FeaturedProjectStoryProps) {
+  const t = useTranslations('ProjectDetails');
+  const tButtons = useTranslations('Buttons');
+  const tNav = useTranslations('Navigation');
+
   const defaultProjects = [
     {
       id: 1,
       title: "FOUR SEASONS LIFE",
-      description:
-        "Çağdaş tasarım çözümleri ile geleceğin yapılarını inşa ediyoruz. Her mevsimin güzelliğini yaşayabileceğiniz modern yaşam alanları.",
+      description: t('project1Description'),
       unitTypes: ["Studio", "Loft", "2+1", "1+1"],
     },
-    
     {
       id: 2,
       title: "AURORA BAY",
-      description:
-        "Çevre dostu yapılar ile doğaya saygılı inşaat. Denizin kucakladığı huzurlu yaşam alanları.",
+      description: t('project2Description'),
       unitTypes: ["1+1", "Loft", "2+1 Garden", "2+1 Infinity"],
     },
     {
       id: 3,
       title: "CAROB HILL",
-      description:
-        "Zamanında teslimat ve müşteri memnuniyeti odaklı hizmet. Tepenin zirvesinde lüks yaşamın adresi.",
+      description: t('project3Description'),
       unitTypes: ["1+1", "Loft", "2+1"],
     },
   ];
 
   const projectImages = [
     "/fourseasons.jpg",
-    
     "/aurora.png",
     "/carob.png"
   ];
@@ -352,27 +352,27 @@ export default function FeaturedProjectStory({
         <div className="h-full flex items-center justify-between px-6">
           {/* Back button */}
           <div className="flex items-center">
-          <button
-  onClick={onBack}
-  className="group inline-flex items-center gap-3 px-4 py-2.5 rounded-xl bg-black/5 hover:bg-black/10 border border-black/10 hover:border-orange-400/30 transition-all duration-300 text-white backdrop-blur-sm"
->
-  <svg 
-    width="18" 
-    height="18" 
-    viewBox="0 0 24 24" 
-    fill="none"
-    className="group-hover:text-orange-400 transition-colors text-white"
-  >
-    <path
-      d="M15 18l-6-6 6-6"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-  <span className="text-sm font-medium text-white">Ana Sayfa</span>
-</button>
+            <button
+              onClick={onBack}
+              className="group inline-flex items-center gap-3 px-4 py-2.5 rounded-xl bg-black/5 hover:bg-black/10 border border-black/10 hover:border-orange-400/30 transition-all duration-300 text-white backdrop-blur-sm"
+            >
+              <svg 
+                width="18" 
+                height="18" 
+                viewBox="0 0 24 24" 
+                fill="none"
+                className="group-hover:text-orange-400 transition-colors text-white"
+              >
+                <path
+                  d="M15 18l-6-6 6-6"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span className="text-sm font-medium text-white">{tNav('home')}</span>
+            </button>
           </div>
 
           {/* Project Names Navigation - Centered */}
@@ -460,52 +460,52 @@ export default function FeaturedProjectStory({
         >
           {/* Project Title with Fullscreen Button */}
           <div className="flex items-center justify-between mb-3">
-  <h2 
-    className="text-2xl md:text-3xl font-bold tracking-tight"
-    style={{ color: '#96DED1' }}
-  >
-    {activeProject.title}
-  </h2>
-  
-  <div className="flex items-center gap-2 ml-3">
-    {/* Map Button */}
-    <button
-      onClick={() => setShowMap(true)}
-      className="inline-flex items-center gap-2 rounded-xl bg-black/20 hover:bg-black/30 border border-white/25 px-3 py-2 text-white transition backdrop-blur-sm"
-      title="Haritada Göster"
-    >
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-        <path
-          d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2" />
-      </svg>
-    </button>
-    
-    {/* Fullscreen Button - only show when unit is selected */}
-    {selectedName && (
-      <button
-        onClick={() => setFullscreenProjectId(currentProject)}
-        className="inline-flex items-center gap-2 rounded-xl bg-black/20 hover:bg-black/30 border border-white/25 px-3 py-2 text-white transition backdrop-blur-sm"
-        title="Tam ekran"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M9 3H3v6M21 9V3h-6M3 15v6h6M15 21h6v-6"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
-    )}
-  </div>
-</div>
+            <h2 
+              className="text-2xl md:text-3xl font-bold tracking-tight"
+              style={{ color: '#96DED1' }}
+            >
+              {activeProject.title}
+            </h2>
+            
+            <div className="flex items-center gap-2 ml-3">
+              {/* Map Button */}
+              <button
+                onClick={() => setShowMap(true)}
+                className="inline-flex items-center gap-2 rounded-xl bg-black/20 hover:bg-black/30 border border-white/25 px-3 py-2 text-white transition backdrop-blur-sm"
+                title={t('showOnMap')}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle cx="12" cy="10" r="3" stroke="currentColor" strokeWidth="2" />
+                </svg>
+              </button>
+              
+              {/* Fullscreen Button - only show when unit is selected */}
+              {selectedName && (
+                <button
+                  onClick={() => setFullscreenProjectId(currentProject)}
+                  className="inline-flex items-center gap-2 rounded-xl bg-black/20 hover:bg-black/30 border border-white/25 px-3 py-2 text-white transition backdrop-blur-sm"
+                  title={t('fullscreen')}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M9 3H3v6M21 9V3h-6M3 15v6h6M15 21h6v-6"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              )}
+            </div>
+          </div>
           
           {/* Project Description */}
           <p className="text-white text-sm md:text-base font-light leading-relaxed mb-4">
@@ -515,7 +515,7 @@ export default function FeaturedProjectStory({
           {/* Unit Types Section */}
           <div>
             <div className="text-xs uppercase tracking-widest text-white/80 mb-2 font-medium">
-              Daire Tipleri
+              {t('unitTypes')}
             </div>
             <div className="grid grid-cols-2 gap-2">
               {activeProject.unitTypes.map((unitType, index) => {
@@ -562,7 +562,7 @@ export default function FeaturedProjectStory({
               <div className="flex flex-col gap-3">
                 <div className="rounded-xl border border-white/20 backdrop-blur-md px-4 py-3 text-center min-w-[120px]" style={{ backgroundColor: 'rgba(0, 0, 128, 0.3)' }}>
                   <div className="text-xs uppercase tracking-wider text-white/70">
-                    Metre Kare
+                    {t('squareMeters')}
                   </div>
                   <div className="text-xl md:text-2xl font-bold text-white mt-1">
                     {unitData.stats?.m2 ?? "—"}
@@ -570,7 +570,7 @@ export default function FeaturedProjectStory({
                 </div>
                 <div className="rounded-xl border border-white/20 backdrop-blur-md px-4 py-3 text-center min-w-[120px]" style={{ backgroundColor: 'rgba(0, 0, 128, 0.3)' }}>
                   <div className="text-xs uppercase tracking-wider text-white/70">
-                    Banyo
+                    {t('bathroom')}
                   </div>
                   <div className="text-xl md:text-2xl font-bold text-white mt-1">
                     {unitData.stats?.banyo ?? "—"}
@@ -578,7 +578,7 @@ export default function FeaturedProjectStory({
                 </div>
                 <div className="rounded-xl border border-white/20 backdrop-blur-md px-4 py-3 text-center min-w-[120px]" style={{ backgroundColor: 'rgba(0, 0, 128, 0.3)' }}>
                   <div className="text-xs uppercase tracking-wider text-white/70">
-                    Yatak Odası
+                    {t('bedroom')}
                   </div>
                   <div className="text-xl md:text-2xl font-bold text-white mt-1">
                     {unitData.stats?.yatak ?? "—"}
@@ -588,45 +588,45 @@ export default function FeaturedProjectStory({
             </div>
           )}
 
-         {/* Interior Thumbnails */}
-{selectedName && thumbs.length > 0 && (
-  <div className={`fixed left-0 right-0 bottom-0 z-[5] px-[5%] pb-6 pt-3 transition-transform duration-500 ${
-    showInteriorTray ? 'translate-y-0' : 'translate-y-full'
-  }`}>
-    <div className="flex justify-center">
-      <div className="rounded-2xl border border-white/15 backdrop-blur-xl shadow-2xl" style={{ backgroundColor: 'rgba(0, 0, 128, 0.3)' }}>
-        <div className="px-4 py-3 text-white/80 text-xs uppercase tracking-wider">
-          İç Mekan Görselleri
-        </div>
-                <div className="px-4 pb-4">
-                <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${thumbs.length}, minmax(100px, 120px))` }}>
-                    {thumbs.map((src) => {
-                      const isPicked = selectedInteriorByProject[currentProject] === src;
-                      return (
-                        <button
-                          key={src}
-                          className={`group relative aspect-[4/3] overflow-hidden rounded-lg border transition-all duration-300 ${
-                            isPicked
-                              ? 'border-orange-400/80 ring-2 ring-orange-400'
-                              : 'border-white/15 hover:border-white/35'
-                          }`}
-                          onClick={() => handleInteriorSelect(src)}
-                        >
-                          <Image
-                            src={src}
-                            alt="Interior"
-                            fill
-                            style={{ objectFit: "cover" }}
-                            unoptimized
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </button>
-                      );
-                    })}
+          {/* Interior Thumbnails */}
+          {selectedName && thumbs.length > 0 && (
+            <div className={`fixed left-0 right-0 bottom-0 z-[5] px-[5%] pb-6 pt-3 transition-transform duration-500 ${
+              showInteriorTray ? 'translate-y-0' : 'translate-y-full'
+            }`}>
+              <div className="flex justify-center">
+                <div className="rounded-2xl border border-white/15 backdrop-blur-xl shadow-2xl" style={{ backgroundColor: 'rgba(0, 0, 128, 0.3)' }}>
+                  <div className="px-4 py-3 text-white/80 text-xs uppercase tracking-wider">
+                    {t('interiorImages')}
+                  </div>
+                  <div className="px-4 pb-4">
+                    <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${thumbs.length}, minmax(100px, 120px))` }}>
+                      {thumbs.map((src) => {
+                        const isPicked = selectedInteriorByProject[currentProject] === src;
+                        return (
+                          <button
+                            key={src}
+                            className={`group relative aspect-[4/3] overflow-hidden rounded-lg border transition-all duration-300 ${
+                              isPicked
+                                ? 'border-orange-400/80 ring-2 ring-orange-400'
+                                : 'border-white/15 hover:border-white/35'
+                            }`}
+                            onClick={() => handleInteriorSelect(src)}
+                          >
+                            <Image
+                              src={src}
+                              alt="Interior"
+                              fill
+                              style={{ objectFit: "cover" }}
+                              unoptimized
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
             </div>
           )}
         </div>
@@ -673,14 +673,14 @@ export default function FeaturedProjectStory({
                     strokeLinejoin="round"
                   />
                 </svg>
-                <span className="text-sm">Geri</span>
+                <span className="text-sm">{tButtons('back')}</span>
               </button>
 
               {fsThumbList.length > 0 && (
                 <div className="absolute right-4 top-1/2 transform -translate-y-1/2 z-[2] max-h-[80vh] overflow-y-auto">
                   <div className="rounded-2xl border border-white/15 bg-transparent backdrop-blur-xl shadow-2xl p-4">
                     <div className="text-white/80 text-xs uppercase tracking-wider mb-3 text-center">
-                      İç Mekan Görselleri
+                      {t('interiorImages')}
                     </div>
                     <div className="flex flex-col gap-2 max-w-[120px]">
                       {fsThumbList.map((src) => {
@@ -801,10 +801,10 @@ export default function FeaturedProjectStory({
         }
       `}</style>
       <MapView 
-  isOpen={showMap}
-  projectId={currentProject}
-  onClose={() => setShowMap(false)}
-/>
+        isOpen={showMap}
+        projectId={currentProject}
+        onClose={() => setShowMap(false)}
+      />
     </>
   );
 }

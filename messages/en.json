@@ -1,0 +1,181 @@
+{
+    "Navigation": {
+      "home": "Home",
+      "about": "About Us",
+      "projects": "Projects",
+      "ourProjects": "Our Projects",
+      "contact": "Contact",
+      "openMenu": "Open menu",
+      "selectLanguage": "Select language"
+    },
+    "Mobile": {
+      "projects": "Projects"
+    },
+    "Projects": {
+      "fourSeasonsDesc": "Building the structures of the future with contemporary design solutions",
+      "theSignDesc": "Pursuit of excellence in every detail with our expert team",
+      "auroraDesc": "Eco-friendly construction with respect for nature",
+      "carobDesc": "Service focused on timely delivery and customer satisfaction"
+    },
+    "Buttons": {
+      "back": "Back",
+      "details": "Details",
+      "next": "Next",
+      "previous": "Previous"
+    },
+   "Gallery": {
+  "slide1": {
+    "title": "Distinguished Projects",
+    "subtitle": "Structures of the Future",
+    "description": "With 40 years of experience, we transform your dreams into reality, paying attention to the finest details."
+  },
+  "slide2": {
+    "title": "Investment Opportunities",
+    "subtitle": "For Your Future",
+    "description": "We design to make the best use of your investment opportunities."
+  },
+  "slide3": {
+    "title": "Sustainable Structures",
+    "subtitle": "Building Technologies",
+    "description": "We develop environmentally friendly, energy-efficient, and sustainable projects."
+  },
+  "previousSlide": "Previous slide",
+  "nextSlide": "Next slide",
+  "goToSlide": "Go to slide"
+},
+"ProjectDetails": {
+  "project1Description": "Building the structures of the future with contemporary design solutions. Modern living spaces where you can experience the beauty of every season.",
+  "project2Description": "Eco-friendly construction with respect for nature. Peaceful living spaces embraced by the sea.",
+  "project3Description": "Service focused on timely delivery and customer satisfaction. The address of luxury living at the top of the hill.",
+  "unitTypes": "Unit Types",
+  "squareMeters": "Square Meters",
+  "bathroom": "Bathroom",
+  "bedroom": "Bedroom",
+  "interiorImages": "Interior Images",
+  "showOnMap": "Show on Map",
+  "fullscreen": "Fullscreen"
+},
+"About": {
+  "hero": {
+    "title": "40 Years of <trust>Trust</trust> and <experience>Experience</experience>",
+    "subtitle": "The family company building Cyprus's most prestigious residential projects"
+  },
+  "stats": {
+    "yearsExperience": "Years of Experience",
+    "completedProjects": "Completed Projects",
+    "happyClients": "Happy Clients",
+    "awardsAndCertificates": "Awards and Certificates"
+  },
+  "tabs": {
+    "story": "Our Story",
+    "team": "Our Team",
+    "values": "Our Values"
+  },
+  "story": {
+    "title": "Strength from Family Tradition",
+    "paragraph1": "Founded by Ceyhun Tunalı in 1976, our company has become one of the most trusted construction firms in Cyprus with its 40-year history. Starting as a family business, we have always prioritized quality and customer satisfaction.",
+    "paragraph2": "Growing with the second generation, our company produces pioneering projects in the sector with modern architectural understanding and innovative approaches. We continue to raise Cyprus's living standards with our prestigious projects like Four Seasons Life, The Sign, Aurora Bay, and Carob Hill.",
+    "paragraph3": "Today, with our experienced team and strong infrastructure, we work to turn your dream living spaces into reality. In every project, we build structures that will add value for generations by blending our family values with our professional approach."
+  },
+  "team": {
+    "title": "Our Professional Team",
+    "director": "Director",
+    "directorBio": "Leader defining our company's vision with 40 years of industry experience.",
+    "assistantDirector": "Assistant Director",
+    "assistantDirectorBio": "Executive expert in strategic planning and operational excellence.",
+    "executiveAssistant": "Senior Executive Assistant",
+    "executiveAssistantBio": "Professional responsible for management coordination and corporate communication.",
+    "salesRepresentative": "Sales Representative",
+    "salesRep1Bio": "International customer relations and sales specialist.",
+    "salesRep2Bio": "Customer satisfaction focused experienced sales professional.",
+    "salesRep3Bio": "Project promotion and customer relations expert.",
+    "accounting": "Accounting",
+    "accounting1Bio": "Financial operations and reporting specialist.",
+    "accounting2Bio": "Budget planning and cost analysis professional.",
+    "accounting3Bio": "Financial control and audit expert.",
+    "siteChief": "Site Chief",
+    "siteChiefBio": "Field operations and quality control manager.",
+    "securityOfficer": "Security Officer",
+    "securityOfficerBio": "Work safety and field security coordinator.",
+    "officeManager": "Office Manager",
+    "officeManagerBio": "Office management and administrative affairs coordinator.",
+    "itUnit": "IT Unit",
+    "itUnitBio": "Information technology and digital infrastructure specialist."
+  },
+  "values": {
+    "title": "Our Values",
+    "excellence": "Excellence",
+    "excellenceDesc": "We aim for the highest quality standards in every project.",
+    "trust": "Trust",
+    "trustDesc": "We build transparent and trust-based relationships with our customers.",
+    "innovation": "Innovation",
+    "innovationDesc": "We produce sustainable and modern solutions.",
+    "delivery": "Timely Delivery",
+    "deliveryDesc": "We fulfill our promises on time."
+  },
+  "timeline": {
+    "title": "Our Milestones",
+    "1976": {
+      "title": "Foundation",
+      "description": "Company founded by Ceyhun Tunalı"
+    },
+    "1995": {
+      "title": "First Major Project",
+      "description": "Our first major project with 100 residences completed"
+    },
+    "2005": {
+      "title": "International Standards",
+      "description": "ISO 9001 quality certificate obtained"
+    },
+    "2015": {
+      "title": "New Generation",
+      "description": "Second generation joined management"
+    },
+    "2024": {
+      "title": "40th Year",
+      "description": "Industry leader with 150+ projects"
+    }
+  },
+  "cta": {
+    "title": "Let's Build Your Dream Home Together",
+    "subtitle": "With 40 years of experience, we offer reliable and quality living spaces.",
+    "viewProjects": "View Our Projects",
+    "contact": "Contact Us"
+  }
+},
+"Contact": {
+  "title": "Get in <gradient>Touch</gradient>",
+  "subtitle": "Discover our tailored solutions for you",
+  "getDirections": "Get directions",
+  "directions": "Directions",
+  "phone": "Phone",
+  "email": "Email",
+  "workingHours": "Working Hours",
+  "workingHoursDetail": "Mon - Fri: 08:00 - 17:00",
+  "address": "Address",
+  "addressDetail": "Iskele, Cyprus",
+  "followUs": "Follow Us",
+  "form": {
+    "title": "Quick Contact Form",
+    "subtitle": "We'll get back to you as soon as possible",
+    "name": "Full Name",
+    "namePlaceholder": "Your name and surname",
+    "email": "Email",
+    "emailPlaceholder": "example@email.com",
+    "phone": "Phone",
+    "phonePlaceholder": "+90 5xx xxx xx xx",
+    "projectInterest": "Project of Interest",
+    "selectProject": "Select",
+    "generalInfo": "General Information",
+    "subject": "Subject",
+    "subjectPlaceholder": "Subject of your message",
+    "message": "Your Message",
+    "messagePlaceholder": "Write your message here...",
+    "sendMessage": "Send Message",
+    "sending": "Sending...",
+    "successMessage": "Your message has been sent successfully!",
+    "errorMessage": "Failed to send message. Please try again later.",
+    "errorFillFields": "Please fill in all required fields."
+  }
+}
+  }

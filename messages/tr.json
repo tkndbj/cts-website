@@ -1,0 +1,181 @@
+{
+    "Navigation": {
+      "home": "Ana Sayfa",
+      "about": "Hakkımızda",
+      "projects": "Projeler",
+      "ourProjects": "Projelerimiz",
+      "contact": "İletişim",
+      "openMenu": "Menüyü aç",
+      "selectLanguage": "Dil seçin"
+    },
+    "Mobile": {
+      "projects": "Projeler"
+    },
+    "Projects": {
+      "fourSeasonsDesc": "Çağdaş tasarım çözümleri ile geleceğin yapılarını inşa ediyoruz",
+      "theSignDesc": "Uzman ekibimiz ile her detayda mükemmellik arayışı",
+      "auroraDesc": "Çevre dostu yapılar ile doğaya saygılı inşaat",
+      "carobDesc": "Zamanında teslimat ve müşteri memnuniyeti odaklı hizmet"
+    },
+    "Buttons": {
+      "back": "Geri",
+      "details": "Detaylar",
+      "next": "İleri",
+      "previous": "Önceki"
+    },
+    "Gallery": {
+  "slide1": {
+    "title": "Seçkin Projeler",
+    "subtitle": "Geleceğin Yapıları",
+    "description": "40 yıllık deneyimimizle, en ince detayları dikkate alarak hayallerinizi gerçeğe dönüştürüyoruz."
+  },
+  "slide2": {
+    "title": "Yatırım Fırsatları",
+    "subtitle": "Geleceğiniz İçin",
+    "description": "Yatırım fırsatlarınızın en iyi şekilde yararlanması için tasarlıyoruz."
+  },
+  "slide3": {
+    "title": "Sürdürülebilir Yapılar",
+    "subtitle": "Yapı Teknolojileri",
+    "description": "Doğayla uyumlu, enerji verimli ve sürdürülebilir projeler geliştiriyoruz."
+  },
+  "previousSlide": "Önceki slayt",
+  "nextSlide": "Sonraki slayt",
+  "goToSlide": "Slayta git"
+},
+"ProjectDetails": {
+  "project1Description": "Çağdaş tasarım çözümleri ile geleceğin yapılarını inşa ediyoruz. Her mevsimin güzelliğini yaşayabileceğiniz modern yaşam alanları.",
+  "project2Description": "Çevre dostu yapılar ile doğaya saygılı inşaat. Denizin kucakladığı huzurlu yaşam alanları.",
+  "project3Description": "Zamanında teslimat ve müşteri memnuniyeti odaklı hizmet. Tepenin zirvesinde lüks yaşamın adresi.",
+  "unitTypes": "Daire Tipleri",
+  "squareMeters": "Metre Kare",
+  "bathroom": "Banyo",
+  "bedroom": "Yatak Odası",
+  "interiorImages": "İç Mekan Görselleri",
+  "showOnMap": "Haritada Göster",
+  "fullscreen": "Tam ekran"
+},
+"About": {
+  "hero": {
+    "title": "40 Yıllık <trust>Güven</trust> ve <experience>Tecrübe</experience>",
+    "subtitle": "Kıbrıs'ın en prestijli konut projelerini hayata geçiren aile şirketi"
+  },
+  "stats": {
+    "yearsExperience": "Yıllık Tecrübe",
+    "completedProjects": "Tamamlanan Proje",
+    "happyClients": "Mutlu Müşteri",
+    "awardsAndCertificates": "Ödül ve Sertifika"
+  },
+  "tabs": {
+    "story": "Hikayemiz",
+    "team": "Ekibimiz",
+    "values": "Değerlerimiz"
+  },
+  "story": {
+    "title": "Aile Geleneğinden Gelen Güç",
+    "paragraph1": "1976 yılında Ceyhun Tunalı tarafından kurulan şirketimiz, 40 yıllık köklü geçmişiyle Kıbrıs'ın en güvenilir inşaat firmalarından biri haline gelmiştir. Aile şirketi olarak başladığımız bu yolculukta, kalite ve müşteri memnuniyetini her zaman ön planda tuttuk.",
+    "paragraph2": "İkinci nesil ile birlikte büyüyen firmamız, modern mimari anlayışı ve yenilikçi yaklaşımlarla sektörde öncü projeler üretmektedir. Four Seasons Life, The Sign, Aurora Bay ve Carob Hill gibi prestijli projelerimizle Kıbrıs'ın yaşam standartlarını yükseltmeye devam ediyoruz.",
+    "paragraph3": "Bugün, deneyimli ekibimiz ve güçlü altyapımızla, hayalinizdeki yaşam alanlarını gerçeğe dönüştürmek için çalışıyoruz. Her projemizde, aile değerlerimizi ve profesyonel yaklaşımımızı harmanlayarak, nesiller boyu değer katacak yapılar inşa ediyoruz."
+  },
+  "team": {
+    "title": "Profesyonel Ekibimiz",
+    "director": "Direktör",
+    "directorBio": "40 yıllık sektör deneyimi ile şirketimizin vizyonunu belirleyen lider.",
+    "assistantDirector": "Direktör Yardımcısı",
+    "assistantDirectorBio": "Stratejik planlama ve operasyonel mükemmellikte uzman yönetici.",
+    "executiveAssistant": "Üst Düzey Yönetici Asistanı",
+    "executiveAssistantBio": "Yönetim koordinasyonu ve kurumsal iletişimden sorumlu profesyonel.",
+    "salesRepresentative": "Satış Temsilcisi",
+    "salesRep1Bio": "Uluslararası müşteri ilişkileri ve satış uzmanı.",
+    "salesRep2Bio": "Müşteri memnuniyeti odaklı deneyimli satış profesyoneli.",
+    "salesRep3Bio": "Proje tanıtım ve müşteri ilişkileri uzmanı.",
+    "accounting": "Muhasebe",
+    "accounting1Bio": "Mali işlemler ve finansal raporlama uzmanı.",
+    "accounting2Bio": "Bütçe planlama ve maliyet analizi profesyoneli.",
+    "accounting3Bio": "Finansal kontrol ve denetim uzmanı.",
+    "siteChief": "Şantiye Şefi",
+    "siteChiefBio": "Saha operasyonları ve kalite kontrol yöneticisi.",
+    "securityOfficer": "Güvenlik Amiri",
+    "securityOfficerBio": "İş güvenliği ve sahada güvenlik koordinatörü.",
+    "officeManager": "Ofis Sorumlusu",
+    "officeManagerBio": "Ofis yönetimi ve idari işler koordinatörü.",
+    "itUnit": "IT Birimi",
+    "itUnitBio": "Bilgi teknolojileri ve dijital altyapı uzmanı."
+  },
+  "values": {
+    "title": "Değerlerimiz",
+    "excellence": "Mükemmellik",
+    "excellenceDesc": "Her projede en yüksek kalite standartlarını hedefleriz.",
+    "trust": "Güven",
+    "trustDesc": "Müşterilerimizle şeffaf ve güvene dayalı ilişkiler kurarız.",
+    "innovation": "İnovasyon",
+    "innovationDesc": "Sürdürülebilir ve modern çözümler üretiriz.",
+    "delivery": "Zamanında Teslimat",
+    "deliveryDesc": "Verdiğimiz sözleri zamanında yerine getiririz."
+  },
+  "timeline": {
+    "title": "Kilometre Taşlarımız",
+    "1976": {
+      "title": "Kuruluş",
+      "description": "Ceyhun Tunalı tarafından şirket kuruldu"
+    },
+    "1995": {
+      "title": "İlk Büyük Proje",
+      "description": "100 konutluk ilk büyük projemiz tamamlandı"
+    },
+    "2005": {
+      "title": "Uluslararası Standartlar",
+      "description": "ISO 9001 kalite sertifikası alındı"
+    },
+    "2015": {
+      "title": "Yeni Nesil",
+      "description": "İkinci nesil yönetime katıldı"
+    },
+    "2024": {
+      "title": "40. Yıl",
+      "description": "150+ proje ile sektör lideri konumundayız"
+    }
+  },
+  "cta": {
+    "title": "Hayalinizdeki Evi Birlikte İnşa Edelim",
+    "subtitle": "40 yıllık tecrübemizle, güvenilir ve kaliteli yaşam alanları sunuyoruz.",
+    "viewProjects": "Projelerimizi İnceleyin",
+    "contact": "İletişime Geçin"
+  }
+},
+"Contact": {
+  "title": "İletişime <gradient>Geçin</gradient>",
+  "subtitle": "Size özel çözümlerimizi keşfedin",
+  "getDirections": "Yol tarifi al",
+  "directions": "Yön",
+  "phone": "Telefon",
+  "email": "E-posta",
+  "workingHours": "Çalışma Saatleri",
+  "workingHoursDetail": "Pzt - Cuma: 08:00 - 17:00",
+  "address": "Adres",
+  "addressDetail": "İskele, Kıbrıs",
+  "followUs": "Bizi Takip Edin",
+  "form": {
+    "title": "Hızlı İletişim Formu",
+    "subtitle": "Size en kısa sürede dönüş yapacağız",
+    "name": "Ad Soyad",
+    "namePlaceholder": "Adınız ve soyadınız",
+    "email": "E-posta",
+    "emailPlaceholder": "ornek@email.com",
+    "phone": "Telefon",
+    "phonePlaceholder": "+90 5xx xxx xx xx",
+    "projectInterest": "İlgilendiğiniz Proje",
+    "selectProject": "Seçiniz",
+    "generalInfo": "Genel Bilgi",
+    "subject": "Konu",
+    "subjectPlaceholder": "Mesajınızın konusu",
+    "message": "Mesajınız",
+    "messagePlaceholder": "Mesajınızı buraya yazınız...",
+    "sendMessage": "Mesajı Gönder",
+    "sending": "Gönderiliyor...",
+    "successMessage": "Mesajınız başarıyla gönderildi!",
+    "errorMessage": "Mesaj gönderilemedi. Lütfen daha sonra tekrar deneyin.",
+    "errorFillFields": "Lütfen tüm zorunlu alanları doldurun."
+  }
+}
+  }
